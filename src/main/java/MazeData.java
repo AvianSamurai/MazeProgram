@@ -1,5 +1,10 @@
 public class MazeData {
 
+    // Not sure exactly how this class will function untill
+    // we get a data structure for the maze created.
+    // But the idea is that this can hold an instance of a
+    // maze and contain data on it for saving and loading.
+
     private String name;
     private String authorName;
     private String creationDate;

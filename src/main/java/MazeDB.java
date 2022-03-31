@@ -45,5 +45,4 @@ public class MazeDB {
         //Returns the number of deleted objects or edite columns/rows
         return 0;
     }
-    
 }

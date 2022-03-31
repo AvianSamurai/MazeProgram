@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public class DatabaseCon {
 
-    private final String propertiesFile = System.getProperty("user.dir") + "\\MazeProgram\\db.props";
+    private final String propertiesFile = "db.props";
     private String databaseURL;
     private String schema;
     private String username, password;
@@ -21,7 +21,7 @@ public class DatabaseCon {
     public DatabaseCon() throws IOException {
         // Get the database's properties [UNTESTED]
         Properties dbProps = new Properties();
-        FileReader propsReader = new FileReader(propertiesFile);
+        FileReader propsReader = new FileReader(System.getProperty("user.dir") + "\\" + propertiesFile);
         dbProps.load(propsReader);
         databaseURL = dbProps.getProperty("jdbc.url");
         schema = dbProps.getProperty("jdbc.schema");

@@ -1,12 +1,20 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 
 public class DatabaseCon {
 
-    private final String propertiesFile = "db.props";
+    // Class Config
+    private static final String PROPERTIES_FILE = "db.props";
+    private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE mazes (" +
+            "id PRIMARY UNIQUE UNSIGNED int(32) NOT NULL, " +
+            "name varchar(128) NOT NULL, " +
+            "author_name varchar(128) NOT NULL, " +
+            "creation_date DATETIME NOT NULL, " +
+            "last_modified DATETIME NOT NULL);"; // [UNTESTED]
+
+    // Local variables
     private String databaseURL;
     private String schema;
     private String username, password;
@@ -19,9 +27,9 @@ public class DatabaseCon {
      * @throws IOException Thrown if an error occurs while reading the db.props file
      */
     public DatabaseCon() throws IOException {
-        // Get the database's properties [UNTESTED]
+        // Get the database's properties
         Properties dbProps = new Properties();
-        FileReader propsReader = new FileReader(System.getProperty("user.dir") + "\\" + propertiesFile);
+        FileReader propsReader = new FileReader(System.getProperty("user.dir") + "\\" + PROPERTIES_FILE);
         dbProps.load(propsReader);
         databaseURL = dbProps.getProperty("jdbc.url");
         schema = dbProps.getProperty("jdbc.schema");

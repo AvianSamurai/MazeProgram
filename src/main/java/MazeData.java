@@ -5,17 +5,19 @@ public class MazeData {
     // But the idea is that this can hold an instance of a
     // maze and contain data on it for saving and loading.
 
+    private int id;
     private String name;
     private String authorName;
     private String creationDate;
     private String lastModifiedData;
 
-    public MazeData(String name, String authorName, String creationDate, String lastModifiedDate, String MazeData) {
+    public MazeData(int id, String name, String authorName, String creationDate, String lastModifiedDate, String MazeData) {
         // Create maze data from arguments
         this.name = name;
         this.authorName = authorName;
         this.creationDate = creationDate;
         this.lastModifiedData = lastModifiedDate;
+        this.id = id;
 
         // Convert maze data to maze representation
     }

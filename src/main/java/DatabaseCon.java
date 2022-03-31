@@ -49,4 +49,21 @@ public class DatabaseCon {
     public MazeData[] GetMazes() {
         return null;
     }
+
+    /**
+     * Saves maze to database or overwrites maze in database
+     * if maze already exists
+     *
+     * @param mazeToSave Maze data to save to database
+     */
+    public void SaveMaze(MazeData mazeToSave) {}
+
+    /**
+     * Checks if maze already exists in Database
+     *
+     * @return True if maze exists
+     */
+    public boolean MazeExists() {
+        return false;
+    }
 }

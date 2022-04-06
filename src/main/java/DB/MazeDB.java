@@ -31,6 +31,14 @@ public class MazeDB {
     public static Statement statement;
 
     //Open a connection to the database
+
+    /**
+     * Opens a connection to the database
+     *
+     * @return The database connection object
+     * @throws ClassNotFoundException Thrown if the JDBC_DRIVER class is not found. This should never happen,
+     * but a database connection isn't possible if it does.
+     */
     public static Connection connection() throws ClassNotFoundException {
         Connection dbcon = null;
         // Get driver class
@@ -47,6 +55,9 @@ public class MazeDB {
         }
         Debug.LogLn("Connection Successful");
 
+        // Save the connection for ease of use
+        connection = dbcon;
+
         return dbcon;
     }
 
@@ -55,18 +66,45 @@ public class MazeDB {
 
     }
 
+    /**
+     * [NOT IMPLEMENTED]
+     * Used to get the response from a database query
+     *
+     * @param query a raw SQL query
+     * @return The results from the query
+     * @throws SQLException Thrown if the query is malformed
+     */
     public ResultSet Query(String query) throws SQLException{
 
         //return result from query
         return null;
     }
 
+    /**
+     * [NOT IMPLEMENTED]
+     * Used to preform updates, creations, or deletions to the database
+     *
+     * @param query a raw SQL query
+     * @return 1 if action was a success, 0 otherwise
+     * @throws SQLException Thrown if the query is malformed
+     */
     public int CreateUpdateDelete(String query) throws SQLException{
 
         //Returns the number of deleted objects or edite columns/rows
         return 0;
     }
 
+    /**
+     * Runs the setup routine for the database class
+     *
+     * The setup routine does the following:
+     *  1) Get the properties from the properties file
+     *  2) Connect to the database with that info
+     *  3) Test if the database has had its structure setup [NOT IMPLEMENTED]
+     *  4) Setup the database's structure [NOT IMPLEMENTED]
+     *
+     * @throws IOException Thrown if the db.props file cannot be found
+     */
     public static void Setup() throws IOException {
         // Get the database's properties
         Properties dbProps = new Properties();

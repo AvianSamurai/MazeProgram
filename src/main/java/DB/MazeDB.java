@@ -1,28 +1,53 @@
 package DB;
 
-import com.mysql.jdbc.Connection;
-
-import java.sql.*;
+import java.io.FileNotFoundException;
+import Utils.Debug;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
+import java.sql.*;
 
-//I looked up static classes in java and apparently you cant declare a class as static because
-//it is a top level class, but we can declare inner classes as static
-public static class MazeDB {
-    private static String db_driver;
+public class MazeDB {
+
+    // Some class config
+    private static final String PROPERTIES_FILE = "db.props";
+    static final String JDBC_DRIVER = "org.mariadb.jdbc.Driver";
+    private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE mazes (" +
+            "id PRIMARY UNIQUE UNSIGNED int(32) NOT NULL, " +
+            "name varchar(128) NOT NULL, " +
+            "author_name varchar(128) NOT NULL, " +
+            "creation_date DATETIME NOT NULL, " +
+            "last_modified DATETIME NOT NULL);"; // [UNTESTED]
+
+    private static String db_schema;
     private static String db_url;
     private static String username;
     private static String pwd;
 
     //Initialising a connection object to create a session with a specific database
-    public Connection connection;
+    public static Connection connection;
 
     //The statement object is used for executing sql statements
-    public Statement statement;
+    public static Statement statement;
 
     //Open a connection to the database
-    public Connection connection(){
+    public static Connection connection() throws ClassNotFoundException {
+        Connection dbcon = null;
+        // Get driver class
+        Class.forName(JDBC_DRIVER);
 
-        return connection;
+        // Open a connection
+        Debug.LogLn("Connecting to database...");
+        try {
+            dbcon = DriverManager.getConnection(db_url, username, pwd);
+        } catch (SQLException e) {
+            Debug.LogLn("Connection Failed");
+            e.printStackTrace();
+            return null;
+        }
+        Debug.LogLn("Connection Successful");
+
+        return dbcon;
     }
 
     //Disconnect from database
@@ -42,8 +67,18 @@ public static class MazeDB {
         return 0;
     }
 
-    //Added a setup skeleton just in case
-    public void Setup(){
+    public static void Setup() throws IOException {
+        // Get the database's properties
+        Properties dbProps = new Properties();
+        FileReader propsReader = new FileReader(System.getProperty("user.dir") + "\\" + PROPERTIES_FILE);
+        dbProps.load(propsReader);
+        db_url = dbProps.getProperty("jdbc.url");
+        db_schema = dbProps.getProperty("jdbc.schema");
+        username = dbProps.getProperty("jdbc.username");
+        pwd = dbProps.getProperty("jdbc.password");
 
+        // Connect to the database
+
+        // Test the database structure
     }
 }

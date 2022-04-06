@@ -12,6 +12,8 @@ public class MazeDB {
     // Some class config
     private static final String PROPERTIES_FILE = "db.props";
     static final String JDBC_DRIVER = "org.mariadb.jdbc.Driver";
+
+    // Useful SQL queries
     private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE mazes (" +
             "id PRIMARY UNIQUE UNSIGNED int(32) NOT NULL, " +
             "name varchar(128) NOT NULL, " +
@@ -25,7 +27,7 @@ public class MazeDB {
     private static String pwd;
 
     //Initialising a connection object to create a session with a specific database
-    public static Connection connection;
+    public static Connection connection = null;
 
     //The statement object is used for executing sql statements
     public static Statement statement;
@@ -104,8 +106,10 @@ public class MazeDB {
      *  4) Setup the database's structure [NOT IMPLEMENTED]
      *
      * @throws IOException Thrown if the db.props file cannot be found
+     * @throws ClassNotFoundException Thrown if the JDBC driver could not be found, if this is thrown
+     * then connection is impossible
      */
-    public static void Setup() throws IOException {
+    public static void Setup() throws IOException, ClassNotFoundException {
         // Get the database's properties
         Properties dbProps = new Properties();
         FileReader propsReader = new FileReader(System.getProperty("user.dir") + "\\" + PROPERTIES_FILE);
@@ -116,7 +120,11 @@ public class MazeDB {
         pwd = dbProps.getProperty("jdbc.password");
 
         // Connect to the database
+        if(connection == null) {
+            connection();
+        }
 
         // Test the database structure
+
     }
 }

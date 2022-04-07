@@ -31,7 +31,7 @@ public class MazeDB {
     public static Connection connection = null;
 
     //The statement object is used for executing sql statements
-    public static Statement statement;
+    public static Statement statement = null;
 
     //Open a connection to the database
 
@@ -64,9 +64,24 @@ public class MazeDB {
         return dbcon;
     }
 
-    //Disconnect from database
-    public void disconnect(){
-
+    /**
+     * Disconnects from the database and resets the database
+     * connector, Setup will need to be preformed if MazeDB is to be used again
+     * whether that's an automatic setup from invoking another method or
+     * setup by calling Setup()
+     */
+    public static void disconnect(){
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            Debug.LogLn("Database access error occurred, Database assumed to be disconnected");
+        }
+        connection = null;
+        db_schema = "";
+        db_url = "";
+        username = "";
+        pwd = "";
+        statement = null;
     }
 
     /**
@@ -77,7 +92,8 @@ public class MazeDB {
      * @return The results from the query
      * @throws SQLException Thrown if the query is malformed
      */
-    public ResultSet Query(String query) throws SQLException{
+    public static ResultSet Query(String query) throws SQLException{
+        if(!EnsureSetup()){return null;} // return query failed if auto-setup failed
 
         //return result from query
         return null;
@@ -91,7 +107,7 @@ public class MazeDB {
      * @return 1 if action was a success, 0 otherwise
      * @throws SQLException Thrown if the query is malformed
      */
-    public int CreateUpdateDelete(String query) throws SQLException{
+    public static int CreateUpdateDelete(String query) throws SQLException{
         if(!EnsureSetup()){return 0;} // return query failed if auto-setup failed
 
         Statement cudStatement = connection.createStatement();
@@ -131,7 +147,7 @@ public class MazeDB {
 
     }
 
-    private Boolean EnsureSetup() {
+    private static Boolean EnsureSetup() {
         if(connection == null) {
             try {
                 Setup();

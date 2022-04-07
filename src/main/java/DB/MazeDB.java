@@ -22,7 +22,7 @@ public class MazeDB {
             "author_name varchar(128) NOT NULL, " +
             "creation_date DATETIME NOT NULL, " +
             "last_modified DATETIME NOT NULL," +
-            "PRIMARY KEY (id))"; // [UNTESTED]
+            "PRIMARY KEY (id))";
     private static final String TEST_DB_STRUCTURE = "SHOW TABLES LIKE '" + SAVED_MAZES_TABLE_NAME + "'";
 
     private static String db_schema;

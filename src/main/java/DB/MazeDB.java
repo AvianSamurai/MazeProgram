@@ -1,6 +1,5 @@
 package DB;
 
-import java.io.FileNotFoundException;
 import Utils.Debug;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,14 +12,18 @@ public class MazeDB {
     private static final String PROPERTIES_FILE = "db.props";
     private static final String JDBC_DRIVER = "org.mariadb.jdbc.Driver";
 
+    // useful constants
+    public static final String SAVED_MAZES_TABLE_NAME = "saved_mazes";
+
     // Useful SQL queries
-    private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE mazes (" +
-            "id PRIMARY UNIQUE UNSIGNED int(32) NOT NULL, " +
+    private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE '" + SAVED_MAZES_TABLE_NAME + "' (" +
+            "id int(32) UNSIGNED UNIQUE NOT NULL, " +
             "name varchar(128) NOT NULL, " +
             "author_name varchar(128) NOT NULL, " +
             "creation_date DATETIME NOT NULL, " +
-            "last_modified DATETIME NOT NULL);"; // [UNTESTED]
-    private static final String TEST_DB_STRUCTURE = "SHOW TABLES LIKE 'saved_mazes'";
+            "last_modified DATETIME NOT NULL," +
+            "PRIMARY KEY (id));"; // [UNTESTED]
+    private static final String TEST_DB_STRUCTURE = "SHOW TABLES LIKE '" + SAVED_MAZES_TABLE_NAME + "'";
 
     private static String db_schema;
     private static String db_url;
@@ -50,7 +53,7 @@ public class MazeDB {
         // Open a connection
         Debug.LogLn("Connecting to database...");
         try {
-            dbcon = DriverManager.getConnection(db_url, username, pwd);
+            dbcon = DriverManager.getConnection(db_url + "/" + db_schema, username, pwd);
         } catch (SQLException e) {
             Debug.LogLn("Connection Failed");
             e.printStackTrace();
@@ -107,6 +110,25 @@ public class MazeDB {
     }
 
     /**
+     * Gets the next unused id for saving a new maze to
+     *
+     * @return the next available id or -1 if there was a problem
+     */
+    public int GetNextAvailableID() {
+        try {
+            ResultSet res = Query("SELECT MAX(id) FROM " + SAVED_MAZES_TABLE_NAME);
+            if(res.next()) {
+                return res.getInt(0) + 1;
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
      * Runs the setup routine for the database class
      *
      * The setup routine does the following:
@@ -140,6 +162,17 @@ public class MazeDB {
         }
 
         // Test the database structure
-
+        if(!Query(TEST_DB_STRUCTURE).next()) {
+            // unfortunately sql create table queries return 0 whether it was successful or not,
+            // so we have to then test the structure again
+            CreateUpdateDelete(CREATE_DB_STRUCTURE_COMMAND);
+            if(!Query(TEST_DB_STRUCTURE).next()) {
+                Debug.LogLn("Table '" + SAVED_MAZES_TABLE_NAME + "' doesn't exist and creation failed");
+            } else {
+                Debug.LogLn("Created table '" + SAVED_MAZES_TABLE_NAME + "'");
+            }
+        } else {
+            Debug.LogLn("Found table '" + SAVED_MAZES_TABLE_NAME + "'");
+        }
     }
 }

@@ -20,6 +20,7 @@ public class MazeDB {
             "author_name varchar(128) NOT NULL, " +
             "creation_date DATETIME NOT NULL, " +
             "last_modified DATETIME NOT NULL);"; // [UNTESTED]
+    private static final String TEST_DB_STRUCTURE = "SHOW TABLES LIKE 'saved_mazes'";
 
     private static String db_schema;
     private static String db_url;
@@ -91,7 +92,9 @@ public class MazeDB {
      * @throws SQLException Thrown if the query is malformed
      */
     public int CreateUpdateDelete(String query) throws SQLException{
+        if(!EnsureSetup()){return 0;} // return query failed if auto-setup failed
 
+        Statement cudStatement = connection.createStatement();
         //Returns the number of deleted objects or edite columns/rows
         return 0;
     }
@@ -126,5 +129,18 @@ public class MazeDB {
 
         // Test the database structure
 
+    }
+
+    private Boolean EnsureSetup() {
+        if(connection == null) {
+            try {
+                Setup();
+            } catch (Exception e) {
+                Debug.LogLn("Auto database setup failed");
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
     }
 }

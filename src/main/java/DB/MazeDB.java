@@ -16,13 +16,13 @@ public class MazeDB {
     public static final String SAVED_MAZES_TABLE_NAME = "saved_mazes";
 
     // Useful SQL queries
-    private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE '" + SAVED_MAZES_TABLE_NAME + "' (" +
+    private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE " + SAVED_MAZES_TABLE_NAME + " (" +
             "id int(32) UNSIGNED UNIQUE NOT NULL, " +
             "name varchar(128) NOT NULL, " +
             "author_name varchar(128) NOT NULL, " +
             "creation_date DATETIME NOT NULL, " +
             "last_modified DATETIME NOT NULL," +
-            "PRIMARY KEY (id));"; // [UNTESTED]
+            "PRIMARY KEY (id))"; // [UNTESTED]
     private static final String TEST_DB_STRUCTURE = "SHOW TABLES LIKE '" + SAVED_MAZES_TABLE_NAME + "'";
 
     private static String db_schema;
@@ -118,7 +118,7 @@ public class MazeDB {
         try {
             ResultSet res = Query("SELECT MAX(id) FROM " + SAVED_MAZES_TABLE_NAME);
             if(res.next()) {
-                return res.getInt(0) + 1;
+                return res.getInt(1) + 1;
             } else {
                 return 0;
             }

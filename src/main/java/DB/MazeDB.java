@@ -11,7 +11,7 @@ public class MazeDB {
 
     // Some class config
     private static final String PROPERTIES_FILE = "db.props";
-    static final String JDBC_DRIVER = "org.mariadb.jdbc.Driver";
+    private static final String JDBC_DRIVER = "org.mariadb.jdbc.Driver";
 
     // Useful SQL queries
     private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE mazes (" +
@@ -28,10 +28,10 @@ public class MazeDB {
     private static String pwd;
 
     //Initialising a connection object to create a session with a specific database
-    public static Connection connection = null;
+    public Connection connection = null;
 
     //The statement object is used for executing sql statements
-    public static Statement statement = null;
+    public Statement statement = null;
 
     //Open a connection to the database
 
@@ -42,7 +42,7 @@ public class MazeDB {
      * @throws ClassNotFoundException Thrown if the JDBC_DRIVER class is not found. This should never happen,
      * but a database connection isn't possible if it does.
      */
-    public static Connection connection() throws ClassNotFoundException {
+    public Connection connection() throws ClassNotFoundException {
         Connection dbcon = null;
         // Get driver class
         Class.forName(JDBC_DRIVER);
@@ -70,7 +70,7 @@ public class MazeDB {
      * whether that's an automatic setup from invoking another method or
      * setup by calling Setup()
      */
-    public static void disconnect(){
+    public void disconnect(){
         try {
             statement.close();
             connection.close();
@@ -78,12 +78,6 @@ public class MazeDB {
         } catch (SQLException e) {
             Debug.LogLn("Database access error occurred, Database assumed to be disconnected");
         }
-        connection = null;
-        db_schema = "";
-        db_url = "";
-        username = "";
-        pwd = "";
-        statement = null;
     }
 
     /**
@@ -94,11 +88,9 @@ public class MazeDB {
      * @return The results from the query
      * @throws SQLException Thrown if the query is malformed
      */
-    public static ResultSet Query(String query) throws SQLException{
-        if(!EnsureSetup()){return null;} // return query failed if auto-setup failed
-
+    public ResultSet Query(String query) throws SQLException{
         //return result from query
-        return null;
+        return statement.executeQuery(query);
     }
 
     /**
@@ -109,9 +101,7 @@ public class MazeDB {
      * @return the number of deleted objects or edite columns/rows
      * @throws SQLException Thrown if the query is malformed
      */
-    public static int CreateUpdateDelete(String query) throws SQLException{
-        if(!EnsureSetup()){return 0;} // return query failed if auto-setup failed
-
+    public int CreateUpdateDelete(String query) throws SQLException{
         //Returns the number of deleted objects or edite columns/rows
         return statement.executeUpdate(query);
     }
@@ -133,7 +123,7 @@ public class MazeDB {
      * @throws SQLException Thrown if there is a database access error or if the connection to the
      * database was disconnected during setup
      */
-    public static void Setup() throws IOException, ClassNotFoundException, SQLException {
+    public MazeDB() throws IOException, ClassNotFoundException, SQLException {
         // Get the database's properties
         Properties dbProps = new Properties();
         FileReader propsReader = new FileReader(System.getProperty("user.dir") + "\\" + PROPERTIES_FILE);
@@ -151,18 +141,5 @@ public class MazeDB {
 
         // Test the database structure
 
-    }
-
-    private static Boolean EnsureSetup() {
-        if(connection == null) {
-            try {
-                Setup();
-            } catch (Exception e) {
-                Debug.LogLn("Auto database setup failed");
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return true;
     }
 }

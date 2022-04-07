@@ -114,7 +114,7 @@ public class MazeDB {
      *
      * @return the next available id or -1 if there was a problem
      */
-    public int GetNextAvailableID() {
+    public int getNextAvailableID() {
         try {
             ResultSet res = Query("SELECT MAX(id) FROM " + SAVED_MAZES_TABLE_NAME);
             if(res.next()) {

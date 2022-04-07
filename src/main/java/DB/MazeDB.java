@@ -129,13 +129,13 @@ public class MazeDB {
     }
 
     /**
-     * Runs the setup routine for the database class
+     * Constructs a MazeDB object and runs the setup routine for the database
      *
      * The setup routine does the following:
      *  1) Get the properties from the properties file
      *  2) Connect to the database with that info
-     *  3) Test if the database has had its structure setup [NOT IMPLEMENTED]
-     *  4) Setup the database's structure [NOT IMPLEMENTED]
+     *  3) Test if the database has had its structure setup
+     *  4) Setup the database's structure
      *
      * Setup failed if any exception is thrown
      *

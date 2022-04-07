@@ -72,7 +72,9 @@ public class MazeDB {
      */
     public static void disconnect(){
         try {
+            statement.close();
             connection.close();
+            Debug.LogLn("Disconnected from database");
         } catch (SQLException e) {
             Debug.LogLn("Database access error occurred, Database assumed to be disconnected");
         }
@@ -104,15 +106,14 @@ public class MazeDB {
      * Used to preform updates, creations, or deletions to the database
      *
      * @param query a raw SQL query
-     * @return 1 if action was a success, 0 otherwise
+     * @return the number of deleted objects or edite columns/rows
      * @throws SQLException Thrown if the query is malformed
      */
     public static int CreateUpdateDelete(String query) throws SQLException{
         if(!EnsureSetup()){return 0;} // return query failed if auto-setup failed
 
-        Statement cudStatement = connection.createStatement();
         //Returns the number of deleted objects or edite columns/rows
-        return 0;
+        return statement.executeUpdate(query);
     }
 
     /**
@@ -124,11 +125,15 @@ public class MazeDB {
      *  3) Test if the database has had its structure setup [NOT IMPLEMENTED]
      *  4) Setup the database's structure [NOT IMPLEMENTED]
      *
+     * Setup failed if any exception is thrown
+     *
      * @throws IOException Thrown if the db.props file cannot be found
      * @throws ClassNotFoundException Thrown if the JDBC driver could not be found, if this is thrown
      * then connection is impossible
+     * @throws SQLException Thrown if there is a database access error or if the connection to the
+     * database was disconnected during setup
      */
-    public static void Setup() throws IOException, ClassNotFoundException {
+    public static void Setup() throws IOException, ClassNotFoundException, SQLException {
         // Get the database's properties
         Properties dbProps = new Properties();
         FileReader propsReader = new FileReader(System.getProperty("user.dir") + "\\" + PROPERTIES_FILE);
@@ -141,6 +146,7 @@ public class MazeDB {
         // Connect to the database
         if(connection == null) {
             connection();
+            statement = connection.createStatement();
         }
 
         // Test the database structure

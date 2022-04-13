@@ -28,7 +28,7 @@ public class MazeGUI extends JFrame implements Runnable {
         JPanel menuPanel = new JPanel();
         menuPanel.add(new JLabel("MENU"));
         JPanel mazePanel = new JPanel();
-        mazePanel.add(new JLabel("Maze canvas"));
+        mazePanel.add(new JLabel("MAZE CANVAS"));
         JPanel propertyPanel = new JPanel();
         propertyPanel.add(new JLabel("PROPERTY"));
 

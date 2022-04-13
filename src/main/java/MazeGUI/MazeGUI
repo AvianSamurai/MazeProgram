@@ -26,11 +26,11 @@ public class MazeGUI extends JFrame implements Runnable {
         getContentPane().add(mainPanel);
 
         JPanel menuPanel = new JPanel();
-        menuPanel.add(new JLabel("MENU"));
+        menuPanel.add(new JLabel("MENU"));  // tempory
         JPanel mazePanel = new JPanel();
-        mazePanel.add(new JLabel("MAZE CANVAS"));
+        mazePanel.add(new JLabel("MAZE CANVAS"));   // tempory
         JPanel propertyPanel = new JPanel();
-        propertyPanel.add(new JLabel("PROPERTY"));
+        propertyPanel.add(new JLabel("PROPERTY"));  // tempory
 
         // Split the mainPanel into three panels
         JSplitPane splitPane1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mazePanel, propertyPanel);

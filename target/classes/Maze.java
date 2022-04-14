@@ -1,7 +1,9 @@
-class Maze{
-    // Import libraries here
-    import Math
+package Program
 
+// Import libraries here
+import java.lang.math;
+
+class Maze{
     // Global variables go here
     int width = 10;
     int height = 10;
@@ -30,7 +32,7 @@ class Maze{
         {
             for (int j = 0; j < height; j++)
             {
-                grid[i,j] = 0;
+                grid[i][j] = 0;
             }
         }
 

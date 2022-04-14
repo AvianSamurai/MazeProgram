@@ -24,11 +24,6 @@ public class Maze {
 
     }
 
-    //Overloading constructor in case logo, title, and author is not entered in object call.
-    public Maze (int cellSize){
-        this.cellSize = cellSize;
-    }
-
     //Retrieving private author String
     public String GetAuthor() {
         return this.author;
@@ -45,6 +40,7 @@ public class Maze {
         LocalDateTime current = LocalDateTime.now();
         return this.theDateTime.format(current);
     }
+
 }
 
 

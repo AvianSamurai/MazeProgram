@@ -12,13 +12,21 @@ import static java.awt.GridBagConstraints.*;
 
 public class MenuJPanel extends JPanel {
 
+    // Spacing
     private static final int LEFT_SPACING = 2;
     private static final int RIGHT_SPACING = 2;
     private static final int BETWEEN_MENU_SPACING = 5;
     private static final int BETWEEN_ITEM_SPACING = 0;
+
+    // Menu Colours
+    private static final Color TITLE_COLOR = Color.decode("#ffffff");
     private static final Color SUBMENU_COLOR = Color.decode("#f8f9fb");
+
+    // Fonts
     private static final Font TITLE_FONT = new Font("Arial", Font.PLAIN, 24);
     private static final Font SUBMENU_FONT = new Font("Arial", Font.PLAIN, 16);
+
+    // Borders
     private static final Border TITLE_BUTTON_BORDER = BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(2, 0, 2, 0, Color.gray),
             BorderFactory.createEmptyBorder(0, 10, 0, 0));
@@ -26,9 +34,12 @@ public class MenuJPanel extends JPanel {
             BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray),
             BorderFactory.createEmptyBorder(2, 20, 2, 0));
 
-    private int titleBtnHeight = 20;
     GridBagConstraints gBC;
 
+    /**
+     * Creates the panel and prepares the internal layout
+     * After calling this, use CreateMenu() to populate it
+     */
     public MenuJPanel() {
         super();
 
@@ -41,6 +52,13 @@ public class MenuJPanel extends JPanel {
                 CENTER, HORIZONTAL, new Insets(0, LEFT_SPACING, BETWEEN_ITEM_SPACING, RIGHT_SPACING), 0, 0);
     }
 
+    /**
+     * Creates a new menu with specified submenu elements
+     * REMEMBER to call FinalisePanel() afterwards to fix formatting errors
+     *
+     * @param title The title of the expander
+     * @param menuItems A string array of the menu elements
+     */
     public void CreateMenu(String title, String[] menuItems) {
         // Create title button
         JButton titleButton = new JButton(title);
@@ -49,7 +67,7 @@ public class MenuJPanel extends JPanel {
         gBC.gridheight = 2;
 
         // Customise title button
-        titleButton.setBackground(Color.white);
+        titleButton.setBackground(TITLE_COLOR);
         titleButton.setFont(TITLE_FONT);
         titleButton.setHorizontalAlignment(SwingConstants.LEFT);
         titleButton.setBorder(TITLE_BUTTON_BORDER);
@@ -72,7 +90,11 @@ public class MenuJPanel extends JPanel {
         });
     }
 
-    public void finalisePanel() {
+    /**
+     * Call after all menus have been created with CreateMenu() to
+     * finalise the formatting
+     */
+    public void FinalisePanel() {
         JPanel spacingJPanel = new JPanel();
         gBC.weighty = 1;
         gBC.gridy++;

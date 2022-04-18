@@ -25,8 +25,11 @@ public class MazeGUI extends JFrame implements Runnable {
         mainPanel.setLayout(new BorderLayout());
         getContentPane().add(mainPanel);
 
-        JPanel menuPanel = new JPanel();
-        menuPanel.add(new JLabel("MENU"));  // tempory
+        MenuJPanel menuPanel = new MenuJPanel();
+        menuPanel.CreateMenu("File", new String[]{"New", "Open", "Import", "Export"});
+        menuPanel.CreateMenu("Edit", new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"});
+        menuPanel.finalisePanel();
+
         JPanel mazePanel = new JPanel();
         mazePanel.add(new JLabel("MAZE CANVAS"));   // tempory
         JPanel propertyPanel = new JPanel();

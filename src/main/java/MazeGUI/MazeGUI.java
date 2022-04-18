@@ -26,8 +26,12 @@ public class MazeGUI extends JFrame implements Runnable {
         getContentPane().add(mainPanel);
 
         MenuJPanel menuPanel = new MenuJPanel();
-        menuPanel.CreateMenu("File", new String[]{"New", "Open", "Import", "Export"});
-        menuPanel.CreateMenu("Edit", new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"});
+        menuPanel.CreateMenu("File",
+                new String[]{"New", "Open", "Import", "Export"},
+                new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
+        menuPanel.CreateMenu("Edit",
+                new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
+                new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
         menuPanel.FinalisePanel();
 
         JPanel mazePanel = new JPanel();
@@ -64,4 +68,12 @@ public class MazeGUI extends JFrame implements Runnable {
     public void run() {
         createGUI();
     }
+
+    // Special spot just for menu action listeners
+    ActionListener testDialogListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, e.getActionCommand());
+        }
+    };
 }

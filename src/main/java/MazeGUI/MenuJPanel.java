@@ -1,5 +1,7 @@
 package MazeGUI;
 
+import Utils.Debug;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
@@ -58,8 +60,16 @@ public class MenuJPanel extends JPanel {
      *
      * @param title The title of the expander
      * @param menuItems A string array of the menu elements
+     * @param submenuListeners An array of action listeners for the submenu buttons, this must be the same size as
+     *                         the menu items array
      */
-    public void CreateMenu(String title, String[] menuItems) {
+    public void CreateMenu(String title, String[] menuItems, ActionListener[] submenuListeners) {
+        // Check that menuItems length matches submenuListeners length
+        if(menuItems.length != submenuListeners.length) {
+            Debug.LogLn("menuItems length does not match submenuListeners length, Menu '" + title + "' was not created");
+            return;
+        }
+
         // Create title button
         JButton titleButton = new JButton(title);
         titleButton.setPreferredSize(new Dimension(100, 50));
@@ -77,7 +87,7 @@ public class MenuJPanel extends JPanel {
         gBC.gridy++;
 
         // Create content buttons and add their action listener
-        JButton[] contentButtons = CreateContent(menuItems);
+        JButton[] contentButtons = CreateContent(menuItems, submenuListeners);
         titleButton.addActionListener(new ActionListener() {
             boolean toggle = true;
             @Override
@@ -101,7 +111,7 @@ public class MenuJPanel extends JPanel {
         this.add(spacingJPanel, gBC);
     }
 
-    private JButton[] CreateContent(String[] menuItemNames) {
+    private JButton[] CreateContent(String[] menuItemNames, ActionListener[] submenuListeners) {
         // Create the returnable list and set up the grid-box constraints required
         JButton[] buttonList = new JButton[menuItemNames.length];
         gBC.gridheight = 1;
@@ -116,6 +126,11 @@ public class MenuJPanel extends JPanel {
             btn.setHorizontalAlignment(SwingConstants.LEFT);
             btn.setBorder(SUBMENU_BUTTON_BORDER);
             btn.setFont(SUBMENU_FONT);
+
+            // Add action listener
+            if(submenuListeners[i] != null) {
+                btn.addActionListener(submenuListeners[i]);
+            }
 
             // Add the button to the list and menu
             buttonList[i] = btn;

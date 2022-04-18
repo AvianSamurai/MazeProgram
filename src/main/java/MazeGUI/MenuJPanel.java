@@ -18,6 +18,7 @@ public class MenuJPanel extends JPanel {
     private static final int BETWEEN_ITEM_SPACING = 0;
     private static final Color SUBMENU_COLOR = Color.decode("#f8f9fb");
     private static final Font TITLE_FONT = new Font("Arial", Font.PLAIN, 24);
+    private static final Font SUBMENU_FONT = new Font("Arial", Font.PLAIN, 16);
     private static final Border TITLE_BUTTON_BORDER = BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(2, 0, 2, 0, Color.gray),
             BorderFactory.createEmptyBorder(0, 10, 0, 0));
@@ -92,6 +93,7 @@ public class MenuJPanel extends JPanel {
             btn.setBackground(SUBMENU_COLOR);
             btn.setHorizontalAlignment(SwingConstants.LEFT);
             btn.setBorder(SUBMENU_BUTTON_BORDER);
+            btn.setFont(SUBMENU_FONT);
 
             // Add the button to the list and menu
             buttonList[i] = btn;

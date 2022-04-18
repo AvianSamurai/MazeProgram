@@ -22,7 +22,7 @@ public class MenuJPanel extends JPanel {
             BorderFactory.createMatteBorder(2, 0, 2, 0, Color.gray),
             BorderFactory.createEmptyBorder(0, 10, 0, 0));
     private static final Border SUBMENU_BUTTON_BORDER = BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray),
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray),
             BorderFactory.createEmptyBorder(2, 20, 2, 0));
 
     private int titleBtnHeight = 20;

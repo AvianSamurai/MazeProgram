@@ -38,7 +38,7 @@ public class MazeGUI extends JFrame implements Runnable {
         MenuJPanel menuPanel = new MenuJPanel();
         menuPanel.CreateMenu("File",
                 new String[]{"New", "Open", "Save", "Export Image"},
-                new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
+                new ActionListener[] {createNewMazeListener, testDialogListener, testDialogListener, testDialogListener});
         menuPanel.CreateMenu("Edit",
                 new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
                 new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
@@ -337,7 +337,8 @@ public class MazeGUI extends JFrame implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int createStatus = JOptionPane.showConfirmDialog(null,
-                        "Do you want?", "New Maze", JOptionPane.YES_NO_OPTION,
+                        "Do you want to automatically generate a maze?",
+                        "New Maze", JOptionPane.YES_NO_OPTION,
                         JOptionPane.PLAIN_MESSAGE);
 
                 if (createStatus == JOptionPane.YES_OPTION){
@@ -380,6 +381,13 @@ public class MazeGUI extends JFrame implements Runnable {
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, e.getActionCommand());
+        }
+    };
+
+    ActionListener createNewMazeListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            NewMaze();
         }
     };
     public static void main(String[] args){

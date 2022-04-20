@@ -109,6 +109,7 @@ public class MazeGUI extends JFrame implements Runnable {
         propertiesPanel.setLayout(groupLayout);
 
         JToggleButton showSolutionButton = new JToggleButton("ON");  // Action a
+        showSolutionButton.setMinimumSize(new Dimension(55, 0));
         JLabel showSolutionLabel = new JLabel("Show optimal solution: ");
         ItemListener itemListener = e -> {
             // event is generated in button

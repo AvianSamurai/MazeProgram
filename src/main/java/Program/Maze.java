@@ -11,6 +11,7 @@ public class Maze {
     public int cellSize;
     public int imageSize;
     public String logo;
+    private String type;
 
 
     //Constructor for the initialization of a new Maze object

@@ -29,7 +29,7 @@ public class MazeGUI extends JFrame implements Runnable {
 
         MenuJPanel menuPanel = new MenuJPanel();
         menuPanel.CreateMenu("File",
-                new String[]{"New", "Open", "Import", "Export"},
+                new String[]{"New", "Open", "Save", "Export Image"},
                 new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
         menuPanel.CreateMenu("Edit",
                 new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},

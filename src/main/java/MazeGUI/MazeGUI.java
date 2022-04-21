@@ -38,7 +38,7 @@ public class MazeGUI extends JFrame implements Runnable {
         MenuJPanel menuPanel = new MenuJPanel();
         menuPanel.CreateMenu("File",
                 new String[]{"New", "Open", "Save", "Export Image"},
-                new ActionListener[] {createNewMazeListener, testDialogListener, testDialogListener, testDialogListener});
+                new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, testDialogListener});
         menuPanel.CreateMenu("Edit",
                 new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
                 new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
@@ -390,6 +390,11 @@ public class MazeGUI extends JFrame implements Runnable {
         public void actionPerformed(ActionEvent e) {
             NewMaze();
         }
+    };
+
+    ActionListener openMazeListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) { new OpenMazeDialog(); }
     };
     public static void main(String[] args){
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));

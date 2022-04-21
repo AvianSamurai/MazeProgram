@@ -1,2 +1,4 @@
-package MazeGUI;public class ExportMazeDialog {
+package MazeGUI;
+
+public class ExportMazeDialog {
 }

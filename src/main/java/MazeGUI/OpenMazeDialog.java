@@ -1,25 +1,50 @@
 package MazeGUI;
 
-import javax.swing.*;
-import java.awt.*;
+import DB.DBHelper;
+import DB.JSelectionTable;
+import DB.MazeDB;
 
-import static java.awt.Font.BOLD;
-import static java.awt.Font.CENTER_BASELINE;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+import static java.awt.Font.*;
 
 public class OpenMazeDialog {
+    // Parameters
     private static final int OUTER_MARGIN = 5;
     private static final Font TITLE_FONT = new Font("Arial", BOLD, 24);
+    private static final Font TABLE_FONT = new Font("Arial", PLAIN, 16);
     private static final GridBagConstraints DEFAULT_GBC = new GridBagConstraints(0, 0, 1, 1,
             0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(5, 5, 5, 5), 5,5);
+    private static final Dimension WINDOW_SIZE = new Dimension(900, 500);
+    private static String[] ROW_NAMES = new String[] {"Maze Name", "Author", "Creation Date", "Last Edited"};
 
+    // Table Model
+    DefaultTableModel DTM = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    // Local variables
+    private JTextField searchBar;
     private JFrame outerFrame;
+    private JSelectionTable table = null;
     private GridBagConstraints gBC;
+    private MazeDB db;
 
     public OpenMazeDialog() {
         // Create outer frame and set size
         outerFrame = new JFrame("Open Maze");
-        outerFrame.setSize(600,400);
+        outerFrame.setSize(WINDOW_SIZE);
+        outerFrame.addWindowListener(windowListener);
 
         // Create default grid bag constraints
         gBC = (GridBagConstraints) DEFAULT_GBC.clone();;
@@ -50,11 +75,14 @@ public class OpenMazeDialog {
         NextY();
         outerPanel.add(searchLabel, gBC);
 
-        JTextField searchBar = new JTextField(); // Text Field
+        searchBar = new JTextField(); // Text Field
+        searchBar.requestFocus();
+        searchBar.addActionListener(searchData);
         NextX(); gBC.weightx = 1;
         outerPanel.add(searchBar, gBC); RestoreGBCDefaults();
 
         JButton searchButton = new JButton("Search"); // Search Button
+        searchButton.addActionListener(searchData);
         NextX();
         outerPanel.add(searchButton, gBC); RestoreGBCDefaults();
 
@@ -66,13 +94,33 @@ public class OpenMazeDialog {
         outerPanel.add(hr2, gBC);
 
         // Create Table
-        JPanel temp = new JPanel();
+        JScrollPane tableScrollPane = new JScrollPane(CreateTable());
         NextY();
         gBC.weighty = 1;
-        outerPanel.add(temp, gBC); RestoreGBCDefaults();
+        outerPanel.add(tableScrollPane, gBC); RestoreGBCDefaults();
 
         // show window
         outerFrame.setVisible(true);
+    }
+
+    private JComponent CreateTable(){
+        try {
+            db = new MazeDB();
+            String[][] data = DBHelper.GetMazeListBySearchString(db, "");
+            if(data.length < 1) {
+                JLabel dbEmptyLabel = new JLabel("Database is empty");
+                dbEmptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                dbEmptyLabel.setFont(TABLE_FONT);
+                return  dbEmptyLabel;
+            }
+            table = new JSelectionTable(new String[]{"ID", "Maze Name", "Author", "Date Created", "Last Edited"});
+            table.setFont(TABLE_FONT);
+            table.setNewData(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JLabel("Database Failure: (" + e.getMessage() + ")");
+        }
+        return table;
     }
 
     private void RestoreGBCDefaults() {
@@ -91,4 +139,50 @@ public class OpenMazeDialog {
         gBC.gridx = 0;
         gBC.gridy++;
     }
+
+    ActionListener searchData = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(table != null) {
+                table.setNewData(DBHelper.GetMazeListBySearchString(db, searchBar.getText()));
+            }
+        }
+    };
+
+    WindowListener windowListener = new WindowListener() {
+        @Override
+        public void windowOpened(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            db.disconnect();
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+
+        }
+    };
 }

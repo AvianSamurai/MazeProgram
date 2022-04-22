@@ -12,6 +12,13 @@ public class JSelectionTable extends JTable {
 
     private DefaultTableModel dtm;
 
+    /**
+     * Creates a new JSelectionTable
+     * JSelectionTable is like a normal JTable except it is not editable and
+     * implements some useful methods for quickly updating the table
+     *
+     * @param header An array of strings for the headers
+     */
     public JSelectionTable(String[] header) {
         super(TableMod(header));
         dtm = (DefaultTableModel) this.getModel();
@@ -20,6 +27,12 @@ public class JSelectionTable extends JTable {
         this.setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
     }
 
+    /**
+     * Wipes the table clean and adds new data to it
+     * where data[x][y], y must be equal to number of columns
+     *
+     * @param data Data to be placed in the table
+     */
     public void setNewData(String[][] data){
         dtm.setNumRows(0);
         this.resizeAndRepaint();
@@ -28,6 +41,7 @@ public class JSelectionTable extends JTable {
         }
     }
 
+    // Creates a custom table model for this type of table
     private static TableModel TableMod(String[] header) {
         DefaultTableModel dtm = new DefaultTableModel() {
             @Override

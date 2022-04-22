@@ -118,7 +118,10 @@ public class OpenMazeDialog {
             table.setNewData(data);
         } catch (Exception e) {
             e.printStackTrace();
-            return new JLabel("Database Failure: (" + e.getMessage() + ")");
+            JLabel dbEmptyLabel = new JLabel("Cannot connect to database");
+            dbEmptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            dbEmptyLabel.setFont(TABLE_FONT);
+            return  dbEmptyLabel;
         }
         return table;
     }
@@ -157,7 +160,9 @@ public class OpenMazeDialog {
 
         @Override
         public void windowClosing(WindowEvent e) {
-            db.disconnect();
+            if(db != null) {
+                db.disconnect();
+            }
         }
 
         @Override

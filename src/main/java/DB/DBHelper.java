@@ -1,5 +1,8 @@
 package DB;
 
+import Utils.Debug;
+
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,6 +43,37 @@ public class DBHelper {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static void LoadTestDataIntoDatabase(MazeDB db, boolean resetFirst) {
+        MazeDB database = db;
+
+        if(resetFirst) {
+            ClearDatabaseAndDisconnect(db);
+            try {
+                db = new MazeDB();
+            } catch (Exception e) {
+                Debug.LogLn("Failed to setup new database after clearing old database");
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    /**
+     * DO NOT USE THIS METHOD IN ANY NON-TESTING METHOD
+     * NOT FOR PRODUCTION
+     * @param db database object to clear all data in and disconnect
+     */
+    public static void ClearDatabaseAndDisconnect(MazeDB db) {
+        try {
+            db.CreateUpdateDelete("DROP TABLE saved_mazes");
+            db.disconnect();
+        } catch (SQLException e) {
+            Debug.LogLn("Could not clear database: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

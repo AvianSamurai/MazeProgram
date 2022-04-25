@@ -1,9 +1,16 @@
 package MazeGUI;
 
+
+import Program.Maze;
+
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JFileChooser;
+import java.io.File;
+import javax.swing.JOptionPane;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -12,6 +19,7 @@ public class MazeGUI extends JFrame implements Runnable {
     public static final int HEIGHT = 1024;
     private final JPanel mainPanel = new JPanel();
     private static final int DIVIDER_SIZE = 10;
+    private static Maze temp_Maze;
     GridBagConstraints c = new GridBagConstraints();
 
     public MazeGUI(String title) throws HeadlessException {
@@ -29,8 +37,8 @@ public class MazeGUI extends JFrame implements Runnable {
 
         MenuJPanel menuPanel = new MenuJPanel();
         menuPanel.CreateMenu("File",
-                new String[]{"New", "Open", "Import", "Export"},
-                new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
+                new String[]{"New", "Open", "Save", "Export Image"},
+                new ActionListener[] {createNewMazeListener, testDialogListener, testDialogListener, testDialogListener});
         menuPanel.CreateMenu("Edit",
                 new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
                 new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
@@ -231,6 +239,138 @@ public class MazeGUI extends JFrame implements Runnable {
         setVisible(true);
     }
 
+    private void NewMaze(){
+        // All Frames and Panels
+        JFrame NewMazeFrame = new JFrame();
+        NewMazeFrame.setSize(800,450);
+        JPanel NewMaze = new JPanel();
+        NewMaze.setSize(800,450);
+        JPanel NewMaze2 = new JPanel();
+        NewMaze2.setSize(800,450);
+
+        // First window
+        JLabel mazeNameLabel, authNameLabel, mazeTypeLabel;
+        JTextField mazeName,authName;
+        NewMaze.add(new JLabel("New Maze"));  // Label of the new window
+
+        // Fields for the user to add maze & author name
+        mazeNameLabel = new JLabel("Maze Name: ");
+        mazeNameLabel.setBounds(50, 100, 100, 30);
+        mazeName=new JTextField();
+        mazeName.setBounds(150,100, 200,30);  // Set where the fields are placed
+        authNameLabel = new JLabel("Author Name: ");
+        authNameLabel.setBounds(50, 150, 100, 30);
+        authName=new JTextField();
+        authName.setBounds(150,150, 200,30);
+
+
+        // DropMenu for the MazeType
+        mazeTypeLabel = new JLabel("Maze Type: ");
+        mazeTypeLabel.setBounds(50, 250, 100, 30);
+
+        String[] mazeTypeOptions = {"General", "Themed", "Others"};
+        JComboBox<String> jComboBox = new JComboBox<>(mazeTypeOptions);
+        jComboBox.setBounds(150, 250, 200, 30);
+
+        // Button to go to next set of options or cancel completely
+        JButton jButtonNext = new JButton("Next");
+        jButtonNext.setBounds(550, 350, 90, 20);
+        jButtonNext.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                NewMazeFrame.setContentPane(NewMaze2);
+            }
+        });
+        JButton jButtonCancel = new JButton("Cancel");
+        jButtonCancel.setBounds(450, 350, 90, 20);
+        jButtonCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                NewMazeFrame.dispose();
+            }
+        });
+
+        // Add elements to the NewMaze Panel
+        NewMaze.add(mazeNameLabel);
+        NewMaze.add(mazeName);
+        NewMaze.add(authNameLabel);
+        NewMaze.add(authName);
+        NewMaze.add(mazeTypeLabel);
+        NewMaze.add(jComboBox);
+        NewMaze.add(jButtonNext);
+        NewMaze.add(jButtonCancel);
+        NewMaze.setLayout(null);
+
+        // Second Form
+        JLabel mazeSizes;
+        NewMaze2.add(new JLabel("New Maze"));  // Label of the new window
+
+        // DropMenu for the MazeSize
+        mazeSizes = new JLabel("Maze Size: ");
+        mazeSizes.setBounds(50, 100, 100, 30);
+
+        String[] mazeSizeOptions = {"100x100", "385x356", "1600x1600"};
+        JComboBox<String> jComboBoxMazeSize = new JComboBox<>(mazeSizeOptions);
+        jComboBoxMazeSize.setBounds(150, 100, 200, 30);
+
+        /*// Button for choosing a logo
+        JFileChooser logoChooser = new JFileChooser();
+        logoChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = logoChooser.showOpenDialog(parent);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            // user selects a file
+        }
+        File selectedFile = logoChooser.getSelectedFile();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+        }*/
+
+        // Button to go to next set of options or cancel completely
+        Object[] options = {"Yes", "No"};
+        JButton jButtonCreate2 = new JButton("Create");
+        jButtonCreate2.setBounds(550, 350, 90, 20);
+        jButtonCreate2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int createStatus = JOptionPane.showConfirmDialog(null,
+                        "Do you want to automatically generate a maze?",
+                        "New Maze", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
+
+                if (createStatus == JOptionPane.YES_OPTION){
+                    NewMazeFrame.dispose();
+                }
+                else
+                    NewMazeFrame.dispose();
+            }
+        });
+        JButton jButtonCancel2 = new JButton("Cancel");
+        jButtonCancel2.setBounds(450, 350, 90, 20);
+        jButtonCancel2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                NewMazeFrame.dispose();
+            }
+        });
+
+        // Add elements to the GUI
+        NewMaze2.add(mazeSizes);
+        NewMaze2.add(jComboBoxMazeSize);
+        NewMaze2.add(jButtonCreate2);
+        NewMaze2.add(jButtonCancel2);
+        NewMaze2.setLayout(null);
+
+        // Finish frame
+        NewMazeFrame.add(NewMaze);
+        NewMazeFrame.setLayout(null);
+        NewMazeFrame.setVisible(true);
+        NewMazeFrame.setContentPane(NewMaze);
+    }
+  
     @Override
     public void run() {
         createGUI();
@@ -241,6 +381,13 @@ public class MazeGUI extends JFrame implements Runnable {
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, e.getActionCommand());
+        }
+    };
+
+    ActionListener createNewMazeListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            NewMaze();
         }
     };
     public static void main(String[] args){

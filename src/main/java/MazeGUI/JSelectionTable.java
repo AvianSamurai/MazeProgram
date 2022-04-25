@@ -1,4 +1,4 @@
-package DB;
+package MazeGUI;
 
 import javax.swing.*;
 import javax.swing.table.*;

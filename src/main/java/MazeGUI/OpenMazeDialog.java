@@ -1,7 +1,6 @@
 package MazeGUI;
 
 import DB.DBHelper;
-import DB.JSelectionTable;
 import DB.MazeDB;
 
 import javax.swing.*;

@@ -46,6 +46,9 @@ public class OpenMazeDialog {
         outerFrame.setSize(WINDOW_SIZE);
         outerFrame.addWindowListener(windowListener);
 
+        // Set icon
+        outerFrame.setIconImage(new ImageIcon("src/main/resources/MazeGUI/MazeCo.png").getImage());
+
         // Create default grid bag constraints
         gBC = (GridBagConstraints) DEFAULT_GBC.clone();;
 

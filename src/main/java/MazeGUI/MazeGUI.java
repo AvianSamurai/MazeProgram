@@ -3,6 +3,7 @@ package MazeGUI;
 
 import DB.MazeDB;
 import Program.Maze;
+import Utils.Debug;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -15,6 +16,8 @@ import javax.swing.JOptionPane;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.SQLException;
 
 public class MazeGUI extends JFrame implements Runnable {
@@ -32,6 +35,9 @@ public class MazeGUI extends JFrame implements Runnable {
     private void createGUI() {
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Set icon
+        this.setIconImage(new ImageIcon("src/main/resources/MazeGUI/MazeCo.png").getImage());
 
         // Panel-related code
         mainPanel.setBorder(BorderFactory.createTitledBorder("MazeCo"));

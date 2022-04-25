@@ -8,21 +8,27 @@ public class Maze {
     private String title;
     private String author;
     private DateTimeFormatter theDateTime;
-    public int cellSize;
-    public int imageSize;
+    public String cellSize;
+    public String imageSize;
     public String logo;
     private String type;
 
 
     //Constructor for the initialization of a new Maze object
-    public Maze (String title, String author, int cellSize, int imageSize, String logo){
+    public Maze (String title, String author, String cellSize, String type){
         this.title = title;
         this.author = author;
         this.cellSize = cellSize;
-        this.imageSize = imageSize;
-        this.logo = logo;
+        //this.imageSize = imageSize;
+        //this.logo = logo;
+        this.type = type;
 
 
+    }
+
+    public Maze (String title, String author){
+        this.title = title;
+        this.author = author;
     }
 
     //Retrieving private author String

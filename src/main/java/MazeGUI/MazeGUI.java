@@ -342,7 +342,13 @@ public class MazeGUI extends JFrame implements Runnable {
                         JOptionPane.PLAIN_MESSAGE);
 
                 if (createStatus == JOptionPane.YES_OPTION){
+                    String title = mazeName.getText().trim();
+                    String author = authName.getText().trim();
+                    String size = jComboBoxMazeSize.getItemAt(jComboBoxMazeSize.getSelectedIndex());
+                    String selectedType = jComboBox.getItemAt(jComboBox.getSelectedIndex());
                     NewMazeFrame.dispose();
+                    Maze newMaze = new Maze(title, author, size, selectedType);
+                    System.out.println("Title: " + title + "\n" + "Author: " + author + "\n" + "Size: " + size + "\n" + "Type: " + selectedType);
                 }
                 else
                     NewMazeFrame.dispose();

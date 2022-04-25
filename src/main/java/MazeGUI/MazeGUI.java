@@ -1,7 +1,6 @@
 package MazeGUI;
 
 
-import DB.DBHelper;
 import DB.MazeDB;
 import Program.Maze;
 
@@ -409,7 +408,8 @@ public class MazeGUI extends JFrame implements Runnable {
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
         // Uncomment this to clear your database and insert fake data
         // MazeDB dbm = new MazeDB();
-        // DBHelper.LoadTestDataIntoDatabase(dbm, true);
+        // dbm.LoadTestDataIntoDatabase(true);
+        // dbm.disconnect();
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

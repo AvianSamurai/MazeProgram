@@ -1,6 +1,5 @@
 package MazeGUI;
 
-import DB.DBHelper;
 import DB.MazeDB;
 
 import javax.swing.*;
@@ -119,7 +118,7 @@ public class ExportMazeDialog {
     private JComponent CreateTable(){
         try {
             db = new MazeDB();
-            String[][] data = DBHelper.GetMazeListBySearchString(db, "");
+            String[][] data = db.GetMazeListBySearchString("");
             if(data.length < 1) {
                 JLabel dbEmptyLabel = new JLabel("Database is empty");
                 dbEmptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -162,7 +161,7 @@ public class ExportMazeDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if(table != null) {
-                table.setNewData(DBHelper.GetMazeListBySearchString(db, searchBar.getText()));
+                table.setNewData(db.GetMazeListBySearchString(searchBar.getText()));
             }
         }
     };

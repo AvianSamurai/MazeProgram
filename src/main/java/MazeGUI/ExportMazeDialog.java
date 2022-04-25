@@ -1,6 +1,7 @@
 package MazeGUI;
 
 import DB.MazeDB;
+import Utils.Debug;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -132,6 +133,7 @@ public class ExportMazeDialog {
             table.setNewData(data);
         } catch (Exception e) {
             e.printStackTrace();
+            Debug.LogLn("Cannot connect to database: " + e.getMessage());
             JLabel dbEmptyLabel = new JLabel("Cannot connect to database");
             dbEmptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
             dbEmptyLabel.setFont(TABLE_FONT);

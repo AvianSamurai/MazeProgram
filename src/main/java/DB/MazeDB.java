@@ -209,6 +209,7 @@ public class MazeDB {
                             r.getString(3), r.getString(4), r.getString(5)});
                 }
             }
+            Debug.LogLn("Found " + data.toArray().length + " results matching '" + searchString + "' in saved_mazes");
             return data.toArray(String[][]::new);
         } catch (SQLException e) {
             e.printStackTrace();

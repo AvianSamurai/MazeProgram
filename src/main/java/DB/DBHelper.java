@@ -2,12 +2,13 @@ package DB;
 
 import Utils.Debug;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.Scanner;
 
 public class DBHelper {
     /**
@@ -46,7 +47,16 @@ public class DBHelper {
         }
     }
 
-    public static void LoadTestDataIntoDatabase(MazeDB db, boolean resetFirst) {
+    /**
+     * Inserts the data in resources/DB/TestData.csv into the database
+     * if resetFirst is true, the database will be reset before data is loaded in
+     * USE WITH CAUTION, USE ONLY IN TESTING
+     *
+     * @param db an active database connection
+     * @param resetFirst if true, DATABASE WILL BE RESET
+     * @throws FileNotFoundException Thrown if the TestData.csv file cannot be found
+     */
+    public static void LoadTestDataIntoDatabase(MazeDB db, boolean resetFirst) throws FileNotFoundException {
         MazeDB database = db;
 
         if(resetFirst) {
@@ -59,7 +69,18 @@ public class DBHelper {
             }
         }
 
-
+        Scanner testDataReader = new Scanner(new File("src/main/resources/DB/TestData.csv"));
+        while(testDataReader.hasNext()) {
+            String[] currentLine = testDataReader.nextLine().split(",");
+            try {
+                db.Query("INSERT INTO saved_mazes (id, name, author_name, creation_date, last_modified)" +
+                        "VALUES (" + currentLine[0] + ", '" + currentLine[1] + "', '" + currentLine[2] +
+                        "', STR_TO_DATE('" + currentLine[3] + "', '%d/%m/%Y'), STR_TO_DATE('" + currentLine[4] + "', '%d/%m/%Y'))");
+            } catch (SQLException e) {
+                Debug.LogLn("SQL query failed while loading test data into database: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

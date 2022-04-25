@@ -148,7 +148,7 @@ public class MazeDB {
     public MazeDB() throws IOException, ClassNotFoundException, SQLException {
         // Get the database's properties
         Properties dbProps = new Properties();
-        FileReader propsReader = new FileReader(System.getProperty("user.dir") + "\\" + PROPERTIES_FILE);
+        FileReader propsReader = new FileReader(PROPERTIES_FILE);
         dbProps.load(propsReader);
         db_url = dbProps.getProperty("jdbc.url");
         db_schema = dbProps.getProperty("jdbc.schema");

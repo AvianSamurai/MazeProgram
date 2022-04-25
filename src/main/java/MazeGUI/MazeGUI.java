@@ -1,6 +1,8 @@
 package MazeGUI;
 
 
+import DB.DBHelper;
+import DB.MazeDB;
 import Program.Maze;
 
 import javax.swing.*;
@@ -13,6 +15,8 @@ import java.io.File;
 import javax.swing.JOptionPane;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class MazeGUI extends JFrame implements Runnable {
     public static final int WIDTH = 1440;
@@ -402,7 +406,7 @@ public class MazeGUI extends JFrame implements Runnable {
         public void actionPerformed(ActionEvent e) { new ExportMazeDialog(); }
     };
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

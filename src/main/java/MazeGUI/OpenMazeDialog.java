@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import static java.awt.Font.*;
+import static java.awt.GridBagConstraints.NONE;
 
 public class OpenMazeDialog {
     // Parameters
@@ -98,6 +99,19 @@ public class OpenMazeDialog {
         gBC.weighty = 1;
         outerPanel.add(tableScrollPane, gBC); RestoreGBCDefaults();
 
+        // Buttons cancel and open
+        JButton cancelBtn = new JButton("Cancel");
+        cancelBtn.addActionListener(cancelListener);
+        NextY(); NextX();
+        gBC.fill = GridBagConstraints.NONE;
+        gBC.anchor = GridBagConstraints.EAST;
+        outerPanel.add(cancelBtn, gBC); RestoreGBCDefaults();
+
+        JButton openBtn = new JButton("Open");
+        openBtn.addActionListener(openListener);
+        NextX();
+        outerPanel.add(openBtn, gBC); RestoreGBCDefaults();
+
         // show window
         outerFrame.setVisible(true);
     }
@@ -150,6 +164,20 @@ public class OpenMazeDialog {
             if(table != null) {
                 table.setNewData(DBHelper.GetMazeListBySearchString(db, searchBar.getText()));
             }
+        }
+    };
+
+    ActionListener cancelListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING));
+        }
+    };
+
+    ActionListener openListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) { // TODO
+            outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING)); // Temperary
         }
     };
 

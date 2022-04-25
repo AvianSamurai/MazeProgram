@@ -1,24 +1,50 @@
 package MazeGUI;
 
-import javax.swing.*;
-import java.awt.*;
+import DB.DBHelper;
+import DB.MazeDB;
 
-import static java.awt.Font.BOLD;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+import static java.awt.Font.*;
+import static java.awt.GridBagConstraints.NONE;
 
 public class ExportMazeDialog {
+    // Parameters
     private static final int OUTER_MARGIN = 5;
     private static final Font TITLE_FONT = new Font("Arial", BOLD, 24);
+    private static final Font TABLE_FONT = new Font("Arial", PLAIN, 16);
     private static final GridBagConstraints DEFAULT_GBC = new GridBagConstraints(0, 0, 1, 1,
             0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(5, 5, 5, 5), 5,5);
+    private static final Dimension WINDOW_SIZE = new Dimension(900, 500);
+    private static String[] ROW_NAMES = new String[] {"Maze Name", "Author", "Creation Date", "Last Edited"};
 
+    // Table Model
+    DefaultTableModel DTM = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    // Local variables
+    private JTextField searchBar;
     private JFrame outerFrame;
+    private JSelectionTable table = null;
     private GridBagConstraints gBC;
+    private MazeDB db;
 
     public ExportMazeDialog() {
         // Create outer frame and set size
-        outerFrame = new JFrame("Export Maze");
-        outerFrame.setSize(600,400);
+        outerFrame = new JFrame("Open Maze");
+        outerFrame.setSize(WINDOW_SIZE);
+        outerFrame.addWindowListener(windowListener);
 
         // Create default grid bag constraints
         gBC = (GridBagConstraints) DEFAULT_GBC.clone();;
@@ -31,7 +57,7 @@ public class ExportMazeDialog {
         outerFrame.getContentPane().add(outerPanel);
 
         // Create title
-        JLabel title = new JLabel("Export Maze to Image");
+        JLabel title = new JLabel("Export maze to image");
         title.setFont(TITLE_FONT);
         gBC.gridwidth = 3;
         gBC.weightx = 1;
@@ -49,11 +75,14 @@ public class ExportMazeDialog {
         NextY();
         outerPanel.add(searchLabel, gBC);
 
-        JTextField searchBar = new JTextField(); // Text Field
+        searchBar = new JTextField(); // Text Field
+        searchBar.requestFocus();
+        searchBar.addActionListener(searchData);
         NextX(); gBC.weightx = 1;
         outerPanel.add(searchBar, gBC); RestoreGBCDefaults();
 
         JButton searchButton = new JButton("Search"); // Search Button
+        searchButton.addActionListener(searchData);
         NextX();
         outerPanel.add(searchButton, gBC); RestoreGBCDefaults();
 
@@ -65,13 +94,51 @@ public class ExportMazeDialog {
         outerPanel.add(hr2, gBC);
 
         // Create Table
-        JPanel temp = new JPanel();
+        JScrollPane tableScrollPane = new JScrollPane(CreateTable());
         NextY();
         gBC.weighty = 1;
-        outerPanel.add(temp, gBC); RestoreGBCDefaults();
+        outerPanel.add(tableScrollPane, gBC); RestoreGBCDefaults();
+
+        // Buttons cancel and open
+        JButton cancelBtn = new JButton("Cancel");
+        cancelBtn.addActionListener(cancelListener);
+        NextY(); NextX();
+        gBC.fill = GridBagConstraints.NONE;
+        gBC.anchor = GridBagConstraints.EAST;
+        outerPanel.add(cancelBtn, gBC); RestoreGBCDefaults();
+
+        JButton openBtn = new JButton("Export");
+        openBtn.addActionListener(openListener);
+        NextX();
+        outerPanel.add(openBtn, gBC); RestoreGBCDefaults();
 
         // show window
         outerFrame.setVisible(true);
+    }
+
+    private JComponent CreateTable(){
+        try {
+            db = new MazeDB();
+            String[][] data = DBHelper.GetMazeListBySearchString(db, "");
+            if(data.length < 1) {
+                JLabel dbEmptyLabel = new JLabel("Database is empty");
+                dbEmptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                dbEmptyLabel.setFont(TABLE_FONT);
+                return  dbEmptyLabel;
+            }
+            table = new JSelectionTable(new String[]{"ID", "Maze Name", "Author", "Date Created", "Last Edited"});
+            table.setFont(TABLE_FONT);
+            table.SetColumnWidth(0, 25);
+            table.SetColumnWidth(1, 300);
+            table.setNewData(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JLabel dbEmptyLabel = new JLabel("Cannot connect to database");
+            dbEmptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            dbEmptyLabel.setFont(TABLE_FONT);
+            return  dbEmptyLabel;
+        }
+        return table;
     }
 
     private void RestoreGBCDefaults() {
@@ -90,4 +157,66 @@ public class ExportMazeDialog {
         gBC.gridx = 0;
         gBC.gridy++;
     }
+
+    ActionListener searchData = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(table != null) {
+                table.setNewData(DBHelper.GetMazeListBySearchString(db, searchBar.getText()));
+            }
+        }
+    };
+
+    ActionListener cancelListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING));
+        }
+    };
+
+    ActionListener openListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) { // TODO
+            outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING)); // Temperary
+        }
+    };
+
+    WindowListener windowListener = new WindowListener() {
+        @Override
+        public void windowOpened(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            if(db != null) {
+                db.disconnect();
+            }
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+
+        }
+    };
 }

@@ -407,6 +407,9 @@ public class MazeGUI extends JFrame implements Runnable {
     };
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
+        // Uncomment this to clear your database and insert fake data
+        // MazeDB dbm = new MazeDB();
+        // DBHelper.LoadTestDataIntoDatabase(dbm, true);
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

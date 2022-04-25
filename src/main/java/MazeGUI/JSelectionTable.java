@@ -41,6 +41,20 @@ public class JSelectionTable extends JTable {
         }
     }
 
+    /**
+     * Sets the preferred width of a column
+     *
+     * @param column column index
+     * @param width new width value
+     */
+    public void SetColumnWidth(int column, int width) {
+        this.setAutoResizeMode(AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+        this.getColumnModel().getColumn(column).setPreferredWidth(width);
+        // Not sure why but without the following line the column will ignore its preferred width
+        //this.getColumnModel().getColumn(column).setMaxWidth(Integer.MAX_VALUE);
+        this.resizeAndRepaint();
+    }
+
     // Creates a custom table model for this type of table
     private static TableModel TableMod(String[] header) {
         DefaultTableModel dtm = new DefaultTableModel() {

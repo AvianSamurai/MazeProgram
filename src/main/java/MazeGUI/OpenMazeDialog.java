@@ -114,6 +114,8 @@ public class OpenMazeDialog {
             }
             table = new JSelectionTable(new String[]{"ID", "Maze Name", "Author", "Date Created", "Last Edited"});
             table.setFont(TABLE_FONT);
+            table.SetColumnWidth(0, 25);
+            table.SetColumnWidth(1, 300);
             table.setNewData(data);
         } catch (Exception e) {
             e.printStackTrace();

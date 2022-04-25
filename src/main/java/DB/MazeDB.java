@@ -20,8 +20,8 @@ public class MazeDB {
             "id int(32) UNSIGNED UNIQUE NOT NULL, " +
             "name varchar(128) NOT NULL, " +
             "author_name varchar(128) NOT NULL, " +
-            "creation_date DATETIME NOT NULL, " +
-            "last_modified DATETIME NOT NULL," +
+            "creation_date DATE NOT NULL, " +
+            "last_modified DATE NOT NULL," +
             "PRIMARY KEY (id))";
     private static final String TEST_DB_STRUCTURE = "SHOW TABLES LIKE '" + SAVED_MAZES_TABLE_NAME + "'";
 

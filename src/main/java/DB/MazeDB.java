@@ -1,10 +1,15 @@
 package DB;
 
 import Utils.Debug;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.sql.*;
+import java.util.Scanner;
 
 public class MazeDB {
 
@@ -148,7 +153,7 @@ public class MazeDB {
     public MazeDB() throws IOException, ClassNotFoundException, SQLException {
         // Get the database's properties
         Properties dbProps = new Properties();
-        FileReader propsReader = new FileReader(System.getProperty("user.dir") + "\\" + PROPERTIES_FILE);
+        FileReader propsReader = new FileReader(PROPERTIES_FILE);
         dbProps.load(propsReader);
         db_url = dbProps.getProperty("jdbc.url");
         db_schema = dbProps.getProperty("jdbc.schema");
@@ -174,5 +179,95 @@ public class MazeDB {
         } else {
             Debug.LogLn("Found table '" + SAVED_MAZES_TABLE_NAME + "'");
         }
+    }
+
+    /**
+     * Returns a 2D array of rows of strings where the search string matches either the ID, Name, or Author
+     * rows are formatted as following
+     * | id | name | author | creation_date | last_modified |
+     *
+     * The search string will be trimmed of any white space or zero space characters and the search will not be
+     * case-sensitive
+     *
+     * this does not contain the maze data, to get the maze data you should use the id as names do not have to
+     * be unique
+     *
+     * @param searchString The string to search the database with
+     * @return A 2D array of strings containing the results
+     */
+    public String[][] GetMazeListBySearchString(String searchString) {
+        String searchStr = searchString.trim().toLowerCase();
+        ResultSet r;
+        try {
+            r = this.Query("SELECT id, name, author_name, creation_date, last_modified FROM saved_mazes");
+            ArrayList<String[]> data = new ArrayList<String[]>();
+            while(r.next()) {
+                if(r.getString(1).equals(searchStr) ||
+                        r.getString(2).toLowerCase().contains(searchStr) ||
+                        r.getString(3).toLowerCase().contains(searchStr)) {
+                    data.add(new String[]{r.getString(1), r.getString(2),
+                            r.getString(3), r.getString(4), r.getString(5)});
+                }
+            }
+            Debug.LogLn("Found " + data.toArray().length + " results matching '" + searchString + "' in saved_mazes");
+            return data.toArray(String[][]::new);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Inserts the data in resources/DB/TestData.csv into the database
+     * if resetFirst is true, the database will be reset before data is loaded in
+     * USE WITH CAUTION, USE ONLY IN TESTING
+     *
+     * @param resetFirst if true, DATABASE WILL BE RESET
+     * @throws FileNotFoundException Thrown if the TestData.csv file cannot be found
+     */
+    public void LoadTestDataIntoDatabase(boolean resetFirst) throws FileNotFoundException {
+        MazeDB database = this;
+
+        if(resetFirst) {
+            ClearDatabase();
+            try {
+                CreateUpdateDelete(CREATE_DB_STRUCTURE_COMMAND);
+            } catch (Exception e) {
+                Debug.LogLn("Failed to setup new database after clearing old database");
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        Scanner testDataReader = new Scanner(new File("src/main/resources/DB/TestData.csv"));
+        while(testDataReader.hasNext()) {
+            String[] currentLine = testDataReader.nextLine().split(",");
+            try {
+                Query("INSERT INTO saved_mazes (id, name, author_name, creation_date, last_modified)" +
+                        "VALUES (" + currentLine[0] + ", '" + currentLine[1] + "', '" + currentLine[2] +
+                        "', STR_TO_DATE('" + currentLine[3] + "', '%d/%m/%Y'), STR_TO_DATE('" + currentLine[4] + "', '%d/%m/%Y'))");
+            } catch (SQLException e) {
+                Debug.LogLn("SQL query failed while loading test data into database: " + e.getMessage());
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        Debug.LogLn("Loaded test data into database");
+    }
+
+    /**
+     * DO NOT USE THIS METHOD IN ANY NON-TESTING METHOD
+     * NOT FOR PRODUCTION
+     */
+    public void ClearDatabase() {
+        try {
+            this.CreateUpdateDelete("DROP TABLE saved_mazes");
+        } catch (SQLException e) {
+            Debug.LogLn("Could not clear database: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+        Debug.LogLn("Cleared database");
     }
 }

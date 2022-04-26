@@ -1,7 +1,9 @@
 package MazeGUI;
 
 
+import DB.MazeDB;
 import Program.Maze;
+import Utils.Debug;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -13,6 +15,10 @@ import java.io.File;
 import javax.swing.JOptionPane;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.SQLException;
 
 public class MazeGUI extends JFrame implements Runnable {
     public static final int WIDTH = 1440;
@@ -30,6 +36,9 @@ public class MazeGUI extends JFrame implements Runnable {
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Set icon
+        this.setIconImage(new ImageIcon("src/main/resources/MazeGUI/MazeCo.png").getImage());
+
         // Panel-related code
         mainPanel.setBorder(BorderFactory.createTitledBorder("MazeCo"));
         mainPanel.setLayout(new BorderLayout());
@@ -38,7 +47,7 @@ public class MazeGUI extends JFrame implements Runnable {
         MenuJPanel menuPanel = new MenuJPanel();
         menuPanel.CreateMenu("File",
                 new String[]{"New", "Open", "Save", "Export Image"},
-                new ActionListener[] {createNewMazeListener, testDialogListener, testDialogListener, testDialogListener});
+                new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
                 new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
                 new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
@@ -117,6 +126,7 @@ public class MazeGUI extends JFrame implements Runnable {
         propertiesPanel.setLayout(groupLayout);
 
         JToggleButton showSolutionButton = new JToggleButton("ON");  // Action a
+        showSolutionButton.setMinimumSize(new Dimension(55, 0));
         JLabel showSolutionLabel = new JLabel("Show optimal solution: ");
         ItemListener itemListener = e -> {
             // event is generated in button
@@ -396,7 +406,22 @@ public class MazeGUI extends JFrame implements Runnable {
             NewMaze();
         }
     };
-    public static void main(String[] args){
+
+    ActionListener openMazeListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) { new OpenMazeDialog(); }
+    };
+
+    ActionListener exportMazeListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) { new ExportMazeDialog(); }
+    };
+
+    public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
+        // Uncomment this to clear your database and insert fake data
+        // MazeDB dbm = new MazeDB();
+        // dbm.LoadTestDataIntoDatabase(true);
+        // dbm.disconnect();
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

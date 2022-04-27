@@ -36,21 +36,13 @@ public class MazeDB {
     private static String pwd;
 
     //Initialising a connection object to create a session with a specific database
-    public Connection connection = null;
+    private Connection connection = null;
 
     //The statement object is used for executing sql statements
-    public Statement statement = null;
+    private Statement statement = null;
 
     //Open a connection to the database
-
-    /**
-     * Opens a connection to the database
-     *
-     * @return The database connection object
-     * @throws ClassNotFoundException Thrown if the JDBC_DRIVER class is not found. This should never happen,
-     * but a database connection isn't possible if it does.
-     */
-    public Connection connection() throws ClassNotFoundException {
+    private Connection connection() throws ClassNotFoundException {
         Connection dbcon = null;
         // Get driver class
         Class.forName(JDBC_DRIVER);
@@ -73,10 +65,7 @@ public class MazeDB {
     }
 
     /**
-     * Disconnects from the database and resets the database
-     * connector, Setup will need to be preformed if MazeDB is to be used again
-     * whether that's an automatic setup from invoking another method or
-     * setup by calling Setup()
+     * Disconnects from the database, ensure this is called when you have finished with MazeDB
      */
     public void disconnect(){
         try {
@@ -89,11 +78,12 @@ public class MazeDB {
     }
 
     /**
-     * [NOT IMPLEMENTED]
      * Used to get the response from a database query
+     * This query cannot add, edit, or delete database data, only read it.
+     * If you need to edit the database use CreateUpdateDelete() instead
      *
      * @param query a raw SQL query
-     * @return The results from the query
+     * @return A ResultSet containing the results
      * @throws SQLException Thrown if the query is malformed
      */
     public ResultSet Query(String query) throws SQLException{
@@ -102,7 +92,6 @@ public class MazeDB {
     }
 
     /**
-     * [NOT IMPLEMENTED]
      * Used to preform updates, creations, or deletions to the database
      *
      * @param query a raw SQL query
@@ -112,25 +101,6 @@ public class MazeDB {
     public int CreateUpdateDelete(String query) throws SQLException{
         //Returns the number of deleted objects or edite columns/rows
         return statement.executeUpdate(query);
-    }
-
-    /**
-     * Gets the next unused id for saving a new maze to
-     *
-     * @return the next available id or -1 if there was a problem
-     */
-    public int getNextAvailableID() {
-        try {
-            ResultSet res = Query("SELECT MAX(id) FROM " + SAVED_MAZES_TABLE_NAME);
-            if(res.next()) {
-                return res.getInt(1) + 1;
-            } else {
-                return 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
     }
 
     /**

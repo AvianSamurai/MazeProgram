@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact name="MazeProgram:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MazeProgram_jar</output-path>
+    <root id="root">
+      <element id="archive" name="MazeProgram.jar">
+        <element id="module-output" name="MazeProgram" />
+      </element>
+      <element id="library" level="project" name="Maven: org.mariadb.jdbc:mariadb-java-client:3.0.4" />
+    </root>
+  </artifact>
+</component>

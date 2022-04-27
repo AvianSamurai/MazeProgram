@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: MazeGUI.MazeGUI
+Class-Path: mariadb-java-client-3.0.4.jar
+

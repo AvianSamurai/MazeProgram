@@ -104,15 +104,15 @@ public class MazeDB {
     }
 
     /**
-     * Constructs a MazeDB object and runs the setup routine for the database
-     *
-     * The setup routine does the following:
-     *  1) Get the properties from the properties file
-     *  2) Connect to the database with that info
-     *  3) Test if the database has had its structure setup
-     *  4) Setup the database's structure
-     *
-     * Setup failed if any exception is thrown
+     * Constructs a MazeDB object and runs the setup routine for the database<br/>
+     *<br/>
+     * The setup routine does the following:<br/>
+     *  1) Get the properties from the properties file<br/>
+     *  2) Connect to the database with that info<br/>
+     *  3) Test if the database has had its structure setup<br/>
+     *  4) Setup the database's structure<br/>
+     *<br/>
+     * Setup failed if any exception is thrown<br/>
      *
      * @throws IOException Thrown if the db.props file cannot be found
      * @throws ClassNotFoundException Thrown if the JDBC driver could not be found, if this is thrown
@@ -152,15 +152,15 @@ public class MazeDB {
     }
 
     /**
-     * Returns a 2D array of rows of strings where the search string matches either the ID, Name, or Author
-     * rows are formatted as following
-     * | id | name | author | creation_date | last_modified |
-     *
+     * Returns a 2D array of rows of strings where the search string matches either the ID, Name, or Author<br/>
+     * rows are formatted as following<br/>
+     * | id | name | author | creation_date | last_modified |<br/>
+     *<br/>
      * The search string will be trimmed of any white space or zero space characters and the search will not be
-     * case-sensitive
-     *
+     * case-sensitive<br/>
+     *<br/>
      * this does not contain the maze data, to get the maze data you should use the id as names do not have to
-     * be unique
+     * be unique<br/>
      *
      * @param searchString The string to search the database with
      * @return A 2D array of strings containing the results

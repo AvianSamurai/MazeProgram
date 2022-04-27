@@ -3,21 +3,15 @@ package MazeGUI;
 
 import DB.MazeDB;
 import Program.Maze;
-import Utils.Debug;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFileChooser;
-import java.io.File;
 import javax.swing.JOptionPane;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
 
 public class MazeGUI extends JFrame implements Runnable {
@@ -358,7 +352,23 @@ public class MazeGUI extends JFrame implements Runnable {
                     String selectedType = jComboBox.getItemAt(jComboBox.getSelectedIndex());
                     NewMazeFrame.dispose();
                     Maze newMaze = new Maze(title, author, size, selectedType);
-                    System.out.println("Title: " + title + "\n" + "Author: " + author + "\n" + "Size: " + size + "\n" + "Type: " + selectedType);
+                    String date = newMaze.GetDateTime();
+                    MazeDB ndm = null;
+                    try {
+                        ndm = new MazeDB();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    } catch (ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                    try {
+                        ndm.CreateUpdateDelete("INSERT INTO saved_mazes (name, author_name, creation_date) VALUES ('"+ title +"','" + author +"','"+ date +"');");
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+
                 }
                 else
                     NewMazeFrame.dispose();
@@ -419,9 +429,9 @@ public class MazeGUI extends JFrame implements Runnable {
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
         // Uncomment this to clear your database and insert fake data
-        // MazeDB dbm = new MazeDB();
-        // dbm.LoadTestDataIntoDatabase(true);
-        // dbm.disconnect();
+        MazeDB dbm = new MazeDB();
+        dbm.LoadTestDataIntoDatabase(true);
+        dbm.disconnect();
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

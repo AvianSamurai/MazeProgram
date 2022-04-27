@@ -22,11 +22,11 @@ public class MazeDB {
 
     // Useful SQL queries
     private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE " + SAVED_MAZES_TABLE_NAME + " (" +
-            "id int(32) UNSIGNED UNIQUE NOT NULL, " +
+            "id int(32) UNSIGNED UNIQUE NOT NULL AUTO_INCREMENT, " +
             "name varchar(128) NOT NULL, " +
             "author_name varchar(128) NOT NULL, " +
             "creation_date DATETIME NOT NULL, " +
-            "last_modified DATETIME NOT NULL," +
+            "last_modified DATETIME," +
             "PRIMARY KEY (id))";
     private static final String TEST_DB_STRUCTURE = "SHOW TABLES LIKE '" + SAVED_MAZES_TABLE_NAME + "'";
 

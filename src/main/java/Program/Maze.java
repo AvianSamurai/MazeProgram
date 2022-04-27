@@ -41,6 +41,10 @@ public class Maze {
         return this.title;
     }
 
+    public String getCellSize(){return this.cellSize;}
+
+    public String getType(){return this.type;}
+
     //Retrieving the date and time of maze creation
     public String GetDateTime(){
         this.theDateTime = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");

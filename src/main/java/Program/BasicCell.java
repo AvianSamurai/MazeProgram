@@ -71,4 +71,9 @@ public class BasicCell implements I_Cell {
     public boolean isPartOfMaze() {
         return true;
     }
+
+    @Override
+    public String getCellType() {
+        return "BasicCell";
+    }
 }

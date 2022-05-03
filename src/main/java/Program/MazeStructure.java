@@ -33,24 +33,42 @@ public class MazeStructure {
      * @param y cell y position
      * @return reference to the I_Cell at that position
      */
-    public I_Cell GetCellAtPosition(int x, int y) {
+    public I_Cell GetCell(int x, int y) {
         if(x > width - 1 || x < 0 || y > height - 1 || y < 0) {
             throw new IndexOutOfBoundsException(String.format("Maze size is [{0}, {1}], Given index was [{2}, {3}]", width, height, x, y));
         }
         return cells[x][y];
     }
 
-    public ImageIcon DebugDisplayMaze() {
+    /**
+     * Returns the basic cell at the requested position, or null if the cell is not of type BasicCell
+     *
+     * @param x cell x position
+     * @param y cell y position
+     * @return the basic cell
+     */
+    public BasicCell GetBasicCell(int x, int y) {
+        I_Cell cell = GetCell(x, y);
+        if(cell.getCellType().equals("BasicCell")) {
+            return (BasicCell) cell;
+        } else {
+            return null;
+        }
+    }
+
+
+
+    public void DebugDisplayMaze() {
         BufferedImage bi = new BufferedImage(width * 32, height * 32, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = bi.createGraphics();
         g.setBackground(Color.white);
         g.fillRect(0, 0, width*32, height*32);
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(2));
-        ((BasicCell)cells[3][4]).CreateConnection((BasicCell)cells[4][4], I_Cell.Direction.EAST);
-        ((BasicCell)cells[4][4]).CreateConnection((BasicCell)cells[4][5], I_Cell.Direction.SOUTH);
-        ((BasicCell)cells[4][5]).CreateConnection((BasicCell)cells[4][6], I_Cell.Direction.SOUTH);
-        ((BasicCell)cells[4][6]).CreateConnection((BasicCell)cells[5][6], I_Cell.Direction.EAST);
+        ((BasicCell)cells[3][4]).CreateConnection((BasicCell)cells[4][4], Direction.EAST);
+        ((BasicCell)cells[4][4]).CreateConnection((BasicCell)cells[4][5], Direction.SOUTH);
+        ((BasicCell)cells[4][5]).CreateConnection((BasicCell)cells[4][6], Direction.SOUTH);
+        ((BasicCell)cells[4][6]).CreateConnection((BasicCell)cells[5][6], Direction.EAST);
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
                 if(((BasicCell)cells[x][y]).GetBorders()[0]) {
@@ -67,6 +85,8 @@ public class MazeStructure {
                 }
             }
         }
-        return new ImageIcon(bi);
+        JDialog imgDialog = new JDialog();
+        imgDialog.add(new JLabel(new ImageIcon(bi)));
+        imgDialog.setVisible(true);
     }
 }

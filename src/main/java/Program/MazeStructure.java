@@ -1,18 +1,9 @@
 package Program;
 
-import MazeGUI.MazeGUI;
-import Utils.Debug;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.plaf.ComponentInputMapUIResource;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.io.IOException;
-import java.nio.Buffer;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class MazeStructure {
     private int width, height;
@@ -106,7 +97,7 @@ public class MazeStructure {
      * @param allowCellsWithOtherConnections whether to include cells with other connections in the final array or not
      * @return an array of carveable directions
      */
-    public Direction[] GetDirectionsToUncarvedCells(int x, int y, boolean allowCellsWithOtherConnections) {
+    public Direction[] GetDirectionsToValidCells(int x, int y, boolean allowCellsWithOtherConnections) {
         BasicCell[] cellNeighbors = GetBasicCellNeighbors(x, y);
         ArrayList<Direction> acceptableDirections = new ArrayList<Direction>();
         for(int i = 0; i < 4; i++) {
@@ -138,6 +129,22 @@ public class MazeStructure {
     }
 
     /**
+     * returns the width of the maze in cells
+     * @return amount of cells wide the maze is
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * returns the height of the maze in cells
+     * @return amount of cells tall the maze is
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
      * For debug only
      * Creates a pop-up window containing an image of the current maze.
      */
@@ -145,10 +152,6 @@ public class MazeStructure {
         BufferedImage bi = new BufferedImage(width * 32, height * 32, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = bi.createGraphics();
         g.setBackground(Color.white);
-        //g.fillRect(0, 0, width*32, height*32);
-        for(int i = 0; i < 20; i++) {
-            CarveRandomly();
-        }
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
                 g.drawImage(GetBasicCell(x, y).getCellImageRepresentation(32, 32), x*32, y*32, 32, 32, null);
@@ -160,19 +163,5 @@ public class MazeStructure {
         imgDialog.setVisible(true);
     }
 
-    private void CarveRandomly() {
-        Random r = new Random(System.nanoTime());
-        int currentX = r.nextInt(width);
-        int currentY = r.nextInt(height);
-        Direction[] carveDir = GetDirectionsToUncarvedCells(currentX, currentY, false);
-        int limit = 100;
-        while(carveDir.length > 0 && limit > 0) {
-            Direction nextDir = carveDir[r.nextInt(carveDir.length)];
-            CarveInDirection(currentX, currentY, nextDir);
-            currentX += nextDir.GetOffset()[0];
-            currentY += nextDir.GetOffset()[1];
-            carveDir = GetDirectionsToUncarvedCells(currentX, currentY, false);
-            limit--;
-        }
-    }
+
 }

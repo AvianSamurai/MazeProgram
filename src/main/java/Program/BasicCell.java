@@ -13,7 +13,7 @@ public class BasicCell implements I_Cell {
     }
 
     /**
-     * Removes the border in the given direction of this cell and removes the border of the other cell in the opposite
+     * Removes the border of this cell in the given direction and removes the border of the other cell in the opposite
      * direction, this results in the cells appearing to be connected
      *
      * @param otherCell The other cell to connect to

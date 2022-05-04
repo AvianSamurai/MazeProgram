@@ -1,7 +1,11 @@
 package Program;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 public class BasicCell implements I_Cell {
 
+    private static final int BORDER_WIDTH = 2;
     boolean[] borders;
 
     public BasicCell() {
@@ -16,7 +20,7 @@ public class BasicCell implements I_Cell {
      * @param dir the direction of the other cell from this cell
      */
     public void CreateConnection(BasicCell otherCell, Direction dir) {
-        borders[dir.GetBorderIndex()] = false;
+        borders[dir.GetIntValue()] = false;
         otherCell.SetBorder(dir.GetOppositeDirection(), false);
     }
 
@@ -42,7 +46,7 @@ public class BasicCell implements I_Cell {
      * @param hasBorder true if the cell has a border
      */
     public void SetBorder(Direction borderDirection, boolean hasBorder) {
-        borders[borderDirection.GetBorderIndex()] = hasBorder;
+        borders[borderDirection.GetIntValue()] = hasBorder;
     }
 
     /**
@@ -73,7 +77,29 @@ public class BasicCell implements I_Cell {
     }
 
     @Override
-    public String getCellType() {
-        return "BasicCell";
+    public BufferedImage getCellImageRepresentation(int width, int height) {
+        BufferedImage cellImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = (Graphics2D) cellImage.getGraphics();
+
+        g.setBackground(Color.white);
+        g.fillRect(0, 0, width, height);
+        g.setColor(Color.BLACK);
+        g.setStroke(new BasicStroke(BORDER_WIDTH));
+
+        if(GetBorders()[0]) {
+            g.drawLine(0, 0, width, 0);
+        }
+        if(GetBorders()[1]) {
+            g.drawLine(width, 0, width, height);
+        }
+        if(GetBorders()[2]) {
+            g.drawLine(0, height, width, height);
+        }
+        if(GetBorders()[3]) {
+            g.drawLine(0, 0, 0, height);
+        }
+
+        g.dispose();
+        return cellImage;
     }
 }

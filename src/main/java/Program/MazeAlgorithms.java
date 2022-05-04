@@ -2,8 +2,13 @@ package Program;
 
 import java.util.Random;
 
-public class GenerationAlgorithms {
+public class MazeAlgorithms {
 
+    /**
+     * Uses Hunt-and-Kill algorithm to generate a maze
+     *
+     * @param m MazeStructure variable to modify
+     */
     public static void GenerateMaze(MazeStructure m) {
         CarveRandomly(m, -1, -1);
         int[] nextStartingPos;

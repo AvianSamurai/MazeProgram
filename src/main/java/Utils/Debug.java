@@ -3,9 +3,9 @@ package Utils;
 public class Debug {
 
     /**
-     * Prints str to the console formatted as following
-     * nameOfCallingClass] str
-     * Adds a new line to the end of the print statement
+     * Prints str to the console formatted as following<br/>
+     * nameOfCallingClass] str<br/>
+     * Adds a new line to the end of the print statement<br/>
      *
      * @param str string to log
      */
@@ -15,8 +15,8 @@ public class Debug {
     }
 
     /**
-     * Prints str to the console formatted as following
-     * nameOfCallingClass] str
+     * Prints str to the console formatted as following<br/>
+     * nameOfCallingClass] str<br/>
      *
      * @param str string to log
      */

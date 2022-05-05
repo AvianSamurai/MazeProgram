@@ -31,7 +31,7 @@ public class MazeGUI extends JFrame implements Runnable {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Set icon
-        this.setIconImage(new ImageIcon("src/main/resources/MazeGUI/MazeCo.png").getImage());
+        this.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
 
         // Panel-related code
         mainPanel.setBorder(BorderFactory.createTitledBorder("MazeCo"));

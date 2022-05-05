@@ -36,21 +36,13 @@ public class MazeDB {
     private static String pwd;
 
     //Initialising a connection object to create a session with a specific database
-    public Connection connection = null;
+    private Connection connection = null;
 
     //The statement object is used for executing sql statements
-    public Statement statement = null;
+    private Statement statement = null;
 
     //Open a connection to the database
-
-    /**
-     * Opens a connection to the database
-     *
-     * @return The database connection object
-     * @throws ClassNotFoundException Thrown if the JDBC_DRIVER class is not found. This should never happen,
-     * but a database connection isn't possible if it does.
-     */
-    public Connection connection() throws ClassNotFoundException {
+    private Connection connection() throws ClassNotFoundException {
         Connection dbcon = null;
         // Get driver class
         Class.forName(JDBC_DRIVER);
@@ -73,10 +65,7 @@ public class MazeDB {
     }
 
     /**
-     * Disconnects from the database and resets the database
-     * connector, Setup will need to be preformed if MazeDB is to be used again
-     * whether that's an automatic setup from invoking another method or
-     * setup by calling Setup()
+     * Disconnects from the database, ensure this is called when you have finished with MazeDB
      */
     public void disconnect(){
         try {
@@ -89,11 +78,12 @@ public class MazeDB {
     }
 
     /**
-     * [NOT IMPLEMENTED]
      * Used to get the response from a database query
+     * This query cannot add, edit, or delete database data, only read it.
+     * If you need to edit the database use CreateUpdateDelete() instead
      *
      * @param query a raw SQL query
-     * @return The results from the query
+     * @return A ResultSet containing the results
      * @throws SQLException Thrown if the query is malformed
      */
     public ResultSet Query(String query) throws SQLException{
@@ -102,7 +92,6 @@ public class MazeDB {
     }
 
     /**
-     * [NOT IMPLEMENTED]
      * Used to preform updates, creations, or deletions to the database
      *
      * @param query a raw SQL query
@@ -115,34 +104,15 @@ public class MazeDB {
     }
 
     /**
-     * Gets the next unused id for saving a new maze to
-     *
-     * @return the next available id or -1 if there was a problem
-     */
-    public int getNextAvailableID() {
-        try {
-            ResultSet res = Query("SELECT MAX(id) FROM " + SAVED_MAZES_TABLE_NAME);
-            if(res.next()) {
-                return res.getInt(1) + 1;
-            } else {
-                return 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    /**
-     * Constructs a MazeDB object and runs the setup routine for the database
-     *
-     * The setup routine does the following:
-     *  1) Get the properties from the properties file
-     *  2) Connect to the database with that info
-     *  3) Test if the database has had its structure setup
-     *  4) Setup the database's structure
-     *
-     * Setup failed if any exception is thrown
+     * Constructs a MazeDB object and runs the setup routine for the database<br/>
+     *<br/>
+     * The setup routine does the following:<br/>
+     *  1) Get the properties from the properties file<br/>
+     *  2) Connect to the database with that info<br/>
+     *  3) Test if the database has had its structure setup<br/>
+     *  4) Setup the database's structure<br/>
+     *<br/>
+     * Setup failed if any exception is thrown<br/>
      *
      * @throws IOException Thrown if the db.props file cannot be found
      * @throws ClassNotFoundException Thrown if the JDBC driver could not be found, if this is thrown
@@ -182,15 +152,15 @@ public class MazeDB {
     }
 
     /**
-     * Returns a 2D array of rows of strings where the search string matches either the ID, Name, or Author
-     * rows are formatted as following
-     * | id | name | author | creation_date | last_modified |
-     *
+     * Returns a 2D array of rows of strings where the search string matches either the ID, Name, or Author<br/>
+     * rows are formatted as following<br/>
+     * | id | name | author | creation_date | last_modified |<br/>
+     *<br/>
      * The search string will be trimmed of any white space or zero space characters and the search will not be
-     * case-sensitive
-     *
+     * case-sensitive<br/>
+     *<br/>
      * this does not contain the maze data, to get the maze data you should use the id as names do not have to
-     * be unique
+     * be unique<br/>
      *
      * @param searchString The string to search the database with
      * @return A 2D array of strings containing the results

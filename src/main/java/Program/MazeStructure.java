@@ -145,6 +145,35 @@ public class MazeStructure {
     }
 
     /**
+     * Replaces the cell at the given co-ordinate with the new cell
+     *
+     * @param x the x coordinate of the new cell
+     * @param y the y coordinate of the new cell
+     * @param newCell the new cell
+     */
+    public void InsertCell(int x, int y, I_Cell newCell) {
+        cells[x][y] = newCell;
+    }
+
+    /**
+     * Replaces the area of cells beginning from the top left with the cells in the given 2d array
+     * Any null values in the provided new cell array will not replace cells in the maze
+     *
+     * @param x the x coordinate of the top left cell
+     * @param y the y coordinate of the top left cell
+     * @param newCells the 2d array of cells to replace with
+     */
+    public void InsertCellGroup(int x, int y, I_Cell[][] newCells) {
+        for(int xPos = 0; xPos < newCells[0].length; xPos++) {
+            for(int yPos = 0; yPos < newCells.length; yPos++) {
+                if(newCells[xPos][yPos] != null) {
+                    InsertCell(x + xPos, y + yPos, newCells[xPos][yPos]);
+                }
+            }
+        }
+    }
+
+    /**
      * For debug only
      * Creates a pop-up window containing an image of the current maze.
      */

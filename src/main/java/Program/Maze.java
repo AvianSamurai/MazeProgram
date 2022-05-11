@@ -21,8 +21,6 @@ public class Maze {
         this.cellSize = cellSize;
         this.imageSize = imageSize;
         this.logo = logo;
-
-
     }
 
     //Overloading constructor in case logo, title, and author is not entered in object call.

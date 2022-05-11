@@ -21,7 +21,7 @@ public class MazeAlgorithms {
         for(int x = 0; x < m.getWidth(); x++) {
             for(int y = 0; y < m.getHeight(); y++) {
 
-                if(!m.GetBasicCell(x, y).hasAnyConnections()) {
+                if(m.GetBasicCell(x, y) != null && !m.GetBasicCell(x, y).hasAnyConnections()) {
                     BasicCell[] cellNeighbors = m.GetBasicCellNeighbors(x, y);
                     for(int i = 0; i < 4; i++) {
                         if(cellNeighbors[i] != null && cellNeighbors[i].hasAnyConnections()) {

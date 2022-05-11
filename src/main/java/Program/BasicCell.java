@@ -5,8 +5,9 @@ import java.awt.image.BufferedImage;
 
 public class BasicCell implements I_Cell {
 
-    private static final int BORDER_WIDTH = 2;
-    boolean[] borders;
+    public static final int BORDER_WIDTH = 2;
+
+    private boolean[] borders;
 
     public BasicCell() {
         borders = new boolean[]{true, true, true, true};
@@ -39,6 +40,15 @@ public class BasicCell implements I_Cell {
         borders[3] = west;
     }
 
+    public void SetBorders(boolean[] borders) {
+        if(borders.length != 4) {
+            throw new IndexOutOfBoundsException(
+                    String.format("border arrays must be 4 elements long, size given was %s", borders.length));
+        }
+
+        this.borders = borders;
+    }
+
     /**
      * Sets whether the cell should have a border or not in the given direction
      *
@@ -69,6 +79,12 @@ public class BasicCell implements I_Cell {
             if (!b) return true;
         }
         return false;
+    }
+
+    public ImageCell ConvertToImageCell() {
+        ImageCell imCell = new ImageCell();
+        imCell.SetBorders(borders);
+        return imCell;
     }
 
     @Override

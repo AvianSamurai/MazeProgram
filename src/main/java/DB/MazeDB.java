@@ -25,6 +25,7 @@ public class MazeDB {
             "id int(32) UNSIGNED UNIQUE NOT NULL AUTO_INCREMENT, " +
             "name varchar(128) NOT NULL, " +
             "author_name varchar(128) NOT NULL, " +
+            "json_data varchar(128) NULL, " +
             "creation_date DATETIME NOT NULL, " +
             "last_modified DATETIME," +
             "PRIMARY KEY (id))";

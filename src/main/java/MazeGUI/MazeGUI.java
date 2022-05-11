@@ -3,6 +3,7 @@ package MazeGUI;
 
 import DB.MazeDB;
 import Program.Maze;
+import com.google.gson.Gson;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +14,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MazeGUI extends JFrame implements Runnable {
     public static final int WIDTH = 1440;
@@ -353,6 +356,13 @@ public class MazeGUI extends JFrame implements Runnable {
                     NewMazeFrame.dispose();
                     Maze newMaze = new Maze(title, author, size, selectedType);
                     String date = newMaze.GetDateTime();
+                    Map<String, String> jsonData = new HashMap<>();
+                    jsonData.put("title",title);
+                    jsonData.put("author", author);
+                    jsonData.put("size", size);
+                    jsonData.put("type", selectedType);
+                    Gson gson = new Gson();
+                    String output = gson.toJson(jsonData);
                     MazeDB ndm = null;
                     try {
                         ndm = new MazeDB();
@@ -364,7 +374,7 @@ public class MazeGUI extends JFrame implements Runnable {
                         ex.printStackTrace();
                     }
                     try {
-                        ndm.CreateUpdateDelete("INSERT INTO saved_mazes (name, author_name, creation_date) VALUES ('"+ title +"','" + author +"','"+ date +"');");
+                        ndm.CreateUpdateDelete("INSERT INTO saved_mazes (name, author_name, json_data, creation_date) VALUES ('"+ title +"','" + author +"','"+ output +"','"+ date +"');");
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }

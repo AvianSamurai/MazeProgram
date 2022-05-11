@@ -7,7 +7,7 @@ public class Maze {
     //Fields for the Maze object
     private String title;
     private String author;
-    private DateTimeFormatter theDateTime;
+    public DateTimeFormatter theDateTime;
     public String cellSize;
     public String imageSize;
     public String logo;

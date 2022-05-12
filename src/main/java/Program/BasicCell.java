@@ -118,4 +118,16 @@ public class BasicCell implements I_Cell {
         g.dispose();
         return cellImage;
     }
+
+    /**
+     * Creates a border on this cell in the given direction, and creates a border on the other cell in the
+     * opposite direction, appearing to disconnect the cells
+     *
+     * @param otherCell The other cell to disconnect from
+     * @param dir the direction of the other cell from this cell
+     */
+    public void BlockConnection(BasicCell otherCell, Direction dir) {
+        borders[dir.GetIntValue()] = true;
+        otherCell.SetBorder(dir.GetOppositeDirection(), true);
+    }
 }

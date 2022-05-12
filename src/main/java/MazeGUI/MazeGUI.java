@@ -1,23 +1,16 @@
 package MazeGUI;
 
 
-import DB.MazeDB;
-import Program.Maze;
-import Utils.Debug;
+import Program.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFileChooser;
-import java.io.File;
 import javax.swing.JOptionPane;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
 
 public class MazeGUI extends JFrame implements Runnable {
@@ -26,6 +19,7 @@ public class MazeGUI extends JFrame implements Runnable {
     private final JPanel mainPanel = new JPanel();
     private static final int DIVIDER_SIZE = 10;
     private static Maze temp_Maze;
+    private static final MazeEditor mazePanel = new MazeEditor();
     GridBagConstraints c = new GridBagConstraints();
 
     public MazeGUI(String title) throws HeadlessException {
@@ -49,12 +43,10 @@ public class MazeGUI extends JFrame implements Runnable {
                 new String[]{"New", "Open", "Save", "Export Image"},
                 new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
-                new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
-                new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
+                new String[]{"Set Start/End", "Add (logo, image)", "Carve", "Block"},
+                new ActionListener[] {testDialogListener, testDialogListener, carveToolListener, blockToolListener});
         menuPanel.FinalisePanel();
 
-        JPanel mazePanel = new JPanel();
-        mazePanel.add(new JLabel("MAZE CANVAS"));
         JPanel propertyPanel = new JPanel();
         //propertyPanel.add(new JLabel("PROPERTY"));
 
@@ -247,6 +239,11 @@ public class MazeGUI extends JFrame implements Runnable {
         //pack();
         repaint();
         setVisible(true);
+
+        MazeStructure m = MazeFactory.CreateBasicMaze(10, 10);// TODO temp, pls remove
+        MazeAlgorithms.GenerateMaze(m); // TODO temp pls remove
+        mazePanel.OpenMazeStructure(m); // TODO temp, pls remove
+        mazePanel.SelectTool(ToolsEnum.CARVE); // TODO temp, pls remove
     }
 
     private void NewMaze(){
@@ -409,6 +406,20 @@ public class MazeGUI extends JFrame implements Runnable {
     ActionListener exportMazeListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) { new ExportMazeDialog(); }
+    };
+
+    ActionListener carveToolListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.CARVE);
+        }
+    };
+
+    ActionListener blockToolListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.BLOCK);
+        }
     };
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {

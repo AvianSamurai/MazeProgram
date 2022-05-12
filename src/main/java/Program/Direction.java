@@ -78,4 +78,19 @@ public enum Direction {
                 return new int[]{-1, 0};
         }
     }
+
+    /**
+     * Converts an X and Y value to a direction, direction must be cardinal (no diagonals) and ints must be 0 or 1
+     *
+     * @param x x offset coordinate
+     * @param y y offset coordinate
+     * @return the direction
+     */
+    public static Direction OffsetToDirection(int x, int y) {
+        if(x == 0 && y == -1) { return NORTH; }
+        if(x == 1 && y == 0) { return EAST; }
+        if(x == 0 && y == 1) { return SOUTH; }
+        if(x == -1 && y == 0) { return WEST; }
+        return null;
+    }
 }

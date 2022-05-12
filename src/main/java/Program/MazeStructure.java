@@ -151,6 +151,25 @@ public class MazeStructure {
     }
 
     /**
+     * Destroys a connection between the cell at [x, y] and the cell in the given direction
+     *
+     * @param x the x position to block from
+     * @param y the y position to block from
+     * @param dir the direction to block in
+     * @return returns true if block was successful
+     */
+    public boolean BlockInDirection(int x, int y, Direction dir) {
+        BasicCell currentCell = GetBasicCell(x, y);
+        int[] offset = dir.GetOffset();
+        BasicCell nextCell = GetBasicCell(x + offset[0], y + offset[1]);
+        if(currentCell != null && nextCell != null) {
+            currentCell.BlockConnection(nextCell, dir);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * returns the width of the maze in cells
      * @return amount of cells wide the maze is
      */

@@ -1,2 +1,5 @@
-package MazeGUI;public class ToolsEnum {
+package MazeGUI;
+
+public enum ToolsEnum {
+    NONE, CARVE, BLOCK
 }

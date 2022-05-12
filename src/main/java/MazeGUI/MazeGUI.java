@@ -240,7 +240,7 @@ public class MazeGUI extends JFrame implements Runnable {
         repaint();
         setVisible(true);
 
-        MazeStructure m = MazeFactory.CreateBasicMaze(10, 10);// TODO temp, pls remove
+        MazeStructure m = MazeFactory.CreateBasicMaze(10, 8);// TODO temp, pls remove
         MazeAlgorithms.GenerateMaze(m); // TODO temp pls remove
         mazePanel.OpenMazeStructure(m); // TODO temp, pls remove
         mazePanel.SelectTool(ToolsEnum.CARVE); // TODO temp, pls remove

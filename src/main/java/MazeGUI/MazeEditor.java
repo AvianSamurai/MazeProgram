@@ -44,16 +44,22 @@ public class MazeEditor extends JPanel {
 
         for(int y = 0; y < yCount; y++) {
             for (int x = 0; x < xCount; x++) {
-                BasicCell cell = mazeStruct.GetBasicCell(x, y);
-                if(cell == null) { break; }
-                boolean[] borders = cell.GetBorders();
-                int north = borders[0] ? BORDER_THICKNESS : 0;
-                int east = borders[1] ? BORDER_THICKNESS : 0;
-                int south = borders[2] ? BORDER_THICKNESS : 0;
-                int west = borders[3] ? BORDER_THICKNESS : 0;
-                buttonGrid[x][y].setBorder(BorderFactory.createMatteBorder(north, west, south, east, Color.black));
+                UpdateButton(x, y);
             }
         }
+    }
+
+    private void UpdateButton(int x, int y) {
+        BasicCell cell = mazeStruct.GetBasicCell(x, y);
+        if(cell == null) {
+            return;
+        }
+        boolean[] borders = cell.GetBorders();
+        int north = borders[0] ? BORDER_THICKNESS : 0;
+        int east = borders[1] ? BORDER_THICKNESS : 0;
+        int south = borders[2] ? BORDER_THICKNESS : 0;
+        int west = borders[3] ? BORDER_THICKNESS : 0;
+        buttonGrid[x][y].setBorder(BorderFactory.createMatteBorder(north, west, south, east, Color.black));
     }
 
     private void CreateButtonGrid() {
@@ -123,6 +129,8 @@ public class MazeEditor extends JPanel {
         if((Math.abs(offsetX) + Math.abs(offsetY) == 1) && (Math.abs(offsetX) != Math.abs(offsetY))) {
             mazeStruct.CarveInDirection(lastSelectedCell[0], lastSelectedCell[1], Direction.OffsetToDirection(offsetX, offsetY));
             buttonGrid[lastSelectedCell[0]][lastSelectedCell[1]].setBackground(Color.WHITE);
+            UpdateButton(x, y);
+            UpdateButton(lastSelectedCell[0], lastSelectedCell[1]);
             lastSelectedCell = null;
         }
     }
@@ -139,6 +147,8 @@ public class MazeEditor extends JPanel {
         if((Math.abs(offsetX) + Math.abs(offsetY) == 1) && (Math.abs(offsetX) != Math.abs(offsetY))) {
             mazeStruct.BlockInDirection(lastSelectedCell[0], lastSelectedCell[1], Direction.OffsetToDirection(offsetX, offsetY));
             buttonGrid[lastSelectedCell[0]][lastSelectedCell[1]].setBackground(Color.WHITE);
+            UpdateButton(x, y);
+            UpdateButton(lastSelectedCell[0], lastSelectedCell[1]);
             lastSelectedCell = null;
         }
     }
@@ -157,6 +167,5 @@ public class MazeEditor extends JPanel {
                 Debug.LogLn("User attempted to use " + selectedTool + "but tool is not defined");
                 break;
         }
-        UpdateButtonGrid();
     }
 }

@@ -50,7 +50,7 @@ public class MazeGUI extends JFrame implements Runnable {
                 new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
                 new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
-                new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
+                new ActionListener[] {testDialogListener, importLogoListener, testDialogListener, testDialogListener});
         menuPanel.FinalisePanel();
 
         JPanel mazePanel = new JPanel();
@@ -409,6 +409,19 @@ public class MazeGUI extends JFrame implements Runnable {
     ActionListener exportMazeListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) { new ExportMazeDialog(); }
+    };
+
+    ActionListener importLogoListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            int result = fileChooser.showOpenDialog(mainPanel);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+            }
+        }
     };
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {

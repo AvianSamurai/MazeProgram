@@ -1,8 +1,6 @@
 package MazeGUI;
 
-import Program.BasicCell;
-import Program.Direction;
-import Program.MazeStructure;
+import Program.*;
 import Utils.Debug;
 
 import javax.swing.*;
@@ -38,7 +36,7 @@ public class MazeEditor extends JPanel {
         UpdateButtonGrid();
     }
 
-    private void UpdateButtonGrid() {
+    public void UpdateButtonGrid() {
         int xCount = mazeStruct.getWidth();
         int yCount = mazeStruct.getHeight();
 
@@ -50,16 +48,21 @@ public class MazeEditor extends JPanel {
     }
 
     private void UpdateButton(int x, int y) {
-        BasicCell cell = mazeStruct.GetBasicCell(x, y);
-        if(cell == null) {
-            return;
+        I_Cell cell = mazeStruct.GetCell(x, y);
+        if(cell instanceof LogoCell) {
+            LogoCell logoCell = (LogoCell) cell;
+            buttonGrid[x][y].setIcon(new ImageIcon(logoCell.GetCellImage().getScaledInstance(GetButtonDimension().width,
+                    GetButtonDimension().height, Image.SCALE_SMOOTH)));
+            // TODO Fix Borders
+        } else {
+            BasicCell basicCell = (BasicCell) cell;
+            boolean[] borders = basicCell.GetBorders();
+            int north = borders[0] ? BORDER_THICKNESS : 0;
+            int east = borders[1] ? BORDER_THICKNESS : 0;
+            int south = borders[2] ? BORDER_THICKNESS : 0;
+            int west = borders[3] ? BORDER_THICKNESS : 0;
+            buttonGrid[x][y].setBorder(BorderFactory.createMatteBorder(north, west, south, east, Color.black));
         }
-        boolean[] borders = cell.GetBorders();
-        int north = borders[0] ? BORDER_THICKNESS : 0;
-        int east = borders[1] ? BORDER_THICKNESS : 0;
-        int south = borders[2] ? BORDER_THICKNESS : 0;
-        int west = borders[3] ? BORDER_THICKNESS : 0;
-        buttonGrid[x][y].setBorder(BorderFactory.createMatteBorder(north, west, south, east, Color.black));
     }
 
     private void CreateButtonGrid() {
@@ -74,6 +77,7 @@ public class MazeEditor extends JPanel {
                 buttonGrid[x][y] = new JButton();
                 buttonGrid[x][y].setPreferredSize(GetButtonDimension());
                 buttonGrid[x][y].setBackground(Color.WHITE);
+                buttonGrid[x][y].setMargin(new Insets(0, 0, 0, 0));
                 final int thisx = x; final int thisy = y;
                 buttonGrid[x][y].addActionListener(new ActionListener() {
                     @Override

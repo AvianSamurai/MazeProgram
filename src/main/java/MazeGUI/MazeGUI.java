@@ -3,6 +3,7 @@ package MazeGUI;
 
 import Program.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,6 +11,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -240,10 +242,16 @@ public class MazeGUI extends JFrame implements Runnable {
         repaint();
         setVisible(true);
 
-        MazeStructure m = MazeFactory.CreateBasicMaze(10, 8);// TODO temp, pls remove
+        MazeStructure m = MazeFactory.CreateBasicMaze(15, 15);// TODO temp, pls remove
         MazeAlgorithms.GenerateMaze(m); // TODO temp pls remove
         mazePanel.OpenMazeStructure(m); // TODO temp, pls remove
         mazePanel.SelectTool(ToolsEnum.CARVE); // TODO temp, pls remove
+        try {
+            LogoCell.InsertLogoIntoMaze(m, ImageIO.read(new File("C:\\Users\\kyron\\OneDrive\\Desktop\\TestLogo.png")), 5, 3, 2); // TODO temp, pls remove
+            mazePanel.UpdateButtonGrid();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void NewMaze(){

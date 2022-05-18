@@ -1,14 +1,13 @@
 package Program;
 
-import Program.MazeFactory;
-import Program.MazeStructure;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MazeAlgorithmsTest {
+public class TestMazeAlgorithms {
     MazeStructure m;
 
     @BeforeEach
@@ -17,16 +16,19 @@ public class MazeAlgorithmsTest {
     }
 
     @Test
+    @DisplayName("Test null maze structure object")
     void testNullMazeStructure() {
         assertThrows(NullPointerException.class, () -> Program.MazeAlgorithms.GenerateMaze(null));
     }
 
     @Test
+    @DisplayName("Text extremely large maze structre")
     void testExtremelyLargeMazeStructure() {
         assertThrows(OutOfMemoryError.class, () -> Program.MazeAlgorithms.GenerateMaze(new MazeStructure(Integer.MAX_VALUE, Integer.MAX_VALUE)));
     }
 
     @Test
+    @DisplayName("Test that maze generation has connected all cells")
     void testAllCellsHaveAConnection() {
         MazeAlgorithms.GenerateMaze(m);
         boolean anyCellsNotConnected = false;

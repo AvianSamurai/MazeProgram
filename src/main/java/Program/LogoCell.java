@@ -42,6 +42,34 @@ public class LogoCell extends BorderedCell implements I_Cell {
     }
 
     /**
+     * When given the width in cells of a logo, this method will return the height of the logo in cells that is required
+     * to maintain the correct aspect ratio
+     *
+     * @param cellsWide requested width of logo
+     * @param logoImage The image to calculate for
+     * @return height of logo in cells
+     */
+    public static int GetLogoCellHeightFromWidth(BufferedImage logoImage, int cellsWide) {
+        int cellSize = (int) Math.ceil(logoImage.getWidth(null) / (double)cellsWide);
+        int cellsTall = (int) Math.ceil(logoImage.getHeight(null) / (double)cellSize);
+        return cellsTall;
+    }
+
+    /**
+     * When given the height in cells of a logo, this method will return the width of the logo in cells that is required
+     * to maintain the correct aspect ratio
+     *
+     * @param cellsTall requested height of logo
+     * @param logoImage The image to calculate for
+     * @return width of logo in cells
+     */
+    public static int GetLogoCellWidthFromHeight(BufferedImage logoImage, int cellsTall) {
+        int cellSize = (int) Math.ceil(logoImage.getHeight(null) / (double)cellsTall);
+        int cellsWide = (int) Math.ceil(logoImage.getWidth(null) / (double)cellSize);
+        return cellsWide;
+    }
+
+    /**
      * Creates a 2D array of LogoCells containing the logo to be place in the maze. <br/>
      * Null objects in the array represent cells in the maze that are not to be overridden with logo cells
      *
@@ -53,7 +81,7 @@ public class LogoCell extends BorderedCell implements I_Cell {
     public static LogoCell[][] CreateLogoCellGroup(BufferedImage logoImage, int cellsWide) {
 
         int cellSize = (int) Math.ceil(logoImage.getWidth(null) / (double)cellsWide);
-        int cellsTall = (int) Math.ceil(logoImage.getHeight(null) / (double)cellSize);
+        int cellsTall = GetLogoCellHeightFromWidth(logoImage, cellsWide);
         LogoCell[][] logoCellSet = new LogoCell[cellsWide][cellsTall];
         BufferedImage logo = new BufferedImage(cellsWide * cellSize, cellsTall * cellSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D)logo.getGraphics();

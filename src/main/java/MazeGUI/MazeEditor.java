@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +45,10 @@ public class MazeEditor extends JPanel {
         mazeStruct = m;
         CreateButtonGrid();
         UpdateButtonGrid();
+    }
+
+    public MazeStructure GetMazeStructure() {
+        return mazeStruct;
     }
 
     public void UpdateButtonGrid() {
@@ -165,10 +170,6 @@ public class MazeEditor extends JPanel {
         Debug.LogLn("User selected " + tool.name() + " tool");
         selectedTool = tool;
         ResetTools();
-
-        if(tool == ToolsEnum.PLACE_LOGO) {
-            PlaceLogoToolSelected();
-        }
     }
 
     private void ResetTools() {
@@ -244,12 +245,8 @@ public class MazeEditor extends JPanel {
         SelectTool(ToolsEnum.NONE);
     }
 
-    private void PlaceLogoToolSelected() {
-        try { // TODO REMOVE THIS TRY CATCH
-            logoCells = LogoCell.CreateLogoCellGroup(ImageIO.read(new File("C:\\Users\\kyron\\OneDrive\\Desktop\\TestLogo.png")), 4);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void SetLogoToPlace(BufferedImage logo, int width) {
+        logoCells = LogoCell.CreateLogoCellGroup(logo, width);
     }
 
     private void HoverEnter(int x, int y) {

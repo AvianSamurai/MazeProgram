@@ -1,5 +1,5 @@
 package MazeGUI;
 
 public enum ToolsEnum {
-    NONE, CARVE, BLOCK
+    NONE, CARVE, BLOCK, PLACE_LOGO
 }

@@ -3,11 +3,19 @@ package MazeGUI;
 import Program.*;
 import Utils.Debug;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.tools.Tool;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Stack;
 
 public class MazeEditor extends JPanel {
 
@@ -17,6 +25,8 @@ public class MazeEditor extends JPanel {
     private SpringLayout outerAreaLayout;
     private ToolsEnum selectedTool = ToolsEnum.NONE;
     private final int BORDER_THICKNESS = 2;
+    private LogoCell[][] logoCells = null;
+    private Stack<int[]> cellsToUpdate = new Stack<>();
 
     public MazeEditor() {
         this.setLayout((outerAreaLayout = new SpringLayout()));
@@ -45,18 +55,48 @@ public class MazeEditor extends JPanel {
                 UpdateButton(x, y);
             }
         }
+        cellsToUpdate.clear();
+    }
+
+    /**
+     * Adds button to the list of cells to update when UpdateEditedButtons() is called
+     *
+     * @param x cell x position
+     * @param y cell y position
+     */
+    public void AddEditedButton(int x, int y) {
+        cellsToUpdate.add(new int[]{x, y});
+    }
+
+    /**
+     * Updates only the buttons that have been edited reciently, to add a button to the reciently edited list, call AddEditedButton(x, y)
+     */
+    public void UpdateEditedButtons() {
+        int[] pos = null;
+        while(!cellsToUpdate.empty()) {
+            pos = cellsToUpdate.pop();
+            if(pos[0] >= 0 && pos[0] < mazeStruct.getWidth() && pos[1] >= 0 && pos[1] < mazeStruct.getHeight()) {
+                UpdateButton(pos[0], pos[1]);
+            }
+        }
     }
 
     private void UpdateButton(int x, int y) {
         I_Cell cell = mazeStruct.GetCell(x, y);
+
+        // Reformat button
+        buttonGrid[x][y].setBackground(Color.white);
+        buttonGrid[x][y].setIcon(null);
+
         if(cell instanceof LogoCell) {
             LogoCell logoCell = (LogoCell) cell;
             buttonGrid[x][y].setIcon(new ImageIcon(logoCell.GetCellImage().getScaledInstance(GetButtonDimension().width,
                     GetButtonDimension().height, Image.SCALE_SMOOTH)));
-            // TODO Fix Borders
-        } else {
-            BasicCell basicCell = (BasicCell) cell;
-            boolean[] borders = basicCell.GetBorders();
+        }
+
+        if(cell instanceof BorderedCell) {
+            BorderedCell borderedCell = (BorderedCell) cell;
+            boolean[] borders = borderedCell.GetBorders();
             int north = borders[0] ? BORDER_THICKNESS : 0;
             int east = borders[1] ? BORDER_THICKNESS : 0;
             int south = borders[2] ? BORDER_THICKNESS : 0;
@@ -83,6 +123,19 @@ public class MazeEditor extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         MazeButtonClicked(thisx, thisy);
+                    }
+                });
+                buttonGrid[x][y].addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        super.mouseEntered(e);
+                        HoverEnter(thisx, thisy);
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        super.mouseExited(e);
+                        HoverExit(thisx, thisy);
                     }
                 });
                 mazeCanvas.add(buttonGrid[x][y]);
@@ -112,6 +165,10 @@ public class MazeEditor extends JPanel {
         Debug.LogLn("User selected " + tool.name() + " tool");
         selectedTool = tool;
         ResetTools();
+
+        if(tool == ToolsEnum.PLACE_LOGO) {
+            PlaceLogoToolSelected();
+        }
     }
 
     private void ResetTools() {
@@ -119,12 +176,14 @@ public class MazeEditor extends JPanel {
             buttonGrid[lastSelectedCell[0]][lastSelectedCell[1]].setBackground(Color.WHITE);
             lastSelectedCell = null;
         }
+        UpdateButtonGrid();
     }
 
     private void CarveTool(int x, int y) {
         if(lastSelectedCell == null) {
             lastSelectedCell = new int[] {x, y};
             buttonGrid[x][y].setBackground(Color.GREEN);
+            cellsToUpdate.add(new int[]{x, y});
             return;
         }
 
@@ -133,8 +192,8 @@ public class MazeEditor extends JPanel {
         if((Math.abs(offsetX) + Math.abs(offsetY) == 1) && (Math.abs(offsetX) != Math.abs(offsetY))) {
             mazeStruct.CarveInDirection(lastSelectedCell[0], lastSelectedCell[1], Direction.OffsetToDirection(offsetX, offsetY));
             buttonGrid[lastSelectedCell[0]][lastSelectedCell[1]].setBackground(Color.WHITE);
-            UpdateButton(x, y);
-            UpdateButton(lastSelectedCell[0], lastSelectedCell[1]);
+            AddEditedButton(x, y);
+            UpdateEditedButtons();
             lastSelectedCell = null;
         }
     }
@@ -143,6 +202,7 @@ public class MazeEditor extends JPanel {
         if(lastSelectedCell == null) {
             lastSelectedCell = new int[] {x, y};
             buttonGrid[x][y].setBackground(Color.RED);
+            AddEditedButton(x, y);
             return;
         }
 
@@ -151,8 +211,8 @@ public class MazeEditor extends JPanel {
         if((Math.abs(offsetX) + Math.abs(offsetY) == 1) && (Math.abs(offsetX) != Math.abs(offsetY))) {
             mazeStruct.BlockInDirection(lastSelectedCell[0], lastSelectedCell[1], Direction.OffsetToDirection(offsetX, offsetY));
             buttonGrid[lastSelectedCell[0]][lastSelectedCell[1]].setBackground(Color.WHITE);
-            UpdateButton(x, y);
-            UpdateButton(lastSelectedCell[0], lastSelectedCell[1]);
+            AddEditedButton(x, y);
+            UpdateEditedButtons();
             lastSelectedCell = null;
         }
     }
@@ -167,9 +227,47 @@ public class MazeEditor extends JPanel {
                 BlockTool(x, y);
                 break;
 
+            case PLACE_LOGO:
+                PlaceLogo(x, y);
+                break;
+
             default:
                 Debug.LogLn("User attempted to use " + selectedTool + "but tool is not defined");
                 break;
+        }
+    }
+
+    private void PlaceLogo(int x, int y) {
+        LogoCell.ClearLogosInMaze(mazeStruct);
+        mazeStruct.InsertCellGroup(x, y, logoCells, true);
+        logoCells = null;
+        SelectTool(ToolsEnum.NONE);
+    }
+
+    private void PlaceLogoToolSelected() {
+        try { // TODO REMOVE THIS TRY CATCH
+            logoCells = LogoCell.CreateLogoCellGroup(ImageIO.read(new File("C:\\Users\\kyron\\OneDrive\\Desktop\\TestLogo.png")), 4);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void HoverEnter(int x, int y) {
+        if(selectedTool == ToolsEnum.PLACE_LOGO) {
+            for(int xOffset = 0; xOffset < logoCells.length; xOffset++) {
+                for(int yOffset = 0; yOffset < logoCells[0].length; yOffset++) {
+                    if(logoCells[xOffset][yOffset] != null && x + logoCells.length <= mazeStruct.getWidth() && y + logoCells[0].length <= mazeStruct.getHeight()) {
+                        buttonGrid[x + xOffset][y + yOffset].setBackground(Color.green);
+                        AddEditedButton(x + xOffset, y + yOffset);
+                    }
+                }
+            }
+        }
+    }
+
+    private void HoverExit(int x, int y) {
+        if(selectedTool == ToolsEnum.PLACE_LOGO) {
+            UpdateEditedButtons();
         }
     }
 }

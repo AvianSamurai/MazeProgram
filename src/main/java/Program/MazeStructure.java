@@ -140,12 +140,15 @@ public class MazeStructure {
      * @return returns true if carve was successful
      */
     public boolean CarveInDirection(int x, int y, Direction dir) {
-        BasicCell currentCell = GetBasicCell(x, y);
-        int[] offset = dir.GetOffset();
-        BasicCell nextCell = GetBasicCell(x + offset[0], y + offset[1]);
-        if(currentCell != null && nextCell != null) {
-            currentCell.CreateConnection(nextCell, dir);
-            return true;
+        I_Cell iCell = GetCell(x, y);
+        if(iCell instanceof BorderedCell) {
+            BorderedCell currentCell = (BorderedCell) iCell;
+            int[] offset = dir.GetOffset();
+            BasicCell nextCell = GetBasicCell(x + offset[0], y + offset[1]);
+            if (currentCell != null && nextCell != null) {
+                currentCell.CreateConnection(nextCell, dir);
+                return true;
+            }
         }
         return false;
     }
@@ -159,12 +162,15 @@ public class MazeStructure {
      * @return returns true if block was successful
      */
     public boolean BlockInDirection(int x, int y, Direction dir) {
-        BasicCell currentCell = GetBasicCell(x, y);
-        int[] offset = dir.GetOffset();
-        BasicCell nextCell = GetBasicCell(x + offset[0], y + offset[1]);
-        if(currentCell != null && nextCell != null) {
-            currentCell.BlockConnection(nextCell, dir);
-            return true;
+        I_Cell iCell = GetCell(x, y);
+        if(iCell instanceof BorderedCell) {
+            BorderedCell currentCell = (BorderedCell) iCell;
+            int[] offset = dir.GetOffset();
+            BasicCell nextCell = GetBasicCell(x + offset[0], y + offset[1]);
+            if (currentCell != null && nextCell != null) {
+                currentCell.BlockConnection(nextCell, dir);
+                return true;
+            }
         }
         return false;
     }
@@ -203,12 +209,27 @@ public class MazeStructure {
      * @param x the x coordinate of the top left cell
      * @param y the y coordinate of the top left cell
      * @param newCells the 2d array of cells to replace with
+     * @param hasExteriorBorder if true, surrounds the inserted group with a border, otherwise, it does not
      */
-    public void InsertCellGroup(int x, int y, I_Cell[][] newCells) {
+    public void InsertCellGroup(int x, int y, I_Cell[][] newCells, boolean hasExteriorBorder) {
         for(int xPos = 0; xPos < newCells.length; xPos++) {
             for(int yPos = 0; yPos < newCells[0].length; yPos++) {
                 if(newCells[xPos][yPos] != null) {
                     InsertCell(x + xPos, y + yPos, newCells[xPos][yPos]);
+                }
+            }
+        }
+
+        for(int xPos = 0; xPos < newCells.length; xPos++) {
+            for(int yPos = 0; yPos < newCells[0].length; yPos++) {
+                if(GetCell(x + xPos, y + yPos) instanceof LogoCell) {
+                    for (Direction dir : GetDirectionsToValidCells(x + xPos, y + yPos, true)) {
+                        if (!hasExteriorBorder) {
+                            CarveInDirection(x + xPos, y + yPos, dir);
+                        } else {
+                            BlockInDirection(x + xPos, y + yPos, dir);
+                        }
+                    }
                 }
             }
         }

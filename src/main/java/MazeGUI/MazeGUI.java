@@ -46,7 +46,7 @@ public class MazeGUI extends JFrame implements Runnable {
                 new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
                 new String[]{"Set Start/End", "Add (logo, image)", "Carve", "Block"},
-                new ActionListener[] {testDialogListener, testDialogListener, carveToolListener, blockToolListener});
+                new ActionListener[] {testDialogListener, logoPlaceToolListender, carveToolListener, blockToolListener});
         menuPanel.FinalisePanel();
 
         JPanel propertyPanel = new JPanel();
@@ -246,15 +246,9 @@ public class MazeGUI extends JFrame implements Runnable {
         MazeAlgorithms.GenerateMaze(m); // TODO temp pls remove
         mazePanel.OpenMazeStructure(m); // TODO temp, pls remove
         mazePanel.SelectTool(ToolsEnum.CARVE); // TODO temp, pls remove
-        try {
-            LogoCell.InsertLogoIntoMaze(m, ImageIO.read(new File("C:\\Users\\kyron\\OneDrive\\Desktop\\TestLogo.png")), 5, 3, 2); // TODO temp, pls remove
-            mazePanel.UpdateButtonGrid();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
-    private void NewMaze(){
+    private void NewMaze() {
         // All Frames and Panels
         JFrame NewMazeFrame = new JFrame();
         NewMazeFrame.setSize(800,450);
@@ -428,6 +422,11 @@ public class MazeGUI extends JFrame implements Runnable {
         public void actionPerformed(ActionEvent e) {
             mazePanel.SelectTool(ToolsEnum.BLOCK);
         }
+    };
+
+    ActionListener logoPlaceToolListender = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) { mazePanel.SelectTool(ToolsEnum.PLACE_LOGO); }
     };
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {

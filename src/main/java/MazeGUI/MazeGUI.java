@@ -45,8 +45,8 @@ public class MazeGUI extends JFrame implements Runnable {
                 new String[]{"New", "Open", "Save", "Export Image"},
                 new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
-                new String[]{"Set Start/End", "Add (logo, image)", "Carve", "Block"},
-                new ActionListener[] {testDialogListener, logoPlaceToolListender, carveToolListener, blockToolListener});
+                new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
+                new ActionListener[] {testDialogListener, importLogoListener, testDialogListener, testDialogListener});
         menuPanel.FinalisePanel();
 
         JPanel propertyPanel = new JPanel();
@@ -424,9 +424,18 @@ public class MazeGUI extends JFrame implements Runnable {
         }
     };
 
-    ActionListener logoPlaceToolListender = new ActionListener() {
+    ActionListener importLogoListener = new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) { mazePanel.SelectTool(ToolsEnum.PLACE_LOGO); }
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            int result = fileChooser.showOpenDialog(mainPanel);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+            }
+            mazePanel.SelectTool(ToolsEnum.PLACE_LOGO);
+        }
     };
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {

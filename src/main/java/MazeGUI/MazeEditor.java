@@ -232,8 +232,11 @@ public class MazeEditor extends JPanel {
                 PlaceLogo(x, y);
                 break;
 
+            case NONE:
+                break;
+
             default:
-                Debug.LogLn("User attempted to use " + selectedTool + "but tool is not defined");
+                Debug.LogLn("User attempted to use " + selectedTool + " but tool is not defined");
                 break;
         }
     }

@@ -47,8 +47,8 @@ public class MazeGUI extends JFrame implements Runnable {
                 new String[]{"New", "Open", "Save", "Export Image"},
                 new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
-                new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
-                new ActionListener[] {testDialogListener, importLogoListener, testDialogListener, testDialogListener});
+                new String[]{"Set Start/End", "Add (logo, image)", "Carve", "Block"},
+                new ActionListener[] {testDialogListener, importLogoListener, carveToolListener, blockToolListener});
         menuPanel.FinalisePanel();
 
         JPanel propertyPanel = new JPanel();
@@ -247,7 +247,6 @@ public class MazeGUI extends JFrame implements Runnable {
         MazeStructure m = MazeFactory.CreateBasicMaze(15, 15);// TODO temp, pls remove
         MazeAlgorithms.GenerateMaze(m); // TODO temp pls remove
         mazePanel.OpenMazeStructure(m); // TODO temp, pls remove
-        mazePanel.SelectTool(ToolsEnum.CARVE); // TODO temp, pls remove
     }
 
     private void NewMaze() {

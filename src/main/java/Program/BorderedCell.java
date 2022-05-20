@@ -24,6 +24,11 @@ public abstract class BorderedCell {
         borders[3] = west;
     }
 
+    /**
+     * used for setting the state of all borders to a given array. The array ordering is clockwise (north, east, south, west).
+     *
+     * @param borders an array of booleans representing border state
+     */
     public void SetBorders(boolean[] borders) {
         if(borders.length != 4) {
             throw new IndexOutOfBoundsException(

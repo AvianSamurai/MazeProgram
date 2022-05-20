@@ -22,8 +22,11 @@ public class AddLogoDialogue extends JDialog {
 
     private AddLogoDialogue(Frame owner, MazeStructure m) {
         super(owner, "Logo Cell Size");
+        this.setLayout(new BorderLayout());
 
         spinner = new JSpinner();
+        JPanel panel = new JPanel();
+        JPanel btnPanel = new JPanel();
 
         // Work out the max logo size
         int maxHeight = LogoCell.GetLogoCellHeightFromWidth(logo, m.getWidth());
@@ -47,29 +50,41 @@ public class AddLogoDialogue extends JDialog {
 
         // Build the button
         JButton btn = new JButton("Add Logo");
+        btn.setToolTipText("Adds a rectangular prism logo");
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SetAndClose();
+                SetAndClose(false);
             }
         });
+        JButton btn2 = new JButton("Add Shaped Logo");
+        btn2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SetAndClose(true);
+            }
+        });
+        btn2.setToolTipText("Will ignore transparent regions of the logo");
 
         // Add the components
-        this.add(new JLabel("Logo width in cells: "));
-        this.add(spinner);
-        this.add(btn);
+        panel.add(new JLabel("Logo width in cells: "));
+        panel.add(spinner);
+        btnPanel.add(btn);
+        btnPanel.add(btn2);
         btn.setSelected(true);
+        this.add(panel, BorderLayout.NORTH);
+        this.add(btnPanel, BorderLayout.SOUTH);
 
         // Show it
-        this.setMinimumSize(new Dimension(300, 75));
+        this.setMinimumSize(new Dimension(275, 120));
         super.setLocationRelativeTo(getParent());
         this.setVisible(true);
         this.repaint();
     }
 
-    protected void SetAndClose() {
+    protected void SetAndClose(boolean logoShaping) {
         mazePanel.SelectTool(ToolsEnum.PLACE_LOGO);
-        mazePanel.SetLogoToPlace(logo, (int)spinner.getValue());
+        mazePanel.SetLogoToPlace(logo, (int)spinner.getValue(), logoShaping);
         this.setVisible(false);
         this.dispose();
     }

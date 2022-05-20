@@ -245,8 +245,8 @@ public class MazeEditor extends JPanel {
         SelectTool(ToolsEnum.NONE);
     }
 
-    public void SetLogoToPlace(BufferedImage logo, int width) {
-        logoCells = LogoCell.CreateLogoCellGroup(logo, width);
+    public void SetLogoToPlace(BufferedImage logo, int width, boolean shapeToLogoShape) {
+        logoCells = LogoCell.CreateLogoCellGroup(logo, width, shapeToLogoShape);
     }
 
     private void HoverEnter(int x, int y) {

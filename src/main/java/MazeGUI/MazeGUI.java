@@ -95,10 +95,29 @@ public class MazeGUI extends JFrame implements Runnable {
         mazeGenerationPanel.setLayout(new GridLayout(3, 1, 15, 15));
 
         JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int result = JOptionPane.showConfirmDialog(null,"Are you sure you want to reset the maze?", "Reset Maze",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if(result == JOptionPane.YES_OPTION){
+                    mazePanel.GetMazeStructure().ResetBasicCells();
+                    mazePanel.UpdateButtonGrid();
+                }
+            }
+        });
         resetButton.setPreferredSize(new Dimension(100, 25));
         JButton stepButton = new JButton("Step");
         stepButton.setPreferredSize(new Dimension(100, 25));
         JButton runButton = new JButton("Run");
+        runButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MazeAlgorithms.GenerateMaze(mazePanel.GetMazeStructure());
+                mazePanel.UpdateButtonGrid();
+            }
+        });
         runButton.setPreferredSize(new Dimension(100, 25));
 
         mazeGenerationPanel.add(resetButton);

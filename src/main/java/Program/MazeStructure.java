@@ -254,5 +254,16 @@ public class MazeStructure {
         imgDialog.setVisible(true);
     }
 
-
+    /**
+     * Resets all the basic cells to before random maze generation had occured
+     */
+    public void ResetBasicCells() {
+        for(int x = 0; x < width; x++) {
+            for(int y = 0; y < height; y++) {
+                if(GetCell(x, y) instanceof BasicCell) {
+                    InsertCell(x, y, new BasicCell());
+                }
+            }
+        }
+    }
 }

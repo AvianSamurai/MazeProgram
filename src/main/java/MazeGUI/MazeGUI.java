@@ -52,8 +52,8 @@ public class MazeGUI extends JFrame implements Runnable {
                 new String[]{"New", "Open", "Save", "Export Image"},
                 new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
-                new String[]{"Set Start/End", "Add (logo, image)", "Carve", "Block"},
-                new ActionListener[] {testDialogListener, importLogoListener, carveToolListener, blockToolListener});
+                new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
+                new ActionListener[] {testDialogListener, importLogoListener, testDialogListener, testDialogListener});
         menuPanel.FinalisePanel();
 
         JPanel propertyPanel = new JPanel();
@@ -464,33 +464,15 @@ public class MazeGUI extends JFrame implements Runnable {
         public void actionPerformed(ActionEvent e) { new ExportMazeDialog(); }
     };
 
-    ActionListener carveToolListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            mazePanel.SelectTool(ToolsEnum.CARVE);
-        }
-    };
-
-    ActionListener blockToolListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            mazePanel.SelectTool(ToolsEnum.BLOCK);
-        }
-    };
-
     ActionListener importLogoListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser fileChooser = new JFileChooser();
-            FileFilter imageFilter = new FileNameExtensionFilter(
-                    "Image files", ImageIO.getReaderFileSuffixes());
-            fileChooser.setFileFilter(imageFilter);
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
             int result = fileChooser.showOpenDialog(mainPanel);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-                AddLogoDialogue.OpenAddLogoDialogue(null, mazePanel, selectedFile.getAbsolutePath());
             }
         }
     };

@@ -19,6 +19,8 @@ public class Maze {
         this.title = title;
         this.author = author;
         this.cellSize = cellSize;
+        this.imageSize = imageSize;
+        this.logo = logo;
         //this.imageSize = imageSize;
         //this.logo = logo;
         this.type = type;

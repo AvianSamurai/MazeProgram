@@ -4,14 +4,19 @@ package MazeGUI;
 import DB.MazeDB;
 import Program.Maze;
 import com.google.gson.Gson;
+import Program.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -23,6 +28,7 @@ public class MazeGUI extends JFrame implements Runnable {
     private final JPanel mainPanel = new JPanel();
     private static final int DIVIDER_SIZE = 10;
     private static Maze temp_Maze;
+    private static final MazeEditor mazePanel = new MazeEditor();
     GridBagConstraints c = new GridBagConstraints();
 
     public MazeGUI(String title) throws HeadlessException {
@@ -46,12 +52,10 @@ public class MazeGUI extends JFrame implements Runnable {
                 new String[]{"New", "Open", "Save", "Export Image"},
                 new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
-                new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
-                new ActionListener[] {testDialogListener, testDialogListener, testDialogListener, testDialogListener});
+                new String[]{"Set Start/End", "Add (logo, image)", "Carve", "Block"},
+                new ActionListener[] {testDialogListener, importLogoListener, carveToolListener, blockToolListener});
         menuPanel.FinalisePanel();
 
-        JPanel mazePanel = new JPanel();
-        mazePanel.add(new JLabel("MAZE CANVAS"));
         JPanel propertyPanel = new JPanel();
         //propertyPanel.add(new JLabel("PROPERTY"));
 
@@ -96,10 +100,29 @@ public class MazeGUI extends JFrame implements Runnable {
         mazeGenerationPanel.setLayout(new GridLayout(3, 1, 15, 15));
 
         JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int result = JOptionPane.showConfirmDialog(null,"Are you sure you want to reset the maze?", "Reset Maze",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if(result == JOptionPane.YES_OPTION){
+                    mazePanel.GetMazeStructure().ResetBasicCells();
+                    mazePanel.UpdateButtonGrid();
+                }
+            }
+        });
         resetButton.setPreferredSize(new Dimension(100, 25));
         JButton stepButton = new JButton("Step");
         stepButton.setPreferredSize(new Dimension(100, 25));
         JButton runButton = new JButton("Run");
+        runButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MazeAlgorithms.GenerateMaze(mazePanel.GetMazeStructure());
+                mazePanel.UpdateButtonGrid();
+            }
+        });
         runButton.setPreferredSize(new Dimension(100, 25));
 
         mazeGenerationPanel.add(resetButton);
@@ -244,9 +267,13 @@ public class MazeGUI extends JFrame implements Runnable {
         //pack();
         repaint();
         setVisible(true);
+
+        MazeStructure m = MazeFactory.CreateBasicMaze(15, 15);// TODO temp, pls remove
+        MazeAlgorithms.GenerateMaze(m); // TODO temp pls remove
+        mazePanel.OpenMazeStructure(m); // TODO temp, pls remove
     }
 
-    private void NewMaze(){
+    private void NewMaze() {
         // All Frames and Panels
         JFrame NewMazeFrame = new JFrame();
         NewMazeFrame.setSize(800,450);
@@ -435,6 +462,37 @@ public class MazeGUI extends JFrame implements Runnable {
     ActionListener exportMazeListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) { new ExportMazeDialog(); }
+    };
+
+    ActionListener carveToolListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.CARVE);
+        }
+    };
+
+    ActionListener blockToolListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.BLOCK);
+        }
+    };
+
+    ActionListener importLogoListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            FileFilter imageFilter = new FileNameExtensionFilter(
+                    "Image files", ImageIO.getReaderFileSuffixes());
+            fileChooser.setFileFilter(imageFilter);
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            int result = fileChooser.showOpenDialog(mainPanel);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                AddLogoDialogue.OpenAddLogoDialogue(null, mazePanel, selectedFile.getAbsolutePath());
+            }
+        }
     };
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {

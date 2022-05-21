@@ -3,16 +3,18 @@ package Program;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Console;
 import java.util.ArrayList;
 
 public class MazeStructure {
     private int width, height;
     private I_Cell[][] cells;
+    private int[][][] logoCellLocations;
 
     protected MazeStructure(int width, int height) {
         this.width = width;
         this.height = height;
-        this.cells = new BasicCell[width][height];
+        this.cells = new I_Cell[width][height];
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
                 cells[x][y] = new BasicCell();
@@ -36,6 +38,15 @@ public class MazeStructure {
     }
 
     /**
+     * Creates a new set of logo cells and add them to the grid
+     *
+     * @param Logo Logo image to add to the grid
+     */
+    public void AddLogo(BufferedImage Logo) {
+
+    }
+
+    /**
      * Returns the basic cell at the requested position, or null if the cell is not of type BasicCell
      *
      * @param x cell x position
@@ -49,6 +60,17 @@ public class MazeStructure {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Sets the cell at the given position to the given cell
+     *
+     * @param newCell the cell to set at the given position
+     * @param x cell x position
+     * @param y cell y position
+     */
+    public void SetCell(I_Cell newCell, int x, int y) {
+        cells[x][y] = newCell;
     }
 
     /**
@@ -118,12 +140,37 @@ public class MazeStructure {
      * @return returns true if carve was successful
      */
     public boolean CarveInDirection(int x, int y, Direction dir) {
-        BasicCell currentCell = GetBasicCell(x, y);
-        int[] offset = dir.GetOffset();
-        BasicCell nextCell = GetBasicCell(x + offset[0], y + offset[1]);
-        if(currentCell != null && nextCell != null) {
-            currentCell.CreateConnection(nextCell, dir);
-            return true;
+        I_Cell iCell = GetCell(x, y);
+        if(iCell instanceof BorderedCell) {
+            BorderedCell currentCell = (BorderedCell) iCell;
+            int[] offset = dir.GetOffset();
+            BasicCell nextCell = GetBasicCell(x + offset[0], y + offset[1]);
+            if (currentCell != null && nextCell != null) {
+                currentCell.CreateConnection(nextCell, dir);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Destroys a connection between the cell at [x, y] and the cell in the given direction
+     *
+     * @param x the x position to block from
+     * @param y the y position to block from
+     * @param dir the direction to block in
+     * @return returns true if block was successful
+     */
+    public boolean BlockInDirection(int x, int y, Direction dir) {
+        I_Cell iCell = GetCell(x, y);
+        if(iCell instanceof BorderedCell) {
+            BorderedCell currentCell = (BorderedCell) iCell;
+            int[] offset = dir.GetOffset();
+            BasicCell nextCell = GetBasicCell(x + offset[0], y + offset[1]);
+            if (currentCell != null && nextCell != null) {
+                currentCell.BlockConnection(nextCell, dir);
+                return true;
+            }
         }
         return false;
     }
@@ -145,23 +192,78 @@ public class MazeStructure {
     }
 
     /**
+     * Replaces the cell at the given co-ordinate with the new cell
+     *
+     * @param x the x coordinate of the new cell
+     * @param y the y coordinate of the new cell
+     * @param newCell the new cell
+     */
+    public void InsertCell(int x, int y, I_Cell newCell) {
+        cells[x][y] = newCell;
+    }
+
+    /**
+     * Replaces the area of cells beginning from the top left with the cells in the given 2d array
+     * Any null values in the provided new cell array will not replace cells in the maze
+     *
+     * @param x the x coordinate of the top left cell
+     * @param y the y coordinate of the top left cell
+     * @param newCells the 2d array of cells to replace with
+     * @param hasExteriorBorder if true, surrounds the inserted group with a border, otherwise, it does not
+     */
+    public void InsertCellGroup(int x, int y, I_Cell[][] newCells, boolean hasExteriorBorder) {
+        for(int xPos = 0; xPos < newCells.length; xPos++) {
+            for(int yPos = 0; yPos < newCells[0].length; yPos++) {
+                if(newCells[xPos][yPos] != null) {
+                    InsertCell(x + xPos, y + yPos, newCells[xPos][yPos]);
+                }
+            }
+        }
+
+        for(int xPos = 0; xPos < newCells.length; xPos++) {
+            for(int yPos = 0; yPos < newCells[0].length; yPos++) {
+                if(GetCell(x + xPos, y + yPos) instanceof LogoCell) {
+                    for (Direction dir : GetDirectionsToValidCells(x + xPos, y + yPos, true)) {
+                        if (!hasExteriorBorder) {
+                            CarveInDirection(x + xPos, y + yPos, dir);
+                        } else {
+                            BlockInDirection(x + xPos, y + yPos, dir);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * For debug only
      * Creates a pop-up window containing an image of the current maze.
      */
-    public void DebugDisplayMaze() {
-        BufferedImage bi = new BufferedImage(width * 32, height * 32, BufferedImage.TYPE_INT_RGB);
+    public void DebugDisplayMaze(int size) {
+        BufferedImage bi = new BufferedImage(width * size, height * size, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = bi.createGraphics();
         g.setBackground(Color.white);
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
-                g.drawImage(GetBasicCell(x, y).getCellImageRepresentation(32, 32), x*32, y*32, 32, 32, null);
+                g.drawImage(GetCell(x, y).getCellImageRepresentation(size, size), x*size, y*size, size, size, null);
             }
         }
         JDialog imgDialog = new JDialog();
         imgDialog.add(new JLabel(new ImageIcon(bi)));
-        imgDialog.setSize(new Dimension((width+4) * 32, (height+4) * 32));
+        imgDialog.setSize(new Dimension(width * size + 64, height * size + 64));
         imgDialog.setVisible(true);
     }
 
-
+    /**
+     * Resets all the basic cells to before random maze generation had occured
+     */
+    public void ResetBasicCells() {
+        for(int x = 0; x < width; x++) {
+            for(int y = 0; y < height; y++) {
+                if(GetCell(x, y) instanceof BasicCell) {
+                    InsertCell(x, y, new BasicCell());
+                }
+            }
+        }
+    }
 }

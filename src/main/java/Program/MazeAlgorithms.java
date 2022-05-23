@@ -1,5 +1,6 @@
 package Program;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MazeAlgorithms {
@@ -15,6 +16,23 @@ public class MazeAlgorithms {
         while((nextStartingPos = GetNextCellToCarveFromAndConnectIt(m)) != null) {
             CarveRandomly(m, nextStartingPos[0], nextStartingPos[1]);
         }
+    }
+
+    public static int[][] GenerateSolution(MazeStructure m, int startX, int startY, int endX, int endY) {
+        ArrayList<int[]> solutionPositions = new ArrayList<int[]>();
+
+        solutionPositions.add(new int[]{0, 0});
+        solutionPositions.add(new int[]{0, 1});
+        solutionPositions.add(new int[]{0, 2});
+        solutionPositions.add(new int[]{0, 3});
+        solutionPositions.add(new int[]{1, 3});
+        solutionPositions.add(new int[]{2, 3});
+        solutionPositions.add(new int[]{2, 4});
+        solutionPositions.add(new int[]{2, 5});
+        solutionPositions.add(new int[]{2, 6});
+        solutionPositions.add(new int[]{endX, endY});
+
+        return solutionPositions.toArray(int[][]::new);
     }
 
     private static int[] GetNextCellToCarveFromAndConnectIt(MazeStructure m) {

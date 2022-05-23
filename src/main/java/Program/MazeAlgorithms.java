@@ -18,7 +18,7 @@ public class MazeAlgorithms {
         }
     }
 
-    public static int[][] GenerateSolution(MazeStructure m) {
+    public static int[][] GenerateSolution(MazeStructure m, int startX, int startY, int endX, int endY) {
         ArrayList<int[]> solutionPositions = new ArrayList<int[]>();
 
         solutionPositions.add(new int[]{0, 0});
@@ -30,7 +30,7 @@ public class MazeAlgorithms {
         solutionPositions.add(new int[]{2, 4});
         solutionPositions.add(new int[]{2, 5});
         solutionPositions.add(new int[]{2, 6});
-        solutionPositions.add(new int[]{1, 6});
+        solutionPositions.add(new int[]{endX, endY});
 
         return solutionPositions.toArray(int[][]::new);
     }

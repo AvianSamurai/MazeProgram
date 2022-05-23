@@ -149,9 +149,13 @@ public class MazeGUI extends JFrame implements Runnable {
             // if selected print selected in console
             if (state == ItemEvent.SELECTED) {
                 showSolutionButton.setText("OFF");
+                mazePanel.SetShowSolution(false);
+                mazePanel.UpdateButtonGrid();
             } else {
                 // else print deselected in console
                 showSolutionButton.setText("ON");
+                mazePanel.SetShowSolution(true);
+                mazePanel.UpdateButtonGrid();
             }
         };
         showSolutionButton.addItemListener(itemListener);

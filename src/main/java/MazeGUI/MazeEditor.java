@@ -28,6 +28,7 @@ public class MazeEditor extends JPanel {
     private final int BORDER_THICKNESS = 2;
     private LogoCell[][] logoCells = null;
     private Stack<int[]> cellsToUpdate = new Stack<>();
+    private boolean showSolution = true;
 
     public MazeEditor() {
         this.setLayout((outerAreaLayout = new SpringLayout()));
@@ -51,6 +52,10 @@ public class MazeEditor extends JPanel {
         return mazeStruct;
     }
 
+    public void SetShowSolution(boolean showSolution) {
+        this.showSolution = showSolution;
+    }
+
     public void UpdateButtonGrid() {
         int xCount = mazeStruct.getWidth();
         int yCount = mazeStruct.getHeight();
@@ -61,6 +66,12 @@ public class MazeEditor extends JPanel {
             }
         }
         cellsToUpdate.clear();
+
+        if(showSolution) {
+            for(int[] solpos : MazeAlgorithms.GenerateSolution(mazeStruct)) {
+                buttonGrid[solpos[0]][solpos[1]].setBackground(Color.CYAN);
+            }
+        }
     }
 
     /**
@@ -82,6 +93,12 @@ public class MazeEditor extends JPanel {
             pos = cellsToUpdate.pop();
             if(pos[0] >= 0 && pos[0] < mazeStruct.getWidth() && pos[1] >= 0 && pos[1] < mazeStruct.getHeight()) {
                 UpdateButton(pos[0], pos[1]);
+            }
+        }
+
+        if(showSolution) {
+            for(int[] solpos : MazeAlgorithms.GenerateSolution(mazeStruct)) {
+                buttonGrid[solpos[0]][solpos[1]].setBackground(Color.CYAN);
             }
         }
     }

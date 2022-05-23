@@ -26,6 +26,8 @@ public class MazeGUI extends JFrame implements Runnable {
     private static final MazeEditor mazePanel = new MazeEditor();
     GridBagConstraints c = new GridBagConstraints();
 
+    private JTextField deadEndsTextField;
+
     public MazeGUI(String title) throws HeadlessException {
         super(title);
     }
@@ -33,6 +35,7 @@ public class MazeGUI extends JFrame implements Runnable {
     private void createGUI() {
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mazePanel.AddRefrenceToMazeGUI(this);
 
         // Set icon
         this.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
@@ -165,7 +168,7 @@ public class MazeGUI extends JFrame implements Runnable {
         reachOptimalSolutionTextField.setEditable(false);
 
         JLabel deadEndsLabel = new JLabel("Dead ends: ");
-        JTextField deadEndsTextField = new JTextField(0);
+        deadEndsTextField = new JTextField(0);
         deadEndsTextField.setEditable(false);
 
         groupLayout.setAutoCreateGaps(true);
@@ -460,6 +463,14 @@ public class MazeGUI extends JFrame implements Runnable {
             }
         }
     };
+
+    /**
+     * Sets the dead end label to the given integer
+     * @param i the int to set the label to
+     */
+    public void UpdateDeadEndsLabel(int i) {
+        deadEndsTextField.setText(i + "");
+    }
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
         // Uncomment this to clear your database and insert fake data

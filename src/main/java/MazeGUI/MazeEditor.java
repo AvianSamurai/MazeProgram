@@ -28,6 +28,7 @@ public class MazeEditor extends JPanel {
     private final int BORDER_THICKNESS = 2;
     private LogoCell[][] logoCells = null;
     private Stack<int[]> cellsToUpdate = new Stack<>();
+    private MazeGUI mazeGUI;
 
     public MazeEditor() {
         this.setLayout((outerAreaLayout = new SpringLayout()));
@@ -47,11 +48,24 @@ public class MazeEditor extends JPanel {
         UpdateButtonGrid();
     }
 
+    public void AddRefrenceToMazeGUI(MazeGUI mazeGUI) {
+        this.mazeGUI = mazeGUI;
+    }
+
     public MazeStructure GetMazeStructure() {
         return mazeStruct;
     }
 
     public void UpdateButtonGrid() {
+        // Update dead ends in a different thread so we dont bog down the program
+        Thread DeadEndsThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UpdateDeadEnds();
+            }
+        });
+        DeadEndsThread.run();
+
         int xCount = mazeStruct.getWidth();
         int yCount = mazeStruct.getHeight();
 
@@ -77,6 +91,15 @@ public class MazeEditor extends JPanel {
      * Updates only the buttons that have been edited reciently, to add a button to the reciently edited list, call AddEditedButton(x, y)
      */
     public void UpdateEditedButtons() {
+        // Update dead ends in a different thread so we dont bog down the program
+        Thread DeadEndsThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UpdateDeadEnds();
+            }
+        });
+        DeadEndsThread.run();
+
         int[] pos = null;
         while(!cellsToUpdate.empty()) {
             pos = cellsToUpdate.pop();
@@ -108,6 +131,21 @@ public class MazeEditor extends JPanel {
             int west = borders[3] ? BORDER_THICKNESS : 0;
             buttonGrid[x][y].setBorder(BorderFactory.createMatteBorder(north, west, south, east, Color.black));
         }
+    }
+
+    private void UpdateDeadEnds() {
+        int deadEndCount = 0;
+        for(int y = 0; y < mazeStruct.getWidth(); y++) {
+            for(int x = 0; x < mazeStruct.getHeight(); x++) {
+                I_Cell cell = mazeStruct.GetCell(x, y);
+                if(cell instanceof BorderedCell) {
+                    if(((BorderedCell)cell).GetBorderCount() == 3) {
+                        deadEndCount++;
+                    }
+                }
+            }
+        }
+        mazeGUI.UpdateDeadEndsLabel(deadEndCount);
     }
 
     private void CreateButtonGrid() {

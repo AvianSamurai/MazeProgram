@@ -8,10 +8,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.tools.Tool;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -39,17 +36,29 @@ public class MazeEditor extends JPanel {
         this.add(mazeCanvas);
         outerAreaLayout.putConstraint(SpringLayout.VERTICAL_CENTER, mazeCanvas, 0, SpringLayout.VERTICAL_CENTER, this);
         outerAreaLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, mazeCanvas, 0, SpringLayout.HORIZONTAL_CENTER, this);
-
     }
 
     public void OpenMazeStructure(MazeStructure m) {
         mazeStruct = m;
+        mazeCanvas.removeAll();
         CreateButtonGrid();
         UpdateButtonGrid();
     }
 
     public void AddRefrenceToMazeGUI(MazeGUI mazeGUI) {
         this.mazeGUI = mazeGUI;
+        mazeGUI.getRootPane().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                if(mazeStruct != null) {
+                    mazeCanvas.setMinimumSize(GetPanelDimension());
+                    mazeCanvas.removeAll();
+                    CreateButtonGrid();
+                    UpdateButtonGrid();
+                }
+            }
+        });
     }
 
     public MazeStructure GetMazeStructure() {
@@ -75,6 +84,7 @@ public class MazeEditor extends JPanel {
             }
         }
         cellsToUpdate.clear();
+        repaint();
     }
 
     /**
@@ -107,6 +117,8 @@ public class MazeEditor extends JPanel {
                 UpdateButton(pos[0], pos[1]);
             }
         }
+
+        repaint();
     }
 
     private void UpdateButton(int x, int y) {
@@ -300,6 +312,7 @@ public class MazeEditor extends JPanel {
                     }
                 }
             }
+            repaint();
         }
     }
 

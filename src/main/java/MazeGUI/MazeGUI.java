@@ -1,6 +1,9 @@
 package MazeGUI;
 
 
+import DB.MazeDB;
+import Program.Maze;
+import com.google.gson.Gson;
 import Program.*;
 
 import javax.imageio.ImageIO;
@@ -16,6 +19,8 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MazeGUI extends JFrame implements Runnable {
     public static final int WIDTH = 1440;
@@ -374,7 +379,36 @@ public class MazeGUI extends JFrame implements Runnable {
                         JOptionPane.PLAIN_MESSAGE);
 
                 if (createStatus == JOptionPane.YES_OPTION){
+                    String title = mazeName.getText().trim();
+                    String author = authName.getText().trim();
+                    String size = jComboBoxMazeSize.getItemAt(jComboBoxMazeSize.getSelectedIndex());
+                    String selectedType = jComboBox.getItemAt(jComboBox.getSelectedIndex());
                     NewMazeFrame.dispose();
+                    Maze newMaze = new Maze(title, author, size, selectedType);
+                    String date = newMaze.GetDateTime();
+                    Map<String, String> jsonData = new HashMap<>();
+                    jsonData.put("title",title);
+                    jsonData.put("author", author);
+                    jsonData.put("size", size);
+                    jsonData.put("type", selectedType);
+                    Gson gson = new Gson();
+                    String output = gson.toJson(jsonData);
+                    MazeDB ndm = null;
+                    try {
+                        ndm = new MazeDB();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    } catch (ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                    try {
+                        ndm.CreateUpdateDelete("INSERT INTO saved_mazes (name, author_name, json_data, creation_date) VALUES ('"+ title +"','" + author +"','"+ output +"','"+ date +"');");
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+
                 }
                 else
                     NewMazeFrame.dispose();
@@ -433,20 +467,6 @@ public class MazeGUI extends JFrame implements Runnable {
         public void actionPerformed(ActionEvent e) { new ExportMazeDialog(); }
     };
 
-    ActionListener carveToolListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            mazePanel.SelectTool(ToolsEnum.CARVE);
-        }
-    };
-
-    ActionListener blockToolListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            mazePanel.SelectTool(ToolsEnum.BLOCK);
-        }
-    };
-
     ActionListener importLogoListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -464,6 +484,20 @@ public class MazeGUI extends JFrame implements Runnable {
         }
     };
 
+    ActionListener carveToolListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.CARVE);
+        }
+    };
+
+    ActionListener blockToolListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.BLOCK);
+        }
+    };
+
     /**
      * Sets the dead end label to the given integer
      * @param i the int to set the label to
@@ -474,9 +508,9 @@ public class MazeGUI extends JFrame implements Runnable {
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
         // Uncomment this to clear your database and insert fake data
-        // MazeDB dbm = new MazeDB();
-        // dbm.LoadTestDataIntoDatabase(true);
-        // dbm.disconnect();
+        MazeDB dbm = new MazeDB();
+        dbm.LoadTestDataIntoDatabase(true);
+        dbm.disconnect();
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

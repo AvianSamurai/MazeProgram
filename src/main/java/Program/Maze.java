@@ -1,5 +1,8 @@
 package Program;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -12,9 +15,18 @@ public class Maze {
     public String imageSize;
     public String logo;
     private String type;
+    private MazeStructure m;
 
 
-    //Constructor for the initialization of a new Maze object
+    /**
+     * Creates a new Maze object containing no maze
+     *
+     * @param title
+     * @param author
+     * @param cellSize
+     * @param type
+     * @deprecated
+     */
     public Maze (String title, String author, String cellSize, String type){
         this.title = title;
         this.author = author;
@@ -24,8 +36,33 @@ public class Maze {
         //this.imageSize = imageSize;
         //this.logo = logo;
         this.type = type;
+    }
 
+    /**
+     * Creates a new maze containing a randomly generated maze of the specific type with and automatic cell size
+     *
+     * @param title Maze title
+     * @param author Maze author
+     * @param type
+     * @param width
+     * @param height
+     */
+    public Maze (String title, String author, String cellSize, String type, int width, int height) {
+        this(title, author, "auto", type);
+        switch (type.toLowerCase()) {
+            default:
+            case "standard":
+                m = MazeFactory.CreateBasicMaze(width, height);
+                break;
 
+            case "themed":
+                m = MazeFactory.CreateThemedMaze(width, height);
+                break;
+
+            case "empty":
+                m = MazeFactory.CreateEmptyMaze(width, height);
+                break;
+        }
     }
 
     public Maze (String title, String author){
@@ -47,12 +84,23 @@ public class Maze {
 
     public String getType(){return this.type;}
 
+    public MazeStructure getMazeStructure() { return m; }
+
+    public void SaveMaze() {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        String mazeString = gson.toJson(m);
+
+    }
+
     //Retrieving the date and time of maze creation
     public String GetDateTime(){
         this.theDateTime = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
         LocalDateTime current = LocalDateTime.now();
         return this.theDateTime.format(current);
     }
+
+
 
 }
 

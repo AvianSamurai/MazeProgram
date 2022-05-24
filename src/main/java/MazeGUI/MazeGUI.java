@@ -27,7 +27,7 @@ public class MazeGUI extends JFrame implements Runnable {
     public static final int HEIGHT = 1024;
     private final JPanel mainPanel = new JPanel();
     private static final int DIVIDER_SIZE = 10;
-    private static Maze temp_Maze;
+    private static Maze maze;
     private static final MazeEditor mazePanel = new MazeEditor();
     GridBagConstraints c = new GridBagConstraints();
 
@@ -270,10 +270,6 @@ public class MazeGUI extends JFrame implements Runnable {
         //pack();
         repaint();
         setVisible(true);
-
-        MazeStructure m = MazeFactory.CreateBasicMaze(15, 15);// TODO temp, pls remove
-        MazeAlgorithms.GenerateMaze(m); // TODO temp pls remove
-        mazePanel.OpenMazeStructure(m); // TODO temp, pls remove
     }
 
     private void NewMaze() {
@@ -305,7 +301,7 @@ public class MazeGUI extends JFrame implements Runnable {
         mazeTypeLabel = new JLabel("Maze Type: ");
         mazeTypeLabel.setBounds(50, 250, 100, 30);
 
-        String[] mazeTypeOptions = {"General", "Themed", "Others"};
+        String[] mazeTypeOptions = {"Standard", "Themed", "Empty"};
         JComboBox<String> jComboBox = new JComboBox<>(mazeTypeOptions);
         jComboBox.setBounds(150, 250, 200, 30);
 
@@ -346,9 +342,31 @@ public class MazeGUI extends JFrame implements Runnable {
         mazeSizes = new JLabel("Maze Size: ");
         mazeSizes.setBounds(50, 100, 100, 30);
 
-        String[] mazeSizeOptions = {"100x100", "385x356", "1600x1600"};
+        /*String[] mazeSizeOptions = {"100x100", "385x356", "1600x1600"};
         JComboBox<String> jComboBoxMazeSize = new JComboBox<>(mazeSizeOptions);
-        jComboBoxMazeSize.setBounds(150, 100, 200, 30);
+        jComboBoxMazeSize.setBounds(150, 100, 200, 30); */
+
+        JLabel widthLabel = new JLabel("width:");
+        widthLabel.setBounds(50, 140, 80, 30);
+        JLabel heightLabel = new JLabel("height:");
+        heightLabel.setBounds(50, 180, 80, 30);
+
+        JSpinner widthSpinner = new JSpinner();
+        JSpinner heightSpinner = new JSpinner();
+        SpinnerNumberModel widthModel = new SpinnerNumberModel();
+        widthModel.setMaximum(100);
+        widthModel.setMinimum(3);
+        widthModel.setStepSize(1);
+        widthModel.setValue(15);
+        widthSpinner.setModel(widthModel);
+        SpinnerNumberModel heightModel = new SpinnerNumberModel();
+        heightModel.setMaximum(100);
+        heightModel.setMinimum(3);
+        heightModel.setStepSize(1);
+        heightModel.setValue(15);
+        heightSpinner.setModel(heightModel);
+        widthSpinner.setBounds(130, 140, 100, 30);
+        heightSpinner.setBounds(130, 180, 100, 30);
 
         /*// Button for choosing a logo
         JFileChooser logoChooser = new JFileChooser();
@@ -378,40 +396,42 @@ public class MazeGUI extends JFrame implements Runnable {
                         "New Maze", JOptionPane.YES_NO_OPTION,
                         JOptionPane.PLAIN_MESSAGE);
 
+                String title = mazeName.getText().trim();
+                String author = authName.getText().trim();
+                //String size = jComboBoxMazeSize.getItemAt(jComboBoxMazeSize.getSelectedIndex());
+                String size = widthSpinner.getValue() + "x" + heightSpinner.getValue();
+                String selectedType = jComboBox.getItemAt(jComboBox.getSelectedIndex());
+                NewMazeFrame.dispose();
+                maze = new Maze(title, author, size, selectedType, (int)widthSpinner.getValue(), (int)heightSpinner.getValue());
                 if (createStatus == JOptionPane.YES_OPTION){
-                    String title = mazeName.getText().trim();
-                    String author = authName.getText().trim();
-                    String size = jComboBoxMazeSize.getItemAt(jComboBoxMazeSize.getSelectedIndex());
-                    String selectedType = jComboBox.getItemAt(jComboBox.getSelectedIndex());
-                    NewMazeFrame.dispose();
-                    Maze newMaze = new Maze(title, author, size, selectedType);
-                    String date = newMaze.GetDateTime();
-                    Map<String, String> jsonData = new HashMap<>();
-                    jsonData.put("title",title);
-                    jsonData.put("author", author);
-                    jsonData.put("size", size);
-                    jsonData.put("type", selectedType);
-                    Gson gson = new Gson();
-                    String output = gson.toJson(jsonData);
-                    MazeDB ndm = null;
-                    try {
-                        ndm = new MazeDB();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } catch (ClassNotFoundException ex) {
-                        ex.printStackTrace();
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
-                    try {
-                        ndm.CreateUpdateDelete("INSERT INTO saved_mazes (name, author_name, json_data, creation_date) VALUES ('"+ title +"','" + author +"','"+ output +"','"+ date +"');");
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
-
+                    MazeAlgorithms.GenerateMaze(maze.getMazeStructure());
                 }
-                else
-                    NewMazeFrame.dispose();
+                mazePanel.OpenMazeStructure(maze.getMazeStructure());
+                String date = maze.GetDateTime();
+                Map<String, String> jsonData = new HashMap<>();
+                jsonData.put("title",title);
+                jsonData.put("author", author);
+                jsonData.put("size", size);
+                jsonData.put("type", selectedType);
+                Gson gson = new Gson();
+                String output = gson.toJson(jsonData);
+                MazeDB ndm = null;
+                try {
+                    ndm = new MazeDB();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    ndm.CreateUpdateDelete("INSERT INTO saved_mazes (name, author_name, json_data, creation_date) VALUES ('"+ title +"','" + author +"','"+ output +"','"+ date +"');");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+                NewMazeFrame.dispose();
             }
         });
         JButton jButtonCancel2 = new JButton("Cancel");
@@ -425,7 +445,11 @@ public class MazeGUI extends JFrame implements Runnable {
 
         // Add elements to the GUI
         NewMaze2.add(mazeSizes);
-        NewMaze2.add(jComboBoxMazeSize);
+        //NewMaze2.add(jComboBoxMazeSize);
+        NewMaze2.add(widthLabel);
+        NewMaze2.add(heightLabel);
+        NewMaze2.add(widthSpinner);
+        NewMaze2.add(heightSpinner);
         NewMaze2.add(jButtonCreate2);
         NewMaze2.add(jButtonCancel2);
         NewMaze2.setLayout(null);

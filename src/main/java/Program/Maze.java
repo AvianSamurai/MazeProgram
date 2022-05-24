@@ -1,5 +1,7 @@
 package Program;
 
+import DB.MazeDB;
+import Utils.Debug;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -10,7 +12,8 @@ public class Maze {
     //Fields for the Maze object
     private String title;
     private String author;
-    public DateTimeFormatter theDateTime;
+    private transient DateTimeFormatter theDateTime;
+    private int id = -1;
     public String cellSize;
     public String imageSize;
     public String logo;
@@ -86,11 +89,30 @@ public class Maze {
 
     public MazeStructure getMazeStructure() { return m; }
 
-    public void SaveMaze() {
+    public boolean SaveMaze() {
+        MazeDB mazeDB;
+        try {
+            mazeDB = new MazeDB();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Debug.LogLn("Failed to open a database connection when saving maze");
+            return false;
+        }
+
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        String mazeString = gson.toJson(m);
+        String mazeString = gson.toJson(this);
+        Debug.LogLn("Saving Maze...");
+        /*
+        Basicly you have to make the mazeString variable be saved to the database and be able to load it from another command.
+        You'll have to insert into if it doesn't exist and otherwise do a replace of some data
+         */
+        if(id == -1) { // This should only be the case if the maze is brand new
+            id = mazeDB.GetNextAvailableID();
+        }
 
+        mazeDB.disconnect();
+        return true;
     }
 
     //Retrieving the date and time of maze creation

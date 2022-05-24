@@ -53,7 +53,7 @@ public class MazeGUI extends JFrame implements Runnable {
         MenuJPanel menuPanel = new MenuJPanel();
         menuPanel.CreateMenu("File",
                 new String[]{"New", "Open", "Save", "Export Image"},
-                new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
+                new ActionListener[] {createNewMazeListener, openMazeListener, saveMazeListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
                 new String[]{"Set Start/End", "Add (logo, image)", "Carve", "Block"},
                 new ActionListener[] {testDialogListener, importLogoListener, carveToolListener, blockToolListener});
@@ -472,6 +472,15 @@ public class MazeGUI extends JFrame implements Runnable {
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, e.getActionCommand());
         }
+    };
+
+    ActionListener saveMazeListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            maze.SaveMaze();
+            JOptionPane.showMessageDialog(null, "IM A SAVING MA MAZE");
+        }
+
     };
 
     ActionListener createNewMazeListener = new ActionListener() {

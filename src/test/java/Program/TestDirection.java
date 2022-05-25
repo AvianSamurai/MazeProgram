@@ -111,7 +111,7 @@ public class TestDirection {
 
     @Test
     @DisplayName("Get offset based on west")
-    void testGetOffsetWast(){
+    void testGetOffsetWest(){
         assertArrayEquals(new int[] {-1, 0}, west.GetOffset());
     }
 }

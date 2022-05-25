@@ -1,6 +1,6 @@
 package Program;
 
-public enum Exit {
+public enum Exit { // TODO delete maybe?
     Type1(100),
     Type2(100),
     Type3(100),

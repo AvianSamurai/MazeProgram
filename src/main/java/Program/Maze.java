@@ -72,25 +72,55 @@ public class Maze {
         }
     }
 
+    /**
+     * Creates a new maze object with only a title and author
+     *
+     * @param title title of the maze
+     * @param author author of the maze
+     * @deprecated
+     */
     public Maze (String title, String author){
         this.title = title;
         this.author = author;
     }
 
-    //Retrieving private author String
+    /**
+     * Gets the author of the maze
+     *
+     * @return maze author
+     */
     public String GetAuthor() {
         return this.author;
     }
 
-    //Retrieving private title string
+    /**
+     * Gets the title of the maze
+     *
+     * @return maze title
+     */
     public String GetTitle(){
         return this.title;
     }
 
+    /**
+     * Gets a string representation of size of the maze in cells
+     *
+     * @return maze size
+     */
     public String getCellSize(){return this.cellSize;}
 
+    /**
+     * Gets the original maze type <br/>
+     * e.g. standard, themed
+     *
+     * @return maze type
+     */
     public String getType(){return this.type;}
 
+    /**
+     * Returns the contained maze structure, this may be null if the maze was constructed with a deprecated constructor
+     * @return the maze structure object
+     */
     public MazeStructure getMazeStructure() { return m; }
 
     /**
@@ -191,7 +221,11 @@ public class Maze {
         return finalMaze;
     }
 
-    //Retrieving the date and time of maze creation
+    /**
+     * Gets the date and time in a sql friendly way
+     *
+     * @return date and time in string format
+     */
     public String GetDateTime(){
         this.theDateTime = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
         LocalDateTime current = LocalDateTime.now();

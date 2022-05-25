@@ -19,6 +19,7 @@ public class InterfaceGsonSerializer<I_Cell> implements JsonSerializer<I_Cell>, 
         return jElement;
     }
 
+    @Override
     public I_Cell deserialize(JsonElement elem, Type interfaceType, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jElement = elem.getAsJsonObject();
         if(jElement.has("type")) {

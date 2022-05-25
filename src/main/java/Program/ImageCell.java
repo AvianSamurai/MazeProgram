@@ -9,20 +9,40 @@ import java.io.IOException;
 public class ImageCell extends BasicCell {
     private Image cellImage;
 
+    /**
+     * Creates a new image cell that contains a placeholder image
+     *
+     * @throws IOException thrown if the placeholder image couldn't be loaded, this should never happen
+     */
     public ImageCell() throws IOException {
         super();
         cellImage = ImageIO.read(this.getClass().getResource("PlaceHolder.png"));
     }
 
+    /**
+     * Creates a new image cell containing the given image
+     *
+     * @param cellImage the image that the cellImage is to contain
+     */
     public ImageCell(Image cellImage) {
         super();
         this.cellImage = cellImage;
     }
 
+    /**
+     * Get the image contained in the cell
+     *
+     * @return the contained buffered image
+     */
     public BufferedImage GetCellImage() {
         return (BufferedImage) cellImage;
     }
 
+    /**
+     * Replaces the contained image in the cell
+     *
+     * @param im the new image
+     */
     public void SetCellImage(Image im) {
         cellImage = im;
     }

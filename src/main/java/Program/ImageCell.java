@@ -1,20 +1,26 @@
 package Program;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class ImageCell extends BasicCell {
     private Image cellImage;
 
-    public ImageCell() {
+    public ImageCell() throws IOException {
         super();
-        cellImage = new ImageIcon(this.getClass().getResource("PlaceHolder.png")).getImage();
+        cellImage = ImageIO.read(this.getClass().getResource("PlaceHolder.png"));
     }
 
     public ImageCell(Image cellImage) {
         super();
         this.cellImage = cellImage;
+    }
+
+    public BufferedImage GetCellImage() {
+        return (BufferedImage) cellImage;
     }
 
     public void SetCellImage(Image im) {

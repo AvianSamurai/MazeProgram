@@ -25,7 +25,7 @@ public class MazeDB {
             "id int(32) UNSIGNED UNIQUE NOT NULL AUTO_INCREMENT, " +
             "name varchar(128) NOT NULL, " +
             "author_name varchar(128) NOT NULL, " +
-            "json_data varchar(128) NULL, " +
+            "json_data LONGTEXT NULL, " +
             "creation_date DATETIME NOT NULL, " +
             "last_modified DATETIME," +
             "PRIMARY KEY (id))";
@@ -87,7 +87,7 @@ public class MazeDB {
         try {
             ResultSet res = Query("SELECT MAX(id) FROM " + SAVED_MAZES_TABLE_NAME);
             if (res.next()) {
-                return res.getInt(0) + 1;
+                return res.getInt(1) + 1;
             } else {
                 return 0;
             }

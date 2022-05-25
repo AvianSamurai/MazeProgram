@@ -1,6 +1,7 @@
 package MazeGUI;
 
 import DB.MazeDB;
+import Program.Maze;
 import Utils.Debug;
 
 import javax.swing.*;
@@ -39,8 +40,11 @@ public class OpenMazeDialog {
     private JSelectionTable table = null;
     private GridBagConstraints gBC;
     private MazeDB db;
+    private MazeGUI mazeGUI;
 
-    public OpenMazeDialog() {
+    public OpenMazeDialog(MazeGUI mazeGUI) {
+        this.mazeGUI = mazeGUI;
+
         // Create outer frame and set size
         outerFrame = new JFrame("Open Maze");
         outerFrame.setSize(WINDOW_SIZE);
@@ -181,7 +185,14 @@ public class OpenMazeDialog {
     ActionListener openListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) { // TODO
-            outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING)); // Temperary
+            outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING));
+            int id = Integer.parseInt((String)table.getValueAt(table.getSelectedRow(), 0));
+            Maze maze = Maze.LoadMazeFromID(id);
+            if(maze != null) {
+                mazeGUI.OpenMaze(maze);
+            } else {
+                JOptionPane.showMessageDialog(null, "Maze failed to open");
+            }
         }
     };
 

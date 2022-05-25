@@ -12,7 +12,6 @@ public class LogoCell extends BorderedCell implements I_Cell {
 
     private Image cellImage;
 
-
     private LogoCell(Image cellImage) {
         this.cellImage = cellImage;
     }

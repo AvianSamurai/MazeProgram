@@ -10,7 +10,12 @@ public class BasicCell extends BorderedCell implements I_Cell {
     }
 
     public ImageCell ConvertToImageCell() {
-        ImageCell imCell = new ImageCell();
+        ImageCell imCell;
+        try {
+            imCell = new ImageCell();
+        } catch (Exception e) {
+            return null; // This should never happen
+        }
         imCell.SetBorders(GetBorders());
         return imCell;
     }

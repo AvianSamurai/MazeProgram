@@ -5,6 +5,8 @@ import Utils.Debug;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -33,8 +35,8 @@ public class Maze {
      * @deprecated
      */
     public Maze (String title, String author, String cellSize, String type){
-        this.title = title;
-        this.author = author;
+        this.title = title.replaceAll("[^a-zA-Z0-9 ]", "");
+        this.author = author.replaceAll("[^a-zA-Z0-9 ]", "");
         this.cellSize = cellSize;
         this.imageSize = imageSize;
         this.logo = logo;
@@ -105,16 +107,44 @@ public class Maze {
             return false;
         }
 
+        boolean newMaze = false;
+
+        if(id == -1) { // This should only be the case if the maze is brand new
+            id = mazeDB.GetNextAvailableID();
+            newMaze = true;
+        }
+
         GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(I_Cell.class, new InterfaceGsonSerializer());
+        builder.registerTypeAdapter(Image.class, new BufferedImageGsonSerializer());
+        builder.registerTypeAdapter(BufferedImage.class, new BufferedImageGsonSerializer());
         Gson gson = builder.create();
         String mazeString = gson.toJson(this);
         Debug.LogLn("Saving Maze...");
-        /*
-        Basicly you have to make the mazeString variable be saved to the database and be able to load it from another command.
-        You'll have to insert into if it doesn't exist and otherwise do a replace of some data
-         */
-        if(id == -1) { // This should only be the case if the maze is brand new
-            id = mazeDB.GetNextAvailableID();
+
+        if(newMaze) {
+            try {
+                int nextID = mazeDB.GetNextAvailableID();
+                mazeDB.CreateUpdateDelete("INSERT INTO saved_mazes (id, name, author_name, json_data, creation_date, last_modified) " +
+                        "VALUES ('" + id + "', '" + title + "','" + author + "','" + mazeString + "','" + GetDateTime() + "','" + GetDateTime() + "');");
+            } catch (SQLException e) {
+                Debug.LogLn("Failed to insert new maze into database");
+                e.printStackTrace();
+                mazeDB.disconnect();
+                return false;
+            }
+            mazeDB.disconnect();
+            return true;
+        } else {
+            try {
+                mazeDB.CreateUpdateDelete("UPDATE saved_mazes SET json_data = '" + mazeString + "', last_modified = '" + GetDateTime() + "' " +
+                        "WHERE id = " + id);
+            } catch (SQLException e) {
+                Debug.LogLn("Failed to update maze in database");
+                e.printStackTrace();
+                mazeDB.disconnect();
+                return false;
+            }
         }
 
         mazeDB.disconnect();
@@ -140,14 +170,21 @@ public class Maze {
 
         ResultSet result;
         try {
+            Debug.LogLn("Loading maze by id (id = " + id + ")");
             result = mazeDB.Query("SELECT json_data FROM saved_mazes WHERE id = " + id);
             GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(I_Cell.class, new InterfaceGsonSerializer());
+            gsonBuilder.registerTypeAdapter(Image.class, new BufferedImageGsonSerializer());
+            gsonBuilder.registerTypeAdapter(BufferedImage.class, new BufferedImageGsonSerializer());
             Gson gson = gsonBuilder.create();
-            if(result.getString(0) != null) {
-                finalMaze = gson.fromJson(result.getString(0), Maze.class);
+            if(result.next()) {
+                if(result.getString(1) != null) {
+                    finalMaze = gson.fromJson(result.getString(1), Maze.class);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            Debug.Log("Failed to load json data from database");
             return null;
         }
 

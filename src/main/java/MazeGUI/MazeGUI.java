@@ -1,9 +1,7 @@
 package MazeGUI;
 
 
-import DB.MazeDB;
 import Program.Maze;
-import com.google.gson.Gson;
 import Program.*;
 
 import javax.imageio.ImageIO;
@@ -19,8 +17,6 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MazeGUI extends JFrame implements Runnable {
     public static final int WIDTH = 1440;
@@ -407,6 +403,7 @@ public class MazeGUI extends JFrame implements Runnable {
                     MazeAlgorithms.GenerateMaze(maze.getMazeStructure());
                 }
                 mazePanel.OpenMazeStructure(maze.getMazeStructure());
+                /*
                 String date = maze.GetDateTime();
                 Map<String, String> jsonData = new HashMap<>();
                 jsonData.put("title",title);
@@ -430,6 +427,7 @@ public class MazeGUI extends JFrame implements Runnable {
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
+                 */
 
                 NewMazeFrame.dispose();
             }
@@ -478,10 +476,12 @@ public class MazeGUI extends JFrame implements Runnable {
         @Override
         public void actionPerformed(ActionEvent e) {
             maze.SaveMaze();
-            JOptionPane.showMessageDialog(null, "IM A SAVING MA MAZE");
+            JOptionPane.showMessageDialog(null, "Maze saved to database");
         }
 
     };
+
+    final private MazeGUI mazeGUI = this;
 
     ActionListener createNewMazeListener = new ActionListener() {
         @Override
@@ -492,7 +492,7 @@ public class MazeGUI extends JFrame implements Runnable {
 
     ActionListener openMazeListener = new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) { new OpenMazeDialog(); }
+        public void actionPerformed(ActionEvent e) { new OpenMazeDialog(mazeGUI); }
     };
 
     ActionListener exportMazeListener = new ActionListener() {
@@ -539,11 +539,16 @@ public class MazeGUI extends JFrame implements Runnable {
         deadEndsTextField.setText(i + "");
     }
 
+    public void OpenMaze(Maze m) {
+        maze = m;
+        mazePanel.OpenMazeStructure(m.getMazeStructure());
+    }
+
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
         // Uncomment this to clear your database and insert fake data
-        MazeDB dbm = new MazeDB();
-        dbm.LoadTestDataIntoDatabase(true);
-        dbm.disconnect();
+        //MazeDB dbm = new MazeDB();
+        //dbm.LoadTestDataIntoDatabase(true);
+        //dbm.disconnect();
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

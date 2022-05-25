@@ -3,16 +3,10 @@ package MazeGUI;
 import Program.*;
 import Utils.Debug;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.tools.Tool;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Stack;
 
 public class MazeEditor extends JPanel {
@@ -31,7 +25,6 @@ public class MazeEditor extends JPanel {
         this.setLayout((outerAreaLayout = new SpringLayout()));
 
         mazeCanvas = new JPanel();
-        mazeCanvas.setBackground(Color.green);
         mazeCanvas.setMinimumSize(GetPanelDimension());
         this.add(mazeCanvas);
         outerAreaLayout.putConstraint(SpringLayout.VERTICAL_CENTER, mazeCanvas, 0, SpringLayout.VERTICAL_CENTER, this);
@@ -132,6 +125,10 @@ public class MazeEditor extends JPanel {
             LogoCell logoCell = (LogoCell) cell;
             buttonGrid[x][y].setIcon(new ImageIcon(logoCell.GetCellImage().getScaledInstance(GetButtonDimension().width,
                     GetButtonDimension().height, Image.SCALE_SMOOTH)));
+        } else if (cell instanceof ImageCell) {
+            ImageCell imageCell = (ImageCell) cell;
+            buttonGrid[x][y].setIcon(new ImageIcon(imageCell.GetCellImage().getScaledInstance(GetButtonDimension().width,
+                    GetButtonDimension().height, Image.SCALE_SMOOTH)));
         }
 
         if(cell instanceof BorderedCell) {
@@ -147,8 +144,8 @@ public class MazeEditor extends JPanel {
 
     private void UpdateDeadEnds() {
         int deadEndCount = 0;
-        for(int y = 0; y < mazeStruct.getWidth(); y++) {
-            for(int x = 0; x < mazeStruct.getHeight(); x++) {
+        for(int y = 0; y < mazeStruct.getHeight(); y++) {
+            for(int x = 0; x < mazeStruct.getWidth(); x++) {
                 I_Cell cell = mazeStruct.GetCell(x, y);
                 if(cell instanceof BorderedCell) {
                     if(((BorderedCell)cell).GetBorderCount() == 3) {

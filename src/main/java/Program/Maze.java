@@ -5,6 +5,8 @@ import Utils.Debug;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -89,6 +91,10 @@ public class Maze {
 
     public MazeStructure getMazeStructure() { return m; }
 
+    /**
+     * Saves the maze to database
+     * @return true if save was successful, false otherwise
+     */
     public boolean SaveMaze() {
         MazeDB mazeDB;
         try {
@@ -113,6 +119,39 @@ public class Maze {
 
         mazeDB.disconnect();
         return true;
+    }
+
+    /**
+     * Loads the maze from the database
+     *
+     * @param id id to find maze by
+     * @return the new maze object
+     */
+    public static Maze LoadMazeFromID(int id) {
+        MazeDB mazeDB;
+        Maze finalMaze = null;
+        try {
+            mazeDB = new MazeDB();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Debug.LogLn("Failed to open a database connection when loading maze");
+            return null;
+        }
+
+        ResultSet result;
+        try {
+            result = mazeDB.Query("SELECT json_data FROM saved_mazes WHERE id = " + id);
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson gson = gsonBuilder.create();
+            if(result.getString(0) != null) {
+                finalMaze = gson.fromJson(result.getString(0), Maze.class);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return finalMaze;
     }
 
     //Retrieving the date and time of maze creation

@@ -138,6 +138,8 @@ public class OpenMazeDialog {
             table.SetColumnWidth(0, 25);
             table.SetColumnWidth(1, 300);
             table.setNewData(data);
+            table.setAutoCreateRowSorter(true);
+            table.getTableHeader().setReorderingAllowed(false);
         } catch (Exception e) {
             e.printStackTrace();
             Debug.LogLn("Cannot connect to database: " + e.getMessage());

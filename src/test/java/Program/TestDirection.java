@@ -90,4 +90,28 @@ public class TestDirection {
     void test3ToDirection() {
         assertEquals(Direction.WEST, Direction.IntToDirection(3));
     }
+
+    @Test
+    @DisplayName("Get offset based on north")
+    void testGetOffsetNorth(){
+        assertArrayEquals(new int[] {0, -1}, north.GetOffset());
+    }
+
+    @Test
+    @DisplayName("Get offset based on south")
+    void testGetOffsetSouth(){
+        assertArrayEquals(new int[] {0, 1}, south.GetOffset());
+    }
+
+    @Test
+    @DisplayName("Get offset based on east")
+    void testGetOffsetEast(){
+        assertArrayEquals(new int[] {1, 0}, east.GetOffset());
+    }
+
+    @Test
+    @DisplayName("Get offset based on west")
+    void testGetOffsetWest(){
+        assertArrayEquals(new int[] {-1, 0}, west.GetOffset());
+    }
 }

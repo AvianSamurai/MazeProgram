@@ -3,6 +3,7 @@ package Program;
 import java.awt.image.BufferedImage;
 
 public interface I_Cell {
+
     /**
      * Returns if this cell is a traversable part of the maze.
      * For Example, a logo cell would not be a traversable part of the maze and would return false.

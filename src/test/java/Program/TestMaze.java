@@ -11,8 +11,8 @@ public class TestMaze {
 
     @BeforeEach
     void setup() {
-        maze1 = new Maze("Cool maze", "Robbert", 1, 1, "logo.png");
-        maze2 = new Maze(1);
+        maze1 = new Maze("Cool maze", "Robbert", "64", "logo.png");
+        maze2 = new Maze("Wow maze", "Jack");
     }
 
     @Test
@@ -22,7 +22,7 @@ public class TestMaze {
 
     @Test
     void testGetAuthorFromMaze2() {
-        assertEquals(null, maze2.GetAuthor());
+        assertEquals("Jack", maze2.GetAuthor());
     }
 
     @Test
@@ -32,7 +32,7 @@ public class TestMaze {
 
     @Test
     void testGetTitleFromMaze2() {
-        assertEquals(null, maze2.GetTitle());
+        assertEquals("Wow maze", maze2.GetTitle());
     }
 
     @Test

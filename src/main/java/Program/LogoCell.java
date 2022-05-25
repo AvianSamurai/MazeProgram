@@ -12,11 +12,15 @@ public class LogoCell extends BorderedCell implements I_Cell {
 
     private Image cellImage;
 
-
     private LogoCell(Image cellImage) {
         this.cellImage = cellImage;
     }
 
+    /**
+     * Gets the image contained in the logo cell
+     *
+     * @return the contained buffered image
+     */
     public BufferedImage GetCellImage() {
         return (BufferedImage) cellImage;
     }

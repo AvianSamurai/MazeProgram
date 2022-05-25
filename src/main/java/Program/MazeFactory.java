@@ -26,4 +26,16 @@ public class MazeFactory {
         m.SetCell(m.GetBasicCell(width - 1 ,height - 1).ConvertToImageCell(), width - 1, height - 1);
         return m;
     }
+
+    /**
+     * Creates a new empty maze
+     *
+     * @param width width of maze in cells
+     * @param height height of maze in cells
+     * @return the empty maze structure object
+     */
+    public static MazeStructure CreateEmptyMaze(int width, int height) {
+        MazeStructure m = new MazeStructure(width, height);
+        return m;
+    }
 }

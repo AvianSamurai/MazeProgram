@@ -22,11 +22,12 @@ public class MazeDB {
 
     // Useful SQL queries
     private static final String CREATE_DB_STRUCTURE_COMMAND = "CREATE TABLE " + SAVED_MAZES_TABLE_NAME + " (" +
-            "id int(32) UNSIGNED UNIQUE NOT NULL, " +
+            "id int(32) UNSIGNED UNIQUE NOT NULL AUTO_INCREMENT, " +
             "name varchar(128) NOT NULL, " +
             "author_name varchar(128) NOT NULL, " +
+            "json_data LONGTEXT NULL, " +
             "creation_date DATETIME NOT NULL, " +
-            "last_modified DATETIME NOT NULL," +
+            "last_modified DATETIME," +
             "PRIMARY KEY (id))";
     private static final String TEST_DB_STRUCTURE = "SHOW TABLES LIKE '" + SAVED_MAZES_TABLE_NAME + "'";
 
@@ -67,7 +68,7 @@ public class MazeDB {
     /**
      * Disconnects from the database, ensure this is called when you have finished with MazeDB
      */
-    public void disconnect(){
+    public void disconnect() {
         try {
             statement.close();
             connection.close();
@@ -75,6 +76,25 @@ public class MazeDB {
         } catch (SQLException e) {
             Debug.LogLn("Database access error occurred, Database assumed to be disconnected");
         }
+    }
+
+    /**
+     * Gets the next unused id for saving a new maze to
+     *
+     * @return the next available id or -1 if there was a problem
+     */
+    public int GetNextAvailableID() {
+        try {
+            ResultSet res = Query("SELECT MAX(id) FROM " + SAVED_MAZES_TABLE_NAME);
+            if (res.next()) {
+                return res.getInt(1) + 1;
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     /**
@@ -86,7 +106,7 @@ public class MazeDB {
      * @return A ResultSet containing the results
      * @throws SQLException Thrown if the query is malformed
      */
-    public ResultSet Query(String query) throws SQLException{
+    public ResultSet Query(String query) throws SQLException {
         //return result from query
         return statement.executeQuery(query);
     }
@@ -98,27 +118,27 @@ public class MazeDB {
      * @return the number of deleted objects or edite columns/rows
      * @throws SQLException Thrown if the query is malformed
      */
-    public int CreateUpdateDelete(String query) throws SQLException{
+    public int CreateUpdateDelete(String query) throws SQLException {
         //Returns the number of deleted objects or edite columns/rows
         return statement.executeUpdate(query);
     }
 
     /**
      * Constructs a MazeDB object and runs the setup routine for the database<br/>
-     *<br/>
+     * <br/>
      * The setup routine does the following:<br/>
-     *  1) Get the properties from the properties file<br/>
-     *  2) Connect to the database with that info<br/>
-     *  3) Test if the database has had its structure setup<br/>
-     *  4) Setup the database's structure<br/>
-     *<br/>
+     * 1) Get the properties from the properties file<br/>
+     * 2) Connect to the database with that info<br/>
+     * 3) Test if the database has had its structure setup<br/>
+     * 4) Setup the database's structure<br/>
+     * <br/>
      * Setup failed if any exception is thrown<br/>
      *
-     * @throws IOException Thrown if the db.props file cannot be found
+     * @throws IOException            Thrown if the db.props file cannot be found
      * @throws ClassNotFoundException Thrown if the JDBC driver could not be found, if this is thrown
-     * then connection is impossible
-     * @throws SQLException Thrown if there is a database access error or if the connection to the
-     * database was disconnected during setup
+     *                                then connection is impossible
+     * @throws SQLException           Thrown if there is a database access error or if the connection to the
+     *                                database was disconnected during setup
      */
     public MazeDB() throws IOException, ClassNotFoundException, SQLException {
         // Get the database's properties
@@ -131,17 +151,17 @@ public class MazeDB {
         pwd = dbProps.getProperty("jdbc.password");
 
         // Connect to the database
-        if(connection == null) {
+        if (connection == null) {
             connection();
             statement = connection.createStatement();
         }
 
         // Test the database structure
-        if(!Query(TEST_DB_STRUCTURE).next()) {
+        if (!Query(TEST_DB_STRUCTURE).next()) {
             // unfortunately sql create table queries return 0 whether it was successful or not,
             // so we have to then test the structure again
             CreateUpdateDelete(CREATE_DB_STRUCTURE_COMMAND);
-            if(!Query(TEST_DB_STRUCTURE).next()) {
+            if (!Query(TEST_DB_STRUCTURE).next()) {
                 Debug.LogLn("Table '" + SAVED_MAZES_TABLE_NAME + "' doesn't exist and creation failed");
             } else {
                 Debug.LogLn("Created table '" + SAVED_MAZES_TABLE_NAME + "'");
@@ -155,10 +175,10 @@ public class MazeDB {
      * Returns a 2D array of rows of strings where the search string matches either the ID, Name, or Author<br/>
      * rows are formatted as following<br/>
      * | id | name | author | creation_date | last_modified |<br/>
-     *<br/>
+     * <br/>
      * The search string will be trimmed of any white space or zero space characters and the search will not be
      * case-sensitive<br/>
-     *<br/>
+     * <br/>
      * this does not contain the maze data, to get the maze data you should use the id as names do not have to
      * be unique<br/>
      *
@@ -171,8 +191,8 @@ public class MazeDB {
         try {
             r = this.Query("SELECT id, name, author_name, creation_date, last_modified FROM saved_mazes");
             ArrayList<String[]> data = new ArrayList<String[]>();
-            while(r.next()) {
-                if(r.getString(1).equals(searchStr) ||
+            while (r.next()) {
+                if (r.getString(1).equals(searchStr) ||
                         r.getString(2).toLowerCase().contains(searchStr) ||
                         r.getString(3).toLowerCase().contains(searchStr)) {
                     data.add(new String[]{r.getString(1), r.getString(2),
@@ -198,7 +218,7 @@ public class MazeDB {
     public void LoadTestDataIntoDatabase(boolean resetFirst) throws FileNotFoundException {
         MazeDB database = this;
 
-        if(resetFirst) {
+        if (resetFirst) {
             ClearDatabase();
             try {
                 CreateUpdateDelete(CREATE_DB_STRUCTURE_COMMAND);
@@ -210,7 +230,7 @@ public class MazeDB {
         }
 
         Scanner testDataReader = new Scanner(new File("src/main/resources/DB/TestData.csv"));
-        while(testDataReader.hasNext()) {
+        while (testDataReader.hasNext()) {
             String[] currentLine = testDataReader.nextLine().split(",");
             try {
                 Query("INSERT INTO saved_mazes (id, name, author_name, creation_date, last_modified)" +

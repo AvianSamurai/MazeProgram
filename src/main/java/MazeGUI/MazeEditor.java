@@ -3,19 +3,10 @@ package MazeGUI;
 import Program.*;
 import Utils.Debug;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.tools.Tool;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Stack;
 
 public class MazeEditor extends JPanel {
@@ -28,23 +19,39 @@ public class MazeEditor extends JPanel {
     private final int BORDER_THICKNESS = 2;
     private LogoCell[][] logoCells = null;
     private Stack<int[]> cellsToUpdate = new Stack<>();
+    private MazeGUI mazeGUI;
 
     public MazeEditor() {
         this.setLayout((outerAreaLayout = new SpringLayout()));
 
         mazeCanvas = new JPanel();
-        mazeCanvas.setBackground(Color.green);
         mazeCanvas.setMinimumSize(GetPanelDimension());
         this.add(mazeCanvas);
         outerAreaLayout.putConstraint(SpringLayout.VERTICAL_CENTER, mazeCanvas, 0, SpringLayout.VERTICAL_CENTER, this);
         outerAreaLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, mazeCanvas, 0, SpringLayout.HORIZONTAL_CENTER, this);
-
     }
 
     public void OpenMazeStructure(MazeStructure m) {
         mazeStruct = m;
+        mazeCanvas.removeAll();
         CreateButtonGrid();
         UpdateButtonGrid();
+    }
+
+    public void AddRefrenceToMazeGUI(MazeGUI mazeGUI) {
+        this.mazeGUI = mazeGUI;
+        mazeGUI.getRootPane().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                if(mazeStruct != null) {
+                    mazeCanvas.setMinimumSize(GetPanelDimension());
+                    mazeCanvas.removeAll();
+                    CreateButtonGrid();
+                    UpdateButtonGrid();
+                }
+            }
+        });
     }
 
     public MazeStructure GetMazeStructure() {
@@ -52,6 +59,15 @@ public class MazeEditor extends JPanel {
     }
 
     public void UpdateButtonGrid() {
+        // Update dead ends in a different thread so we dont bog down the program
+        Thread DeadEndsThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UpdateDeadEnds();
+            }
+        });
+        DeadEndsThread.run();
+
         int xCount = mazeStruct.getWidth();
         int yCount = mazeStruct.getHeight();
 
@@ -61,6 +77,7 @@ public class MazeEditor extends JPanel {
             }
         }
         cellsToUpdate.clear();
+        repaint();
     }
 
     /**
@@ -77,6 +94,15 @@ public class MazeEditor extends JPanel {
      * Updates only the buttons that have been edited reciently, to add a button to the reciently edited list, call AddEditedButton(x, y)
      */
     public void UpdateEditedButtons() {
+        // Update dead ends in a different thread so we dont bog down the program
+        Thread DeadEndsThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UpdateDeadEnds();
+            }
+        });
+        DeadEndsThread.run();
+
         int[] pos = null;
         while(!cellsToUpdate.empty()) {
             pos = cellsToUpdate.pop();
@@ -84,6 +110,8 @@ public class MazeEditor extends JPanel {
                 UpdateButton(pos[0], pos[1]);
             }
         }
+
+        repaint();
     }
 
     private void UpdateButton(int x, int y) {
@@ -97,6 +125,10 @@ public class MazeEditor extends JPanel {
             LogoCell logoCell = (LogoCell) cell;
             buttonGrid[x][y].setIcon(new ImageIcon(logoCell.GetCellImage().getScaledInstance(GetButtonDimension().width,
                     GetButtonDimension().height, Image.SCALE_SMOOTH)));
+        } else if (cell instanceof ImageCell) {
+            ImageCell imageCell = (ImageCell) cell;
+            buttonGrid[x][y].setIcon(new ImageIcon(imageCell.GetCellImage().getScaledInstance(GetButtonDimension().width,
+                    GetButtonDimension().height, Image.SCALE_SMOOTH)));
         }
 
         if(cell instanceof BorderedCell) {
@@ -108,6 +140,21 @@ public class MazeEditor extends JPanel {
             int west = borders[3] ? BORDER_THICKNESS : 0;
             buttonGrid[x][y].setBorder(BorderFactory.createMatteBorder(north, west, south, east, Color.black));
         }
+    }
+
+    private void UpdateDeadEnds() {
+        int deadEndCount = 0;
+        for(int y = 0; y < mazeStruct.getHeight(); y++) {
+            for(int x = 0; x < mazeStruct.getWidth(); x++) {
+                I_Cell cell = mazeStruct.GetCell(x, y);
+                if(cell instanceof BorderedCell) {
+                    if(((BorderedCell)cell).GetBorderCount() == 3) {
+                        deadEndCount++;
+                    }
+                }
+            }
+        }
+        mazeGUI.UpdateDeadEndsLabel(deadEndCount);
     }
 
     private void CreateButtonGrid() {
@@ -262,6 +309,7 @@ public class MazeEditor extends JPanel {
                     }
                 }
             }
+            repaint();
         }
     }
 

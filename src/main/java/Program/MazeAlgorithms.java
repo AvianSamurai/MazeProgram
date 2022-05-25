@@ -11,10 +11,33 @@ public class MazeAlgorithms {
      */
     public static void GenerateMaze(MazeStructure m) {
         CarveRandomly(m, -1, -1);
-        int[] nextStartingPos;
-        while((nextStartingPos = GetNextCellToCarveFromAndConnectIt(m)) != null) {
+        int[] nextStartingPos = GetNextCellToCarveFromAndConnectIt(m);
+        while(nextStartingPos != null) {
             CarveRandomly(m, nextStartingPos[0], nextStartingPos[1]);
+            nextStartingPos = GetNextCellToCarveFromAndConnectIt(m);
+
+            // Search for any remaining un-carved cells
+            if(nextStartingPos == null) {
+                nextStartingPos = SearchForRemainingCells(m);
+            }
         }
+
+    }
+
+    private static int[] SearchForRemainingCells(MazeStructure m) {
+        for(int x = 0; x < m.getWidth(); x++) {
+            for(int y = 0; y < m.getHeight(); y++) {
+                if(m.GetBasicCell(x, y) != null && !m.GetBasicCell(x, y).hasAnyConnections()) {
+                    BasicCell[] cellNeighbors = m.GetBasicCellNeighbors(x, y);
+                    for(int i = 0; i < 4; i++) {
+                        if(cellNeighbors[i] != null) {
+                            return new int[] {x, y};
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private static int[] GetNextCellToCarveFromAndConnectIt(MazeStructure m) {
@@ -66,4 +89,6 @@ public class MazeAlgorithms {
             limit--;
         }
     }
+
+    
 }

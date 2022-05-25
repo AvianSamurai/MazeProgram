@@ -82,6 +82,14 @@ public abstract class BorderedCell {
         otherCell.SetBorder(dir.GetOppositeDirection(), true);
     }
 
+    public int GetBorderCount() {
+        int count = 0;
+        for(boolean b : borders) {
+            if(b) {count++;}
+        }
+        return count;
+    }
+
     /**
      * Checks if this cell has any open borders
      *

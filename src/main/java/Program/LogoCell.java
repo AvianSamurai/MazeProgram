@@ -138,7 +138,11 @@ public class LogoCell extends BorderedCell implements I_Cell {
 
     @Override
     public BufferedImage getCellImageRepresentation(int width, int height) {
-        BufferedImage logoCellImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage logoCellImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = (Graphics2D) logoCellImage.getGraphics();
+        g.setBackground(Color.white);
+        g.fillRect(0, 0, width, height);
+        g.drawImage(GetCellImage(), 0, 0, width, height, null);
         DrawBorders(logoCellImage);
         return logoCellImage;
     }

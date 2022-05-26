@@ -16,7 +16,7 @@ public class MazeEditor extends JPanel {
     private JPanel mazeCanvas;
     private SpringLayout outerAreaLayout;
     private ToolsEnum selectedTool = ToolsEnum.NONE;
-    private final int BORDER_THICKNESS = 2;
+    private final int BORDER_THICKNESS = 1;
     private LogoCell[][] logoCells = null;
     private Stack<int[]> cellsToUpdate = new Stack<>();
     private MazeGUI mazeGUI;

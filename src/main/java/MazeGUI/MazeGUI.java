@@ -468,7 +468,9 @@ public class MazeGUI extends JFrame implements Runnable {
     ActionListener testDialogListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+
             JOptionPane.showMessageDialog(null, e.getActionCommand());
+            maze.getMazeStructure().DebugDisplayMaze(16);
         }
     };
 

@@ -75,7 +75,7 @@ public class LogoCell extends BorderedCell implements I_Cell {
     public static int GetLogoCellWidthFromHeight(BufferedImage logoImage, int cellsTall) {
         int cellSize = (int) Math.ceil(logoImage.getHeight(null) / (double)cellsTall);
         int cellsWide = (int) Math.ceil(logoImage.getWidth(null) / (double)cellSize);
-        return cellsWide;
+        return cellsWide - 1;
     }
 
     /**
@@ -142,7 +142,7 @@ public class LogoCell extends BorderedCell implements I_Cell {
         Graphics2D g = (Graphics2D) logoCellImage.getGraphics();
         g.setBackground(Color.white);
         g.fillRect(0, 0, width, height);
-        g.drawImage(GetCellImage(), 0, 0, width, height, null);
+        g.drawImage(GetCellImage().getScaledInstance(width, height, Image.SCALE_SMOOTH), 0, 0, width, height, null);
         DrawBorders(logoCellImage);
         return logoCellImage;
     }

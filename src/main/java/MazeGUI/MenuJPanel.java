@@ -4,11 +4,10 @@ import Utils.Debug;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import static java.awt.GridBagConstraints.*;
 
@@ -36,6 +35,9 @@ public class MenuJPanel extends JPanel {
             BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray),
             BorderFactory.createEmptyBorder(2, 20, 2, 0));
 
+    private JButton[][] buttons;
+    private ArrayList<JButton[]> tempButtonList;
+
     GridBagConstraints gBC;
 
     /**
@@ -44,6 +46,9 @@ public class MenuJPanel extends JPanel {
      */
     public MenuJPanel() {
         super();
+
+        // Setup the arraylist
+        tempButtonList = new ArrayList<>();
 
         // Setup Layout
         GridBagLayout gridBag = new GridBagLayout();
@@ -88,6 +93,7 @@ public class MenuJPanel extends JPanel {
 
         // Create content buttons and add their action listener
         JButton[] contentButtons = CreateContent(menuItems, submenuListeners);
+        tempButtonList.add(contentButtons);
         titleButton.addActionListener(new ActionListener() {
             boolean toggle = true;
             @Override
@@ -108,7 +114,21 @@ public class MenuJPanel extends JPanel {
         JPanel spacingJPanel = new JPanel();
         gBC.weighty = 1;
         gBC.gridy++;
+        buttons = tempButtonList.toArray(JButton[][]::new);
         this.add(spacingJPanel, gBC);
+    }
+
+    /**
+     * Sets all buttons in the specified submenu to be enabled or disabled
+     *
+     * @param menuID submenu id
+     * @param enabled whether they should be enabled or disabled (true for enabled)
+     */
+    public void SetSubmenuIsEnabled(int menuID, boolean enabled) {
+        if(buttons.length <= menuID) { return; }
+        for(JButton b : buttons[menuID]) {
+            b.setEnabled(enabled);
+        }
     }
 
     private JButton[] CreateContent(String[] menuItemNames, ActionListener[] submenuListeners) {

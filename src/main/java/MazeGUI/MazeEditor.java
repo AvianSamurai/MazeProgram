@@ -36,6 +36,7 @@ public class MazeEditor extends JPanel {
         mazeCanvas.removeAll();
         CreateButtonGrid();
         UpdateButtonGrid();
+        mazeGUI.GetMenuPanel().SetSubmenuIsEnabled(1, true);
     }
 
     public void AddRefrenceToMazeGUI(MazeGUI mazeGUI) {

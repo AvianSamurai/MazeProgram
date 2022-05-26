@@ -23,8 +23,9 @@ public class MazeGUI extends JFrame implements Runnable {
     public static final int HEIGHT = 1024;
     private final JPanel mainPanel = new JPanel();
     private static final int DIVIDER_SIZE = 10;
-    private static Maze maze;
+    private static Maze maze = null;
     private static final MazeEditor mazePanel = new MazeEditor();
+    private static final MenuJPanel menuPanel = new MenuJPanel();
     GridBagConstraints c = new GridBagConstraints();
 
     private JTextField deadEndsTextField;
@@ -46,7 +47,6 @@ public class MazeGUI extends JFrame implements Runnable {
         mainPanel.setLayout(new BorderLayout());
         getContentPane().add(mainPanel);
 
-        MenuJPanel menuPanel = new MenuJPanel();
         menuPanel.CreateMenu("File",
                 new String[]{"New", "Open", "Save", "Export Image"},
                 new ActionListener[] {createNewMazeListener, openMazeListener, saveMazeListener, exportMazeListener});
@@ -54,6 +54,7 @@ public class MazeGUI extends JFrame implements Runnable {
                 new String[]{"Set Start/End", "Add (logo, image)", "Carve", "Block"},
                 new ActionListener[] {testDialogListener, importLogoListener, carveToolListener, blockToolListener});
         menuPanel.FinalisePanel();
+        menuPanel.SetSubmenuIsEnabled(1, false);
 
         JPanel propertyPanel = new JPanel();
         //propertyPanel.add(new JLabel("PROPERTY"));
@@ -477,6 +478,7 @@ public class MazeGUI extends JFrame implements Runnable {
     ActionListener saveMazeListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            if(maze == null) { JOptionPane.showMessageDialog(null, "No maze is open"); }
             maze.SaveMaze();
             JOptionPane.showMessageDialog(null, "Maze saved to database");
         }
@@ -544,6 +546,10 @@ public class MazeGUI extends JFrame implements Runnable {
     public void OpenMaze(Maze m) {
         maze = m;
         mazePanel.OpenMazeStructure(m.getMazeStructure());
+    }
+
+    public MenuJPanel GetMenuPanel() {
+        return menuPanel;
     }
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {

@@ -70,7 +70,7 @@ public class MazeAlgorithms {
 
         // Get all the valid directions around the starting point
         Direction[] carveDir = mazeStruct.GetDirectionsToValidCells(currentX, currentY, false);
-        int limit = 100; // This is here to avoid infinite loops
+        int limit = 1000; // This is here to avoid infinite loops
 
         while(carveDir.length > 0 && limit > 0) { // While the current cell has at least 1 direction we can carve in
             // Choose a random direction to carve in from the list of valid directions

@@ -33,7 +33,7 @@ public class MenuJPanel extends JPanel {
             BorderFactory.createEmptyBorder(0, 10, 0, 0));
     private static final Border SUBMENU_BUTTON_BORDER = BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray),
-            BorderFactory.createEmptyBorder(2, 20, 2, 0));
+            BorderFactory.createEmptyBorder(5, 20, 5, 0));
 
     private JButton[][] buttons;
     private ArrayList<JButton[]> tempButtonList;

@@ -23,6 +23,7 @@ public class Maze {
     public String logo;
     private String type;
     private MazeStructure m;
+    private int[] startPos, endPos;
 
 
     /**
@@ -56,6 +57,10 @@ public class Maze {
      */
     public Maze (String title, String author, String cellSize, String type, int width, int height) {
         this(title, author, "auto", type);
+
+        startPos = new int[]{0, 0};
+        endPos = new int[]{width - 1, height - 1};
+
         switch (type.toLowerCase()) {
             default:
             case "standard":
@@ -108,6 +113,35 @@ public class Maze {
      * @return maze size
      */
     public String getCellSize(){return this.cellSize;}
+
+    /**
+     * Returns a 2D x,y int representing the starting position of the maze
+     *
+     * @return the start position of the maze
+     */
+    public int[] GetStartPos() { return this.startPos; }
+
+    /**
+     * Returns a 2D x,y int representing the ending position of the maze
+     *
+     * @return the end position of the maze
+     */
+    public int[] GetEndPos() { return this.endPos; }
+
+    /**
+     * Sets the starting point of the maze to a 2D x,y coordinate
+     *
+     * @param startPos new start position
+     */
+    public void SetStartPos(int[] startPos) { this.startPos = startPos; }
+
+
+    /**
+     * Sets the ending point of the maze to a 2D x,y coordinate
+     *
+     * @param endPos new end position
+     */
+    public void SetEndPos(int[] endPos) { this.endPos = endPos; }
 
     /**
      * Gets the original maze type <br/>

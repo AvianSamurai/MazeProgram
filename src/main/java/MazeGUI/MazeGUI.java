@@ -48,11 +48,11 @@ public class MazeGUI extends JFrame implements Runnable {
         getContentPane().add(mainPanel);
 
         menuPanel.CreateMenu("File",
-                new String[]{"New", "Open", "Save", "Export Image"},
+                new String[]{         "New",                "Open",            "Save",           "Export Image"},
                 new ActionListener[] {createNewMazeListener, openMazeListener, saveMazeListener, exportMazeListener});
         menuPanel.CreateMenu("Edit",
-                new String[]{"Set Start/End", "Add (logo, image)", "Carve", "Block"},
-                new ActionListener[] {testDialogListener, importLogoListener, carveToolListener, blockToolListener});
+                new String[]{         "Set Start/End",  "Set Image Cell",     "Toggle Cell Image",     "Add (logo, image)", "Carve",           "Block"},
+                new ActionListener[] {startEndListener, setCellImageListener, toggleCellImageListener, importLogoListener,  carveToolListener, blockToolListener});
         menuPanel.FinalisePanel();
         menuPanel.SetSubmenuIsEnabled(1, false);
 
@@ -254,8 +254,10 @@ public class MazeGUI extends JFrame implements Runnable {
         saveAndExport.setLayout(new GridLayout(2, 1, 15, 30));
 
         JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(saveMazeListener);
         resetButton.setPreferredSize(new Dimension(100, 25));
         JButton exportButton = new JButton("Export");
+        //TODO add export listener
         stepButton.setPreferredSize(new Dimension(100, 25));
 
         saveAndExport.add(saveButton);
@@ -403,7 +405,7 @@ public class MazeGUI extends JFrame implements Runnable {
                 if (createStatus == JOptionPane.YES_OPTION){
                     MazeAlgorithms.GenerateMaze(maze.getMazeStructure());
                 }
-                mazePanel.OpenMazeStructure(maze.getMazeStructure());
+                mazePanel.OpenMazeStructure(maze);
                 /*
                 String date = maze.GetDateTime();
                 Map<String, String> jsonData = new HashMap<>();
@@ -521,6 +523,21 @@ public class MazeGUI extends JFrame implements Runnable {
         }
     };
 
+    ActionListener setCellImageListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {mazePanel.SelectTool(ToolsEnum.SET_CELL_IMAGE);}
+    };
+
+    ActionListener toggleCellImageListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {mazePanel.SelectTool(ToolsEnum.TOGGLE_CELL_IMAGE);}
+    };
+
+    ActionListener startEndListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {mazePanel.SelectTool(ToolsEnum.SET_START_END);}
+    };
+
     ActionListener carveToolListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -545,7 +562,7 @@ public class MazeGUI extends JFrame implements Runnable {
 
     public void OpenMaze(Maze m) {
         maze = m;
-        mazePanel.OpenMazeStructure(m.getMazeStructure());
+        mazePanel.OpenMazeStructure(m);
     }
 
     public MenuJPanel GetMenuPanel() {

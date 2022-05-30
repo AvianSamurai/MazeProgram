@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class ImageCell extends BasicCell {
+    public static final int ARROW_IMAGE_SIZE = 256;
     private Image cellImage;
 
     /**
@@ -17,6 +18,7 @@ public class ImageCell extends BasicCell {
     public ImageCell() throws IOException {
         super();
         cellImage = ImageIO.read(this.getClass().getResource("PlaceHolder.png"));
+
     }
 
     /**
@@ -44,7 +46,55 @@ public class ImageCell extends BasicCell {
      * @param im the new image
      */
     public void SetCellImage(Image im) {
-        cellImage = im;
+        BufferedImage cellim = (BufferedImage) im;
+        int imwidth = cellim.getWidth();
+        int imheight = cellim.getHeight();
+
+        if(imheight < imwidth) {
+            cellImage = new BufferedImage(imwidth, imwidth, BufferedImage.TYPE_INT_ARGB);
+            ((Graphics2D)cellImage.getGraphics()).drawImage(cellim, 0, (imwidth - imheight)/2, imwidth, imheight, null);
+        } else {
+            cellImage = new BufferedImage(imheight, imheight, BufferedImage.TYPE_INT_ARGB);
+            ((Graphics2D)cellImage.getGraphics()).drawImage(cellim,  (imheight - imwidth)/2, 0, imwidth, imheight, null);
+        }
+    }
+
+    public void SetCellArrow(Direction dir, boolean isStart) {
+        SetBorder(dir, false);
+
+        BufferedImage arrowImage;
+        try {
+            arrowImage = ImageIO.read(this.getClass().getResource("ArrowImage.png"));
+        } catch (IOException e) { // This should never happen
+            e.printStackTrace();
+            return;
+        }
+
+        BufferedImage resizedArrow = new BufferedImage(ARROW_IMAGE_SIZE, ARROW_IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
+        ((Graphics2D)resizedArrow.getGraphics()).drawImage(arrowImage, 0, isStart ? 0 : ARROW_IMAGE_SIZE - arrowImage.getHeight(), null);
+
+        cellImage = new BufferedImage(ARROW_IMAGE_SIZE, ARROW_IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = (Graphics2D) cellImage.getGraphics();
+
+        switch (isStart ? dir.GetOppositeDirection() : dir) {
+
+            case WEST:
+                g.rotate(Math.PI / 2, ARROW_IMAGE_SIZE / 2, ARROW_IMAGE_SIZE / 2);
+                break;
+
+            case NORTH:
+                g.rotate(Math.PI, ARROW_IMAGE_SIZE/2, ARROW_IMAGE_SIZE/2);
+                break;
+
+            case SOUTH:
+                g.rotate(0, ARROW_IMAGE_SIZE/2, ARROW_IMAGE_SIZE/2);
+                break;
+
+            case EAST:
+                g.rotate(3 * Math.PI / 2, ARROW_IMAGE_SIZE/2, ARROW_IMAGE_SIZE/2);
+                break;
+        }
+        g.drawRenderedImage(resizedArrow, null);
     }
 
     @Override

@@ -49,10 +49,10 @@ public class MazeGUI extends JFrame implements Runnable {
 
         menuPanel.CreateMenu("File",
                 new String[]{         "New",                "Open",            "Save",           "Export Image"},
-                new ActionListener[] {createNewMazeListener, openMazeListener, saveMazeListener, exportMazeListener});
+                new ActionListener[] {createNewMazeListener, openMazeListener, saveMazeListener, exportMazeListener}, false);
         menuPanel.CreateMenu("Edit",
-                new String[]{         "Set Start/End",  "Set Image Cell",     "Toggle Cell Image",     "Add (logo, image)", "Carve",           "Block"},
-                new ActionListener[] {startEndListener, setCellImageListener, toggleCellImageListener, importLogoListener,  carveToolListener, blockToolListener});
+                new String[]{        "Set Start & End", "Set Image",          "Toggle Image",          "Add Logo",          "Carve",           "Block"},
+                new ActionListener[] {startEndListener,  setCellImageListener, toggleCellImageListener, importLogoListener,  carveToolListener, blockToolListener}, true);
         menuPanel.FinalisePanel();
         menuPanel.SetSubmenuIsEnabled(1, false);
 
@@ -525,7 +525,9 @@ public class MazeGUI extends JFrame implements Runnable {
 
     ActionListener setCellImageListener = new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) {mazePanel.SelectTool(ToolsEnum.SET_CELL_IMAGE);}
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.SET_CELL_IMAGE);
+        }
     };
 
     ActionListener toggleCellImageListener = new ActionListener() {

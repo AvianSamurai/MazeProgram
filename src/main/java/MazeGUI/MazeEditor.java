@@ -226,6 +226,9 @@ public class MazeEditor extends JPanel {
         Debug.LogLn("User selected " + tool.name() + " tool");
         selectedTool = tool;
         ResetTools();
+        if(tool == ToolsEnum.NONE) {
+            mazeGUI.GetMenuPanel().ClearHighlighting();
+        }
     }
 
     private void ResetTools() {

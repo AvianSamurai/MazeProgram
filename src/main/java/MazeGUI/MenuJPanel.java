@@ -13,6 +13,7 @@ import static java.awt.GridBagConstraints.*;
 
 public class MenuJPanel extends JPanel {
 
+    public static final Color HIGHLIGHT_COLOR = Color.decode("#bdfaa5");
     // Spacing
     private static final int LEFT_SPACING = 2;
     private static final int RIGHT_SPACING = 2;
@@ -68,7 +69,7 @@ public class MenuJPanel extends JPanel {
      * @param submenuListeners An array of action listeners for the submenu buttons, this must be the same size as
      *                         the menu items array
      */
-    public void CreateMenu(String title, String[] menuItems, ActionListener[] submenuListeners) {
+    public void CreateMenu(String title, String[] menuItems, ActionListener[] submenuListeners, boolean autoHighlight) {
         // Check that menuItems length matches submenuListeners length
         if(menuItems.length != submenuListeners.length) {
             Debug.LogLn("menuItems length does not match submenuListeners length, Menu '" + title + "' was not created");
@@ -92,7 +93,7 @@ public class MenuJPanel extends JPanel {
         gBC.gridy++;
 
         // Create content buttons and add their action listener
-        JButton[] contentButtons = CreateContent(menuItems, submenuListeners);
+        JButton[] contentButtons = CreateContent(menuItems, submenuListeners, autoHighlight);
         tempButtonList.add(contentButtons);
         titleButton.addActionListener(new ActionListener() {
             boolean toggle = true;
@@ -131,7 +132,15 @@ public class MenuJPanel extends JPanel {
         }
     }
 
-    private JButton[] CreateContent(String[] menuItemNames, ActionListener[] submenuListeners) {
+    public void ClearHighlighting() {
+        for(JButton[] menu : buttons) {
+            for(JButton b : menu) {
+                b.setBackground(SUBMENU_COLOR);
+            }
+        }
+    }
+
+    private JButton[] CreateContent(String[] menuItemNames, ActionListener[] submenuListeners, boolean autoHighlight) {
         // Create the returnable list and set up the grid-box constraints required
         JButton[] buttonList = new JButton[menuItemNames.length];
         gBC.gridheight = 1;
@@ -151,6 +160,9 @@ public class MenuJPanel extends JPanel {
             if(submenuListeners[i] != null) {
                 btn.addActionListener(submenuListeners[i]);
             }
+            if(autoHighlight) {
+                btn.addActionListener(highlightListener);
+            }
 
             // Add the button to the list and menu
             buttonList[i] = btn;
@@ -165,4 +177,12 @@ public class MenuJPanel extends JPanel {
         gBC.insets = new Insets(0, LEFT_SPACING, BETWEEN_ITEM_SPACING, RIGHT_SPACING);
         return buttonList;
     }
+
+    ActionListener highlightListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ClearHighlighting();
+            ((JButton)e.getSource()).setBackground(HIGHLIGHT_COLOR);
+        }
+    };
 }

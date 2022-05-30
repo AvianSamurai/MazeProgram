@@ -66,8 +66,8 @@ public class Maze {
                 m = MazeFactory.CreateThemedMaze(width, height);
                 break;
 
-            case "empty":
-                m = MazeFactory.CreateEmptyMaze(width, height);
+            case "logo":
+                m = MazeFactory.CreateLogoMaze(width, height);
                 break;
         }
     }

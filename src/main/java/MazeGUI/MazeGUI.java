@@ -298,7 +298,7 @@ public class MazeGUI extends JFrame implements Runnable {
         mazeTypeLabel = new JLabel("Maze Type: ");
         mazeTypeLabel.setBounds(50, 250, 100, 30);
 
-        String[] mazeTypeOptions = {"Standard", "Themed", "Empty"};
+        String[] mazeTypeOptions = {"Standard", "Themed", "Logo"};
         JComboBox<String> jComboBox = new JComboBox<>(mazeTypeOptions);
         jComboBox.setBounds(150, 250, 200, 30);
 

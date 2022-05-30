@@ -1,5 +1,16 @@
 package Program;
 
+import MazeGUI.AddLogoDialogue;
+import Utils.Debug;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 public class MazeFactory {
     /**
      * Creates a standard maze with no defined entry or exit
@@ -27,15 +38,37 @@ public class MazeFactory {
         return m;
     }
 
-    /**
-     * Creates a new empty maze
-     *
-     * @param width width of maze in cells
-     * @param height height of maze in cells
-     * @return the empty maze structure object
-     */
-    public static MazeStructure CreateEmptyMaze(int width, int height) {
+    public static MazeStructure CreateLogoMaze(int width, int height) {
         MazeStructure m = new MazeStructure(width, height);
+
+        JFileChooser fileChooser = new JFileChooser();
+        FileFilter imageFilter = new FileNameExtensionFilter(
+                "Image files", ImageIO.getReaderFileSuffixes());
+        fileChooser.setFileFilter(imageFilter);
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = fileChooser.showOpenDialog(null);
+        if (result != JFileChooser.APPROVE_OPTION) { return m; }
+
+        File selectedFile = fileChooser.getSelectedFile();
+        System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+        BufferedImage logo;
+        try {
+            logo = ImageIO.read(selectedFile);
+        } catch (IOException e) {
+            Debug.LogLn("Failed to open logo when creating new maze");
+            e.printStackTrace();
+            return m;
+        }
+
+        int maxWidth = width/3;
+        if(LogoCell.GetLogoCellHeightFromWidth(logo, maxWidth) > maxWidth) {
+            maxWidth = LogoCell.GetLogoCellWidthFromHeight(logo, maxWidth);
+        }
+        LogoCell[][] logocells = LogoCell.CreateLogoCellGroup(logo, maxWidth, false);
+        int newHeight = LogoCell.GetLogoCellHeightFromWidth(logo, maxWidth);
+
+        m.InsertCellGroup((width - maxWidth)/2, (height - newHeight)/2, logocells, true);
+
         return m;
     }
 }

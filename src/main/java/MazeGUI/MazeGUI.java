@@ -341,10 +341,6 @@ public class MazeGUI extends JFrame implements Runnable {
         mazeSizes = new JLabel("Maze Size: ");
         mazeSizes.setBounds(50, 100, 100, 30);
 
-        /*String[] mazeSizeOptions = {"100x100", "385x356", "1600x1600"};
-        JComboBox<String> jComboBoxMazeSize = new JComboBox<>(mazeSizeOptions);
-        jComboBoxMazeSize.setBounds(150, 100, 200, 30); */
-
         JLabel widthLabel = new JLabel("width:");
         widthLabel.setBounds(50, 140, 80, 30);
         JLabel heightLabel = new JLabel("height:");
@@ -366,22 +362,6 @@ public class MazeGUI extends JFrame implements Runnable {
         heightSpinner.setModel(heightModel);
         widthSpinner.setBounds(130, 140, 100, 30);
         heightSpinner.setBounds(130, 180, 100, 30);
-
-        /*// Button for choosing a logo
-        JFileChooser logoChooser = new JFileChooser();
-        logoChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = logoChooser.showOpenDialog(parent);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            // user selects a file
-        }
-        File selectedFile = logoChooser.getSelectedFile();
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-        }*/
 
         // Button to go to next set of options or cancel completely
         Object[] options = {"Yes", "No"};
@@ -406,35 +386,10 @@ public class MazeGUI extends JFrame implements Runnable {
                     MazeAlgorithms.GenerateMaze(maze.getMazeStructure());
                 }
                 mazePanel.OpenMazeStructure(maze);
-                /*
-                String date = maze.GetDateTime();
-                Map<String, String> jsonData = new HashMap<>();
-                jsonData.put("title",title);
-                jsonData.put("author", author);
-                jsonData.put("size", size);
-                jsonData.put("type", selectedType);
-                Gson gson = new Gson();
-                String output = gson.toJson(jsonData);
-                MazeDB ndm = null;
-                try {
-                    ndm = new MazeDB();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                } catch (ClassNotFoundException ex) {
-                    ex.printStackTrace();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-                try {
-                    ndm.CreateUpdateDelete("INSERT INTO saved_mazes (name, author_name, json_data, creation_date) VALUES ('"+ title +"','" + author +"','"+ output +"','"+ date +"');");
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-                 */
-
                 NewMazeFrame.dispose();
             }
         });
+
         JButton jButtonCancel2 = new JButton("Cancel");
         jButtonCancel2.setBounds(450, 350, 90, 20);
         jButtonCancel2.addActionListener(new ActionListener() {

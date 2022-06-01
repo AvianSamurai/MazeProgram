@@ -10,6 +10,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="16a4c485-e17a-471a-ae9f-bf7c644420b3" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/src/main/java/Program/InterfaceGsonSerializer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/DB/MazeDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/DB/MazeDB.java" afterDir="false" />
@@ -22,6 +23,9 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/Program/LogoCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Program/LogoCell.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Program/Maze.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Program/Maze.java" afterDir="false" />
     </list>
+=======
+    <list default="true" id="16a4c485-e17a-471a-ae9f-bf7c644420b3" name="Changes" comment="" />
+>>>>>>> origin/MazeClass
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -140,6 +144,7 @@
       </map>
     </option>
   </component>
+<<<<<<< HEAD
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -151,6 +156,8 @@
       </breakpoints>
     </breakpoint-manager>
   </component>
+=======
+>>>>>>> origin/MazeClass
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/MazeProgram$Main__1_.ic" NAME="Main (1) Coverage Results" MODIFIED="1650240832369" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>Program.*</FILTER>

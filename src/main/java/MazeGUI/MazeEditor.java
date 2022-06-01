@@ -27,6 +27,7 @@ public class MazeEditor extends JPanel {
     private LogoCell[][] logoCells = null;
     private Stack<int[]> cellsToUpdate = new Stack<>();
     private MazeGUI mazeGUI;
+    private boolean showSolution = true;
 
     public MazeEditor() {
         this.setLayout((outerAreaLayout = new SpringLayout()));
@@ -67,6 +68,10 @@ public class MazeEditor extends JPanel {
         return mazeStruct;
     }
 
+    public void SetShowSolution(boolean showSolution) {
+        this.showSolution = showSolution;
+    }
+
     public void UpdateButtonGrid() {
         // Update dead ends in a different thread so we dont bog down the program
         Thread DeadEndsThread = new Thread(new Runnable() {
@@ -86,6 +91,16 @@ public class MazeEditor extends JPanel {
             }
         }
         cellsToUpdate.clear();
+
+        if(showSolution) {
+            int[][] solutionPositions = MazeAlgorithms.GenerateSolution(mazeStruct, 0, 0, mazeStruct.getWidth() - 1, mazeStruct.getHeight() - 1);
+            if(solutionPositions != null) {
+                for (int[] solpos : solutionPositions) {
+                    buttonGrid[solpos[0]][solpos[1]].setBackground(Color.CYAN);
+                }
+            }
+        }
+
         repaint();
     }
 
@@ -117,6 +132,12 @@ public class MazeEditor extends JPanel {
             pos = cellsToUpdate.pop();
             if(pos[0] >= 0 && pos[0] < mazeStruct.getWidth() && pos[1] >= 0 && pos[1] < mazeStruct.getHeight()) {
                 UpdateButton(pos[0], pos[1]);
+            }
+        }
+
+        if(showSolution) {
+            for(int[] solpos : MazeAlgorithms.GenerateSolution(mazeStruct, 0, 0, mazeStruct.getWidth() - 1, mazeStruct.getHeight() - 1)) {
+                buttonGrid[solpos[0]][solpos[1]].setBackground(Color.CYAN);
             }
         }
 

@@ -2,6 +2,9 @@ package MazeGUI;
 
 
 import Program.Maze;
+import DB.MazeDB;
+import Program.Maze;
+import com.google.gson.Gson;
 import Program.*;
 
 import javax.imageio.ImageIO;
@@ -17,6 +20,8 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MazeGUI extends JFrame implements Runnable {
     public static final int WIDTH = 1440;
@@ -154,9 +159,13 @@ public class MazeGUI extends JFrame implements Runnable {
             // if selected print selected in console
             if (state == ItemEvent.SELECTED) {
                 showSolutionButton.setText("OFF");
+                mazePanel.SetShowSolution(false);
+                mazePanel.UpdateButtonGrid();
             } else {
                 // else print deselected in console
                 showSolutionButton.setText("ON");
+                mazePanel.SetShowSolution(true);
+                mazePanel.UpdateButtonGrid();
             }
         };
         showSolutionButton.addItemListener(itemListener);
@@ -465,15 +474,11 @@ public class MazeGUI extends JFrame implements Runnable {
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser fileChooser = new JFileChooser();
-            FileFilter imageFilter = new FileNameExtensionFilter(
-                    "Image files", ImageIO.getReaderFileSuffixes());
-            fileChooser.setFileFilter(imageFilter);
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
             int result = fileChooser.showOpenDialog(mainPanel);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-                AddLogoDialogue.OpenAddLogoDialogue(null, mazePanel, selectedFile.getAbsolutePath());
             }
         }
     };

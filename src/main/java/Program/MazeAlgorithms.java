@@ -1,6 +1,10 @@
 package Program;
 
+import MazeGUI.MazeEditor;
+
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Stack;
 
 public class MazeAlgorithms {
 
@@ -38,6 +42,80 @@ public class MazeAlgorithms {
             }
         }
         return null;
+    }
+    public static int[][] GenerateSolution(MazeStructure m, int startX, int startY, int endX, int endY) {
+        ArrayList<int[]> solutionPositions = new ArrayList<int[]>();
+
+        int[][] mazeWeights = MaxIntValueArray(m.getWidth(), m.getHeight());
+
+        Stack<int[]> stack = new Stack<int[]>();
+        stack.push(new int[] {startX, startY});
+        mazeWeights[startX][startY] = 0;
+
+        while(!stack.empty()) {
+            int[] pos = stack.pop();
+
+            BasicCell currentCell = m.GetBasicCell(pos[0], pos[1]);
+            if(currentCell == null) { break; }
+
+            Direction[] dirs = m.GetDirectionsToValidCells(pos[0], pos[1], true);
+            for(Direction dir : dirs) {
+
+                int[] offset = dir.GetOffset();
+                int newX = pos[0] + offset[0];
+                int newY = pos[1] + offset[1];
+
+                if (mazeWeights[newX][newY] == Integer.MAX_VALUE && !currentCell.GetBorders()[dir.GetIntValue()]) {
+
+                    BasicCell cell = m.GetBasicCell(newX, newY);
+
+                    if (cell != null) {
+                        mazeWeights[newX][newY] = mazeWeights[pos[0]][pos[1]] + 1;
+                        stack.push(new int[]{newX, newY});
+                    }
+                }
+            }
+        }
+        if(mazeWeights[endX][endY] == Integer.MAX_VALUE) {
+            return null;
+        }
+        int currentX = endX;
+        int currentY = endY;
+        int minWeight = mazeWeights[endX][endY];
+        while(true) {
+
+            Direction[] dirs = m.GetDirectionsToValidCells(currentX, currentY, true);
+            Direction dirToMove = null;
+            BasicCell currentCell = m.GetBasicCell(currentX, currentY);
+            for(Direction dir : dirs) {
+                if(currentCell != null && !currentCell.GetBorders()[dir.GetIntValue()]) {
+                    int[] offset = dir.GetOffset();
+                    if (mazeWeights[currentX + offset[0]][currentY + offset[1]] < minWeight) {
+                        minWeight = mazeWeights[currentX][currentY];
+                        dirToMove = dir;
+                    }
+                }
+            }
+            currentX += dirToMove.GetOffset()[0];
+            currentY += dirToMove.GetOffset()[1];
+            solutionPositions.add(new int[]{currentX, currentY});
+
+            if(currentX == startX && currentY == startY) {
+                break;
+            }
+        }
+
+        return solutionPositions.toArray(int[][]::new);
+    }
+
+    static int[][] MaxIntValueArray(int xsize, int ysize) {
+        int[][] finalArray = new int[xsize][ysize];
+        for(int x = 0; x < xsize; x++) {
+            for(int y = 0; y < ysize; y++) {
+                finalArray[x][y] = Integer.MAX_VALUE;
+            }
+        }
+        return finalArray;
     }
 
     private static int[] GetNextCellToCarveFromAndConnectIt(MazeStructure m) {

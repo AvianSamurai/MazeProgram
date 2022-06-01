@@ -25,7 +25,6 @@ public class Maze {
     private MazeStructure m;
     private int[] startPos, endPos;
 
-
     /**
      * Creates a new Maze object containing no maze
      *
@@ -265,9 +264,6 @@ public class Maze {
         LocalDateTime current = LocalDateTime.now();
         return this.theDateTime.format(current);
     }
-
-
-
 }
 
 

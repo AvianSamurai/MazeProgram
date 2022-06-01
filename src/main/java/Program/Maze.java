@@ -251,6 +251,11 @@ public class Maze {
             return null;
         }
 
+        if(finalMaze.startPos == null || finalMaze.endPos == null) {
+            finalMaze.startPos = new int[]{0, 0};
+            finalMaze.endPos = new int[]{finalMaze.getMazeStructure().getWidth() - 1, finalMaze.getMazeStructure().getHeight() - 1};
+        }
+
         return finalMaze;
     }
 

@@ -82,6 +82,9 @@ public class MazeAlgorithms {
         int currentX = endX;
         int currentY = endY;
         int minWeight = mazeWeights[endX][endY];
+
+        solutionPositions.add(new int[]{endX, endY});
+
         while(true) {
 
             Direction[] dirs = m.GetDirectionsToValidCells(currentX, currentY, true);

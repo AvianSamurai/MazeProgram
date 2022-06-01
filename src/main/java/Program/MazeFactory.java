@@ -38,6 +38,14 @@ public class MazeFactory {
         return m;
     }
 
+    /**
+     * Prompts the user to select an image and automatically places it in the center of a new maze object.
+     * The logo's largest dimension will be 1/3 of the size of the maze's relevant dimension
+     *
+     * @param width the width in cells of the maze
+     * @param height the height in cells of the maze
+     * @return the new maze object
+     */
     public static MazeStructure CreateLogoMaze(int width, int height) {
         MazeStructure m = new MazeStructure(width, height);
 

@@ -108,7 +108,7 @@ public class MazeEditor extends JPanel {
         }
 
         if(showSolution) {
-            for(int[] solpos : MazeAlgorithms.GenerateSolution(mazeStruct, 0,g 0, mazeStruct.getWidth() - 1, mazeStruct.getHeight() - 1)) {
+            for(int[] solpos : MazeAlgorithms.GenerateSolution(mazeStruct, 0, 0, mazeStruct.getWidth() - 1, mazeStruct.getHeight() - 1)) {
                 buttonGrid[solpos[0]][solpos[1]].setBackground(Color.CYAN);
             }
         }

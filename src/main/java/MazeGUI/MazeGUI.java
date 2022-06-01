@@ -338,25 +338,26 @@ public class MazeGUI extends JFrame implements Runnable {
         mazeSizes = new JLabel("Maze Size: ");
         mazeSizes.setBounds(50, 100, 100, 30);
 
-        String[] mazeSizeOptions = {"100x100", "385x356", "1600x1600"};
-        JComboBox<String> jComboBoxMazeSize = new JComboBox<>(mazeSizeOptions);
-        jComboBoxMazeSize.setBounds(150, 100, 200, 30);
-
-        /*// Button for choosing a logo
-        JFileChooser logoChooser = new JFileChooser();
-        logoChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = logoChooser.showOpenDialog(parent);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            // user selects a file
-        }
-        File selectedFile = logoChooser.getSelectedFile();
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-        }*/
+        JLabel widthLabel = new JLabel("width:");
+        widthLabel.setBounds(50, 140, 80, 30);
+        JLabel heightLabel = new JLabel("height:");
+        heightLabel.setBounds(50, 180, 80, 30);
+        JSpinner widthSpinner = new JSpinner();
+        JSpinner heightSpinner = new JSpinner();
+        SpinnerNumberModel widthModel = new SpinnerNumberModel();
+        widthModel.setMaximum(100);
+        widthModel.setMinimum(3);
+        widthModel.setStepSize(1);
+        widthModel.setValue(15);
+        widthSpinner.setModel(widthModel);
+        SpinnerNumberModel heightModel = new SpinnerNumberModel();
+        heightModel.setMaximum(100);
+        heightModel.setMinimum(3);
+        heightModel.setStepSize(1);
+        heightModel.setValue(15);
+        heightSpinner.setModel(heightModel);
+        widthSpinner.setBounds(130, 140, 100, 30);
+        heightSpinner.setBounds(130, 180, 100, 30);
 
         // Button to go to next set of options or cancel completely
         Object[] options = {"Yes", "No"};
@@ -373,10 +374,11 @@ public class MazeGUI extends JFrame implements Runnable {
                 if (createStatus == JOptionPane.YES_OPTION){
                     NewMazeFrame.dispose();
                 }
-                else
-                    NewMazeFrame.dispose();
+                mazePanel.OpenMazeStructure(maze.getMazeStructure());
+                NewMazeFrame.dispose();
             }
         });
+
         JButton jButtonCancel2 = new JButton("Cancel");
         jButtonCancel2.setBounds(450, 350, 90, 20);
         jButtonCancel2.addActionListener(new ActionListener() {
@@ -388,7 +390,6 @@ public class MazeGUI extends JFrame implements Runnable {
 
         // Add elements to the GUI
         NewMaze2.add(mazeSizes);
-        NewMaze2.add(jComboBoxMazeSize);
         NewMaze2.add(jButtonCreate2);
         NewMaze2.add(jButtonCancel2);
         NewMaze2.setLayout(null);

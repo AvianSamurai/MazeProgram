@@ -479,6 +479,7 @@ public class MazeGUI extends JFrame implements Runnable {
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                AddLogoDialogue.OpenAddLogoDialogue(null, mazePanel, selectedFile.getAbsolutePath());
             }
         }
     };

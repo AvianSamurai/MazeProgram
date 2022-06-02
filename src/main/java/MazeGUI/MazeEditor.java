@@ -26,6 +26,7 @@ public class MazeEditor extends JPanel {
     private final int BORDER_THICKNESS = 1;
     private LogoCell[][] logoCells = null;
     private Stack<int[]> cellsToUpdate = new Stack<>();
+    private int[][] solutionPositions = null;
     private MazeGUI mazeGUI;
     private boolean showSolution = true;
 
@@ -46,6 +47,25 @@ public class MazeEditor extends JPanel {
         CreateButtonGrid();
         UpdateButtonGrid();
         mazeGUI.GetMenuPanel().SetSubmenuIsEnabled(1, true);
+    }
+
+    private void UpdateSolution() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                solutionPositions = MazeAlgorithms.GenerateSolution(mazeStruct, maze.GetStartPos()[0], maze.GetStartPos()[1], maze.GetEndPos()[0], maze.GetEndPos()[1]);
+                if(showSolution) {
+                    if(solutionPositions != null) {
+                        for (int[] solpos : solutionPositions) {
+                            buttonGrid[solpos[0]][solpos[1]].setBackground(Color.CYAN);
+                        }
+                        repaint();
+                    }
+                }
+                mazeGUI.UpdateSolutionsLabel(solutionPositions == null ? 0 : solutionPositions.length);
+            }
+        });
+        thread.start();
     }
 
     public void AddRefrenceToMazeGUI(MazeGUI mazeGUI) {
@@ -92,14 +112,7 @@ public class MazeEditor extends JPanel {
         }
         cellsToUpdate.clear();
 
-        if(showSolution) {
-            int[][] solutionPositions = MazeAlgorithms.GenerateSolution(mazeStruct, maze.GetStartPos()[0], maze.GetStartPos()[1], maze.GetEndPos()[0], maze.GetEndPos()[1]);
-            if(solutionPositions != null) {
-                for (int[] solpos : solutionPositions) {
-                    buttonGrid[solpos[0]][solpos[1]].setBackground(Color.CYAN);
-                }
-            }
-        }
+        UpdateSolution();
 
         repaint();
     }
@@ -127,6 +140,12 @@ public class MazeEditor extends JPanel {
         });
         DeadEndsThread.run();
 
+        if(solutionPositions != null) {
+            for (int[] pos : solutionPositions) {
+                cellsToUpdate.add(pos);
+            }
+        }
+
         int[] pos = null;
         while(!cellsToUpdate.empty()) {
             pos = cellsToUpdate.pop();
@@ -135,11 +154,7 @@ public class MazeEditor extends JPanel {
             }
         }
 
-        if(showSolution) {
-            for(int[] solpos : MazeAlgorithms.GenerateSolution(mazeStruct, maze.GetStartPos()[0], maze.GetStartPos()[1], maze.GetEndPos()[0], maze.GetEndPos()[1])) {
-                buttonGrid[solpos[0]][solpos[1]].setBackground(Color.CYAN);
-            }
-        }
+        UpdateSolution();
 
         repaint();
     }

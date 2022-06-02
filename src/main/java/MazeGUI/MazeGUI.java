@@ -34,6 +34,8 @@ public class MazeGUI extends JFrame implements Runnable {
     GridBagConstraints c = new GridBagConstraints();
 
     private JTextField deadEndsTextField;
+    private JTextField currentlySolvableTextField;
+    private JTextField reachOptimalSolutionTextField;
 
     public MazeGUI(String title) throws HeadlessException {
         super(title);
@@ -171,11 +173,11 @@ public class MazeGUI extends JFrame implements Runnable {
         showSolutionButton.addItemListener(itemListener);
 
         JLabel currentlySolvableLabel = new JLabel("Currently solvable: ");
-        JTextField currentlySolvableTextField = new JTextField(0);
+        currentlySolvableTextField = new JTextField(0);
         currentlySolvableTextField.setEditable(false);
 
         JLabel reachOptimalSolutionLabel = new JLabel("Reached by an optimal solution: ");
-        JTextField reachOptimalSolutionTextField = new JTextField(0);
+        reachOptimalSolutionTextField = new JTextField(0);
         reachOptimalSolutionTextField.setEditable(false);
 
         JLabel deadEndsLabel = new JLabel("Dead ends: ");
@@ -521,6 +523,12 @@ public class MazeGUI extends JFrame implements Runnable {
      */
     public void UpdateDeadEndsLabel(int i) {
         deadEndsTextField.setText(i + "");
+    }
+
+    public void UpdateSolutionsLabel(int length) {
+        currentlySolvableTextField.setText(length > 0 ? "Solvable" : "Not Solvable");
+        currentlySolvableTextField.setBackground(length > 0 ? Color.green : Color.pink);
+        reachOptimalSolutionTextField.setText(length + "");
     }
 
     public void OpenMaze(Maze m) {

@@ -190,6 +190,14 @@ public class MazeStructure {
     public int getHeight() {
         return height;
     }
+    
+    /**
+     * returns an array of cells
+     * @return an array of coordinates of cells within the specified dimension
+     */
+    public I_Cell[][] getCells() {
+        return cells;
+    }
 
     /**
      * Replaces the cell at the given co-ordinate with the new cell

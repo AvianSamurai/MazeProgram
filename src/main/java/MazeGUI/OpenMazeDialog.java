@@ -1,15 +1,13 @@
 package MazeGUI;
 
 import DB.MazeDB;
+import Program.Maze;
 import Utils.Debug;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 
 import static java.awt.Font.*;
 import static java.awt.GridBagConstraints.NONE;
@@ -39,8 +37,11 @@ public class OpenMazeDialog {
     private JSelectionTable table = null;
     private GridBagConstraints gBC;
     private MazeDB db;
+    private MazeGUI mazeGUI;
 
-    public OpenMazeDialog() {
+    public OpenMazeDialog(MazeGUI mazeGUI) {
+        this.mazeGUI = mazeGUI;
+
         // Create outer frame and set size
         outerFrame = new JFrame("Open Maze");
         outerFrame.setSize(WINDOW_SIZE);
@@ -134,6 +135,12 @@ public class OpenMazeDialog {
             table.SetColumnWidth(0, 25);
             table.SetColumnWidth(1, 300);
             table.setNewData(data);
+            table.setAutoCreateRowSorter(true);
+            table.getTableHeader().setReorderingAllowed(false);
+            table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            table.addMouseListener(mouseDoubleClickListener);
+            table.setCellSelectionEnabled(false);
+            table.setRowSelectionAllowed(true);
         } catch (Exception e) {
             e.printStackTrace();
             Debug.LogLn("Cannot connect to database: " + e.getMessage());
@@ -181,9 +188,32 @@ public class OpenMazeDialog {
     ActionListener openListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) { // TODO
-            outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING)); // Temperary
+            OpenSelectedMaze();
         }
     };
+
+    MouseAdapter mouseDoubleClickListener = new MouseAdapter() {
+        public void mousePressed(MouseEvent mouseEvent) {
+            if(mouseEvent.getClickCount() == 2) {
+                OpenSelectedMaze();
+            }
+        }
+    };
+
+    public void OpenSelectedMaze() {
+        if(table.getSelectedRowCount() == 0) {
+            JOptionPane.showMessageDialog(null, "Please select a maze to open");
+            return;
+        }
+        outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING));
+        int id = Integer.parseInt((String)table.getValueAt(table.getSelectedRow(), 0));
+        Maze maze = Maze.LoadMazeFromID(id);
+        if(maze != null) {
+            mazeGUI.OpenMaze(maze);
+        } else {
+            JOptionPane.showMessageDialog(null, "Maze failed to open");
+        }
+    }
 
     WindowListener windowListener = new WindowListener() {
         @Override

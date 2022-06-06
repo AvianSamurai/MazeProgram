@@ -12,11 +12,15 @@ public class LogoCell extends BorderedCell implements I_Cell {
 
     private Image cellImage;
 
-
     private LogoCell(Image cellImage) {
         this.cellImage = cellImage;
     }
 
+    /**
+     * Gets the image contained in the logo cell
+     *
+     * @return the contained buffered image
+     */
     public BufferedImage GetCellImage() {
         return (BufferedImage) cellImage;
     }
@@ -71,7 +75,7 @@ public class LogoCell extends BorderedCell implements I_Cell {
     public static int GetLogoCellWidthFromHeight(BufferedImage logoImage, int cellsTall) {
         int cellSize = (int) Math.ceil(logoImage.getHeight(null) / (double)cellsTall);
         int cellsWide = (int) Math.ceil(logoImage.getWidth(null) / (double)cellSize);
-        return cellsWide;
+        return cellsWide - 1;
     }
 
     /**
@@ -134,7 +138,11 @@ public class LogoCell extends BorderedCell implements I_Cell {
 
     @Override
     public BufferedImage getCellImageRepresentation(int width, int height) {
-        BufferedImage logoCellImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage logoCellImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = (Graphics2D) logoCellImage.getGraphics();
+        g.setBackground(Color.white);
+        g.fillRect(0, 0, width, height);
+        g.drawImage(GetCellImage().getScaledInstance(width, height, Image.SCALE_SMOOTH), 0, 0, width, height, null);
         DrawBorders(logoCellImage);
         return logoCellImage;
     }

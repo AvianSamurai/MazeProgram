@@ -9,8 +9,18 @@ public class BasicCell extends BorderedCell implements I_Cell {
         this.SetBorders(true, true, true, true);
     }
 
+    /**
+     * Converts the basic cell to an image cell
+     *
+     * @return an image cell with the same borders as the previous basic cell
+     */
     public ImageCell ConvertToImageCell() {
-        ImageCell imCell = new ImageCell();
+        ImageCell imCell;
+        try {
+            imCell = new ImageCell();
+        } catch (Exception e) {
+            return null; // This should never happen
+        }
         imCell.SetBorders(GetBorders());
         return imCell;
     }

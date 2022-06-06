@@ -1,6 +1,7 @@
 package MazeGUI;
 
 
+import Program.Maze;
 import DB.MazeDB;
 import Program.Maze;
 import com.google.gson.Gson;
@@ -27,9 +28,12 @@ public class MazeGUI extends JFrame implements Runnable {
     public static final int HEIGHT = 1024;
     private final JPanel mainPanel = new JPanel();
     private static final int DIVIDER_SIZE = 10;
-    private static Maze temp_Maze;
+    private static Maze maze = null;
     private static final MazeEditor mazePanel = new MazeEditor();
+    private static final MenuJPanel menuPanel = new MenuJPanel();
     GridBagConstraints c = new GridBagConstraints();
+
+    private JTextField deadEndsTextField;
 
     public MazeGUI(String title) throws HeadlessException {
         super(title);
@@ -38,6 +42,7 @@ public class MazeGUI extends JFrame implements Runnable {
     private void createGUI() {
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mazePanel.AddRefrenceToMazeGUI(this);
 
         // Set icon
         this.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
@@ -47,14 +52,14 @@ public class MazeGUI extends JFrame implements Runnable {
         mainPanel.setLayout(new BorderLayout());
         getContentPane().add(mainPanel);
 
-        MenuJPanel menuPanel = new MenuJPanel();
         menuPanel.CreateMenu("File",
-                new String[]{"New", "Open", "Save", "Export Image"},
-                new ActionListener[] {createNewMazeListener, openMazeListener, testDialogListener, exportMazeListener});
+                new String[]{         "New",                "Open",            "Save",           "Export Image"},
+                new ActionListener[] {createNewMazeListener, openMazeListener, saveMazeListener, exportMazeListener}, false);
         menuPanel.CreateMenu("Edit",
-                new String[]{"Set Start/End", "Add (logo, image)", "Maze Type", "Draw"},
-                new ActionListener[] {testDialogListener, importLogoListener, testDialogListener, testDialogListener});
+                new String[]{        "Set Start & End", "Set Image",          "Toggle Image",          "Add Logo",          "Carve",           "Block"},
+                new ActionListener[] {startEndListener,  setCellImageListener, toggleCellImageListener, importLogoListener,  carveToolListener, blockToolListener}, true);
         menuPanel.FinalisePanel();
+        menuPanel.SetSubmenuIsEnabled(1, false);
 
         JPanel propertyPanel = new JPanel();
         //propertyPanel.add(new JLabel("PROPERTY"));
@@ -174,7 +179,7 @@ public class MazeGUI extends JFrame implements Runnable {
         reachOptimalSolutionTextField.setEditable(false);
 
         JLabel deadEndsLabel = new JLabel("Dead ends: ");
-        JTextField deadEndsTextField = new JTextField(0);
+        deadEndsTextField = new JTextField(0);
         deadEndsTextField.setEditable(false);
 
         groupLayout.setAutoCreateGaps(true);
@@ -258,8 +263,10 @@ public class MazeGUI extends JFrame implements Runnable {
         saveAndExport.setLayout(new GridLayout(2, 1, 15, 30));
 
         JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(saveMazeListener);
         resetButton.setPreferredSize(new Dimension(100, 25));
         JButton exportButton = new JButton("Export");
+        //TODO add export listener
         stepButton.setPreferredSize(new Dimension(100, 25));
 
         saveAndExport.add(saveButton);
@@ -271,10 +278,6 @@ public class MazeGUI extends JFrame implements Runnable {
         //pack();
         repaint();
         setVisible(true);
-
-        MazeStructure m = MazeFactory.CreateBasicMaze(15, 15);// TODO temp, pls remove
-        MazeAlgorithms.GenerateMaze(m); // TODO temp pls remove
-        mazePanel.OpenMazeStructure(m); // TODO temp, pls remove
     }
 
     private void NewMaze() {
@@ -306,7 +309,7 @@ public class MazeGUI extends JFrame implements Runnable {
         mazeTypeLabel = new JLabel("Maze Type: ");
         mazeTypeLabel.setBounds(50, 250, 100, 30);
 
-        String[] mazeTypeOptions = {"General", "Themed", "Others"};
+        String[] mazeTypeOptions = {"Standard", "Themed", "Logo"};
         JComboBox<String> jComboBox = new JComboBox<>(mazeTypeOptions);
         jComboBox.setBounds(150, 250, 200, 30);
 
@@ -347,25 +350,27 @@ public class MazeGUI extends JFrame implements Runnable {
         mazeSizes = new JLabel("Maze Size: ");
         mazeSizes.setBounds(50, 100, 100, 30);
 
-        String[] mazeSizeOptions = {"100x100", "385x356", "1600x1600"};
-        JComboBox<String> jComboBoxMazeSize = new JComboBox<>(mazeSizeOptions);
-        jComboBoxMazeSize.setBounds(150, 100, 200, 30);
+        JLabel widthLabel = new JLabel("width:");
+        widthLabel.setBounds(50, 140, 80, 30);
+        JLabel heightLabel = new JLabel("height:");
+        heightLabel.setBounds(50, 180, 80, 30);
 
-        /*// Button for choosing a logo
-        JFileChooser logoChooser = new JFileChooser();
-        logoChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = logoChooser.showOpenDialog(parent);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            // user selects a file
-        }
-        File selectedFile = logoChooser.getSelectedFile();
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-        }*/
+        JSpinner widthSpinner = new JSpinner();
+        JSpinner heightSpinner = new JSpinner();
+        SpinnerNumberModel widthModel = new SpinnerNumberModel();
+        widthModel.setMaximum(100);
+        widthModel.setMinimum(3);
+        widthModel.setStepSize(1);
+        widthModel.setValue(15);
+        widthSpinner.setModel(widthModel);
+        SpinnerNumberModel heightModel = new SpinnerNumberModel();
+        heightModel.setMaximum(100);
+        heightModel.setMinimum(3);
+        heightModel.setStepSize(1);
+        heightModel.setValue(15);
+        heightSpinner.setModel(heightModel);
+        widthSpinner.setBounds(130, 140, 100, 30);
+        heightSpinner.setBounds(130, 180, 100, 30);
 
         // Button to go to next set of options or cancel completely
         Object[] options = {"Yes", "No"};
@@ -379,42 +384,21 @@ public class MazeGUI extends JFrame implements Runnable {
                         "New Maze", JOptionPane.YES_NO_OPTION,
                         JOptionPane.PLAIN_MESSAGE);
 
+                String title = mazeName.getText().trim();
+                String author = authName.getText().trim();
+                //String size = jComboBoxMazeSize.getItemAt(jComboBoxMazeSize.getSelectedIndex());
+                String size = widthSpinner.getValue() + "x" + heightSpinner.getValue();
+                String selectedType = jComboBox.getItemAt(jComboBox.getSelectedIndex());
+                NewMazeFrame.dispose();
+                maze = new Maze(title, author, size, selectedType, (int)widthSpinner.getValue(), (int)heightSpinner.getValue());
                 if (createStatus == JOptionPane.YES_OPTION){
-                    String title = mazeName.getText().trim();
-                    String author = authName.getText().trim();
-                    String size = jComboBoxMazeSize.getItemAt(jComboBoxMazeSize.getSelectedIndex());
-                    String selectedType = jComboBox.getItemAt(jComboBox.getSelectedIndex());
-                    NewMazeFrame.dispose();
-                    Maze newMaze = new Maze(title, author, size, selectedType);
-                    String date = newMaze.GetDateTime();
-                    Map<String, String> jsonData = new HashMap<>();
-                    jsonData.put("title",title);
-                    jsonData.put("author", author);
-                    jsonData.put("size", size);
-                    jsonData.put("type", selectedType);
-                    Gson gson = new Gson();
-                    String output = gson.toJson(jsonData);
-                    MazeDB ndm = null;
-                    try {
-                        ndm = new MazeDB();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } catch (ClassNotFoundException ex) {
-                        ex.printStackTrace();
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
-                    try {
-                        ndm.CreateUpdateDelete("INSERT INTO saved_mazes (name, author_name, json_data, creation_date) VALUES ('"+ title +"','" + author +"','"+ output +"','"+ date +"');");
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
-
+                    MazeAlgorithms.GenerateMaze(maze.getMazeStructure());
                 }
-                else
-                    NewMazeFrame.dispose();
+                mazePanel.OpenMazeStructure(maze);
+                NewMazeFrame.dispose();
             }
         });
+
         JButton jButtonCancel2 = new JButton("Cancel");
         jButtonCancel2.setBounds(450, 350, 90, 20);
         jButtonCancel2.addActionListener(new ActionListener() {
@@ -426,7 +410,11 @@ public class MazeGUI extends JFrame implements Runnable {
 
         // Add elements to the GUI
         NewMaze2.add(mazeSizes);
-        NewMaze2.add(jComboBoxMazeSize);
+        //NewMaze2.add(jComboBoxMazeSize);
+        NewMaze2.add(widthLabel);
+        NewMaze2.add(heightLabel);
+        NewMaze2.add(widthSpinner);
+        NewMaze2.add(heightSpinner);
         NewMaze2.add(jButtonCreate2);
         NewMaze2.add(jButtonCancel2);
         NewMaze2.setLayout(null);
@@ -447,9 +435,23 @@ public class MazeGUI extends JFrame implements Runnable {
     ActionListener testDialogListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+
             JOptionPane.showMessageDialog(null, e.getActionCommand());
+            maze.getMazeStructure().DebugDisplayMaze(16);
         }
     };
+
+    ActionListener saveMazeListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(maze == null) { JOptionPane.showMessageDialog(null, "No maze is open"); }
+            maze.SaveMaze();
+            JOptionPane.showMessageDialog(null, "Maze saved to database");
+        }
+
+    };
+
+    final private MazeGUI mazeGUI = this;
 
     ActionListener createNewMazeListener = new ActionListener() {
         @Override
@@ -460,7 +462,7 @@ public class MazeGUI extends JFrame implements Runnable {
 
     ActionListener openMazeListener = new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) { new OpenMazeDialog(); }
+        public void actionPerformed(ActionEvent e) { new OpenMazeDialog(mazeGUI); }
     };
 
     ActionListener exportMazeListener = new ActionListener() {
@@ -481,11 +483,59 @@ public class MazeGUI extends JFrame implements Runnable {
         }
     };
 
+    ActionListener setCellImageListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.SET_CELL_IMAGE);
+        }
+    };
+
+    ActionListener toggleCellImageListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {mazePanel.SelectTool(ToolsEnum.TOGGLE_CELL_IMAGE);}
+    };
+
+    ActionListener startEndListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {mazePanel.SelectTool(ToolsEnum.SET_START_END);}
+    };
+
+    ActionListener carveToolListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.CARVE);
+        }
+    };
+
+    ActionListener blockToolListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mazePanel.SelectTool(ToolsEnum.BLOCK);
+        }
+    };
+
+    /**
+     * Sets the dead end label to the given integer
+     * @param i the int to set the label to
+     */
+    public void UpdateDeadEndsLabel(int i) {
+        deadEndsTextField.setText(i + "");
+    }
+
+    public void OpenMaze(Maze m) {
+        maze = m;
+        mazePanel.OpenMazeStructure(m);
+    }
+
+    public MenuJPanel GetMenuPanel() {
+        return menuPanel;
+    }
+
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
         // Uncomment this to clear your database and insert fake data
-        MazeDB dbm = new MazeDB();
-        dbm.LoadTestDataIntoDatabase(true);
-        dbm.disconnect();
+        //MazeDB dbm = new MazeDB();
+        //dbm.LoadTestDataIntoDatabase(true);
+        //dbm.disconnect();
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

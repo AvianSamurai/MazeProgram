@@ -42,7 +42,7 @@ public class ExportMazeDialog {
 
     public ExportMazeDialog() {
         // Create outer frame and set size
-        outerFrame = new JFrame("Open Maze");
+        outerFrame = new JFrame("Export Maze to Image");
         outerFrame.setSize(WINDOW_SIZE);
         outerFrame.addWindowListener(windowListener);
 
@@ -102,7 +102,7 @@ public class ExportMazeDialog {
         gBC.weighty = 1;
         outerPanel.add(tableScrollPane, gBC); RestoreGBCDefaults();
 
-        // Buttons cancel and open
+        // Buttons cancel and export
         JButton cancelBtn = new JButton("Cancel");
         cancelBtn.addActionListener(cancelListener);
         NextY(); NextX();
@@ -134,6 +134,10 @@ public class ExportMazeDialog {
             table.SetColumnWidth(0, 25);
             table.SetColumnWidth(1, 300);
             table.setNewData(data);
+            table.setAutoCreateRowSorter(true);
+            table.getTableHeader().setReorderingAllowed(false);
+            table.setCellSelectionEnabled(false);
+            table.setRowSelectionAllowed(true);
         } catch (Exception e) {
             e.printStackTrace();
             Debug.LogLn("Cannot connect to database: " + e.getMessage());

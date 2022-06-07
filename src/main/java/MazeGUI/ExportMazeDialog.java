@@ -40,7 +40,16 @@ public class ExportMazeDialog {
     private GridBagConstraints gBC;
     private MazeDB db;
 
-    public ExportMazeDialog() {
+    private static boolean isOpen = false;
+
+    public static void Open() {
+        if(!isOpen) {
+            new ExportMazeDialog();
+            isOpen = true;
+        }
+    }
+
+    private ExportMazeDialog() {
         // Create outer frame and set size
         outerFrame = new JFrame("Export Maze to Image");
         outerFrame.setSize(WINDOW_SIZE);
@@ -117,6 +126,7 @@ public class ExportMazeDialog {
 
         // show window
         outerFrame.setVisible(true);
+        outerFrame.setAlwaysOnTop(true);
     }
 
     private JComponent CreateTable(){
@@ -197,6 +207,7 @@ public class ExportMazeDialog {
 
         @Override
         public void windowClosing(WindowEvent e) {
+            isOpen = false;
             if(db != null) {
                 db.disconnect();
             }

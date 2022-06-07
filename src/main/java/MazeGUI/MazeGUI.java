@@ -426,6 +426,7 @@ public class MazeGUI extends JFrame implements Runnable {
         NewMazeFrame.setLayout(null);
         NewMazeFrame.setVisible(true);
         NewMazeFrame.setContentPane(NewMaze);
+        NewMazeFrame.setAlwaysOnTop(true);
     }
   
     @Override
@@ -464,12 +465,12 @@ public class MazeGUI extends JFrame implements Runnable {
 
     ActionListener openMazeListener = new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) { new OpenMazeDialog(mazeGUI); }
+        public void actionPerformed(ActionEvent e) { OpenMazeDialog.Open(mazeGUI); }
     };
 
     ActionListener exportMazeListener = new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) { new ExportMazeDialog(); }
+        public void actionPerformed(ActionEvent e) { ExportMazeDialog.Open(); }
     };
 
     ActionListener importLogoListener = new ActionListener() {

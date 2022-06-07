@@ -39,7 +39,16 @@ public class OpenMazeDialog {
     private MazeDB db;
     private MazeGUI mazeGUI;
 
-    public OpenMazeDialog(MazeGUI mazeGUI) {
+    private static boolean isOpen = false;
+
+    public static void Open(MazeGUI mGUI) {
+        if(!isOpen) {
+            new OpenMazeDialog(mGUI);
+            isOpen = true;
+        }
+    }
+
+    private OpenMazeDialog(MazeGUI mazeGUI) {
         this.mazeGUI = mazeGUI;
 
         // Create outer frame and set size
@@ -118,6 +127,7 @@ public class OpenMazeDialog {
 
         // show window
         outerFrame.setVisible(true);
+        outerFrame.setAlwaysOnTop(true);
     }
 
     private JComponent CreateTable(){
@@ -223,6 +233,7 @@ public class OpenMazeDialog {
 
         @Override
         public void windowClosing(WindowEvent e) {
+            isOpen = false;
             if(db != null) {
                 db.disconnect();
             }

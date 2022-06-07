@@ -34,13 +34,20 @@ public class MazeGUI extends JFrame implements Runnable {
     GridBagConstraints c = new GridBagConstraints();
 
     private JTextField deadEndsTextField;
+    private JTextField currentlySolvableTextField;
+    private JTextField reachOptimalSolutionTextField;
 
     public MazeGUI(String title) throws HeadlessException {
         super(title);
     }
 
     private void createGUI() {
-        setSize(WIDTH, HEIGHT);
+        Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        int finalWidth = screenSize.width < WIDTH ? screenSize.width : WIDTH;
+        int finalHeight = screenSize.height < HEIGHT ? screenSize.height : HEIGHT;
+        setSize(finalWidth, finalHeight);
+        setLocationRelativeTo(null);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mazePanel.AddRefrenceToMazeGUI(this);
 
@@ -171,11 +178,11 @@ public class MazeGUI extends JFrame implements Runnable {
         showSolutionButton.addItemListener(itemListener);
 
         JLabel currentlySolvableLabel = new JLabel("Currently solvable: ");
-        JTextField currentlySolvableTextField = new JTextField(0);
+        currentlySolvableTextField = new JTextField(0);
         currentlySolvableTextField.setEditable(false);
 
         JLabel reachOptimalSolutionLabel = new JLabel("Reached by an optimal solution: ");
-        JTextField reachOptimalSolutionTextField = new JTextField(0);
+        reachOptimalSolutionTextField = new JTextField(0);
         reachOptimalSolutionTextField.setEditable(false);
 
         JLabel deadEndsLabel = new JLabel("Dead ends: ");
@@ -424,6 +431,7 @@ public class MazeGUI extends JFrame implements Runnable {
         NewMazeFrame.setLayout(null);
         NewMazeFrame.setVisible(true);
         NewMazeFrame.setContentPane(NewMaze);
+        NewMazeFrame.setAlwaysOnTop(true);
     }
   
     @Override
@@ -462,12 +470,12 @@ public class MazeGUI extends JFrame implements Runnable {
 
     ActionListener openMazeListener = new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) { new OpenMazeDialog(mazeGUI); }
+        public void actionPerformed(ActionEvent e) { OpenMazeDialog.Open(mazeGUI); }
     };
 
     ActionListener exportMazeListener = new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) { new ExportMazeDialog(); }
+        public void actionPerformed(ActionEvent e) { ExportMazeDialog.Open(); }
     };
 
     ActionListener importLogoListener = new ActionListener() {
@@ -479,6 +487,7 @@ public class MazeGUI extends JFrame implements Runnable {
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                AddLogoDialogue.OpenAddLogoDialogue(null, mazePanel, selectedFile.getAbsolutePath());
             }
         }
     };
@@ -520,6 +529,12 @@ public class MazeGUI extends JFrame implements Runnable {
      */
     public void UpdateDeadEndsLabel(int i) {
         deadEndsTextField.setText(i + "");
+    }
+
+    public void UpdateSolutionsLabel(int length) {
+        currentlySolvableTextField.setText(length > 0 ? "Solvable" : "Not Solvable");
+        currentlySolvableTextField.setBackground(length > 0 ? Color.green : Color.pink);
+        reachOptimalSolutionTextField.setText(length + "");
     }
 
     public void OpenMaze(Maze m) {

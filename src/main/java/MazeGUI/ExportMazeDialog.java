@@ -43,11 +43,13 @@ public class ExportMazeDialog {
     private static boolean isOpen = false;
 
     public static void Open() {
-        if(!isOpen) {
+        if(!isOpen && !OpenMazeDialog.GetIsOpen()) {
             new ExportMazeDialog();
             isOpen = true;
         }
     }
+
+    public static boolean GetIsOpen() {return isOpen; }
 
     private ExportMazeDialog() {
         // Create outer frame and set size

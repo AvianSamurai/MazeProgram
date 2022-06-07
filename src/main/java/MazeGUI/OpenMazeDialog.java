@@ -42,11 +42,13 @@ public class OpenMazeDialog {
     private static boolean isOpen = false;
 
     public static void Open(MazeGUI mGUI) {
-        if(!isOpen) {
+        if(!isOpen && !ExportMazeDialog.GetIsOpen()) {
             new OpenMazeDialog(mGUI);
             isOpen = true;
         }
     }
+
+    public static boolean GetIsOpen() {return isOpen; }
 
     private OpenMazeDialog(MazeGUI mazeGUI) {
         this.mazeGUI = mazeGUI;

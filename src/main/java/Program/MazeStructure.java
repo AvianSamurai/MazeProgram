@@ -3,7 +3,6 @@ package Program;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.Console;
 import java.util.ArrayList;
 
 public class MazeStructure {
@@ -219,7 +218,7 @@ public class MazeStructure {
      * @param newCells the 2d array of cells to replace with
      * @param hasExteriorBorder if true, surrounds the inserted group with a border, otherwise, it does not
      */
-    public void InsertCellGroup(int x, int y, I_Cell[][] newCells, boolean hasExteriorBorder) {
+    public void InsertLogoCellGroup(int x, int y, I_Cell[][] newCells, boolean hasExteriorBorder) {
         for(int xPos = 0; xPos < newCells.length; xPos++) {
             for(int yPos = 0; yPos < newCells[0].length; yPos++) {
                 if(newCells[xPos][yPos] != null) {

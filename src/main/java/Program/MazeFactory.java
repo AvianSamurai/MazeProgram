@@ -1,6 +1,5 @@
 package Program;
 
-import MazeGUI.AddLogoDialogue;
 import Utils.Debug;
 
 import javax.imageio.ImageIO;
@@ -75,7 +74,7 @@ public class MazeFactory {
         LogoCell[][] logocells = LogoCell.CreateLogoCellGroup(logo, maxWidth, false);
         int newHeight = LogoCell.GetLogoCellHeightFromWidth(logo, maxWidth);
 
-        m.InsertCellGroup((width - maxWidth)/2, (height - newHeight)/2, logocells, true);
+        m.InsertLogoCellGroup((width - maxWidth)/2, (height - newHeight)/2, logocells, true);
 
         return m;
     }

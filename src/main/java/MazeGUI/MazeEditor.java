@@ -12,7 +12,6 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.util.Stack;
 
 public class MazeEditor extends JPanel {
@@ -565,7 +564,7 @@ public class MazeEditor extends JPanel {
 
     private void PlaceLogo(int x, int y) {
         LogoCell.ClearLogosInMaze(mazeStruct);
-        mazeStruct.InsertCellGroup(x, y, logoCells, true);
+        mazeStruct.InsertLogoCellGroup(x, y, logoCells, true);
         logoCells = null;
         SelectTool(ToolsEnum.NONE);
     }

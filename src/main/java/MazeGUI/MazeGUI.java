@@ -42,7 +42,12 @@ public class MazeGUI extends JFrame implements Runnable {
     }
 
     private void createGUI() {
-        setSize(WIDTH, HEIGHT);
+        Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        int finalWidth = screenSize.width < WIDTH ? screenSize.width : WIDTH;
+        int finalHeight = screenSize.height < HEIGHT ? screenSize.height : HEIGHT;
+        setSize(finalWidth, finalHeight);
+        setLocationRelativeTo(null);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mazePanel.AddRefrenceToMazeGUI(this);
 

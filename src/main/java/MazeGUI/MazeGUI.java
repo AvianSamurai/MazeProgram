@@ -45,6 +45,7 @@ public class MazeGUI extends JFrame implements Runnable {
     private JPanel thumbnailPanel;
     private JRadioButton yes;
     private JRadioButton no;
+    private JButton btnExport;
 
     public MazeGUI(String title) throws HeadlessException {
         super(title);
@@ -492,6 +493,7 @@ public class MazeGUI extends JFrame implements Runnable {
 
         ButtonGroup G = new ButtonGroup();
         yes = new JRadioButton("Yes");
+        yes.setSelected(true);
         no = new JRadioButton("No");
         solutionPanel.add(yes);
         solutionPanel.add(no);
@@ -500,7 +502,7 @@ public class MazeGUI extends JFrame implements Runnable {
         solutionPanel.setLayout(new BoxLayout(solutionPanel, BoxLayout.Y_AXIS));
 
         JButton btnCancel = new JButton("Cancel");
-        JButton btnExport = new JButton("Export");
+        btnExport = new JButton("Export");
         btnExport.addActionListener(downloadListener);
         btnCancel.addActionListener(new ActionListener() {
             @Override
@@ -523,42 +525,17 @@ public class MazeGUI extends JFrame implements Runnable {
         for (int i = 64; i >= 16; i--) {
             if (res >= start && res <= add) {
                 bufferedThumbnail = mazePanel.GetMazeStructure().getMazeImage(i);
-                solutionImg = mazePanel.GetMazeStructure().drawSolution(bufferedThumbnail, i, maze);
+                solutionImg = mazePanel.GetMazeStructure().drawSolution(i, maze);
             }
             start = add;
             add += 208;
         }
 
-
         thumbnailPanel.setSize(new Dimension(300, 300));
         JLabel imageLabel = new JLabel();
         Debug.LogLn(GetPanelDimension().width + " | " + GetPanelDimension().height);
 
-        /*
-        yes.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (yes.isSelected()) {
-                    imageLabel.setIcon(new ImageIcon(bufferedThumbnail.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
-                }
-            }
-        });
-        */
-
-        //imageLabel.setIcon(new ImageIcon(solutionImg.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
-        //imageLabel.setIcon(new ImageIcon(bufferedThumbnail.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
-
-        /*
-        no.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (no.isSelected()) {
-
-                }
-            }
-        });
-        */
-
+        imageLabel.setIcon(new ImageIcon(bufferedThumbnail.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
         thumbnailPanel.add(imageLabel);
 
         JLabel resolution = new JLabel("Resolution");
@@ -602,36 +579,26 @@ public class MazeGUI extends JFrame implements Runnable {
     private void DownloadMazeDialog() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-
-        FileFilter pngFilter = new FileTypeFilter(".png", "PNG Image");
-        FileFilter jpgFilter = new FileTypeFilter(".jpg", "JPG Image");
-        FileFilter gifFilter = new FileTypeFilter(".gif", "GIF Image");
-
-        fileChooser.addChoosableFileFilter(pngFilter);
-        fileChooser.addChoosableFileFilter(jpgFilter);
-        fileChooser.addChoosableFileFilter(gifFilter);
+        FileFilter fileFilter = new FileTypeFilter(".png", "PNG Image");
+        fileChooser.addChoosableFileFilter(fileFilter);
         fileChooser.setAcceptAllFileFilterUsed(false);
 
         int userSelection = fileChooser.showSaveDialog(outerExportFrame);
         if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
             try {
-                FileTypeFilter filter = (FileTypeFilter) fileChooser.getFileFilter();
-                if (filter.getExtension().equals(".png")) {
-                    File fileToSave1 = fileChooser.getSelectedFile();
-                    fileToSave1 = new File(fileToSave1 + "_maze.png");
-                    File fileToSave2 = fileChooser.getSelectedFile();
-                    fileToSave2 = new File(fileToSave2 + "_solution.png");
-                    ImageIO.write(bufferedThumbnail, "png", fileToSave1);
-                    ImageIO.write(solutionImg, "png", fileToSave2);
-                }
-                else if (filter.getExtension().equals(".jpg")) {
-                    fileToSave = new File(fileToSave + ".jpg");
-                    ImageIO.write(bufferedThumbnail, "jpg", fileToSave);
-                }
-                else {
-                    fileToSave = new File(fileToSave + ".gif");
-                    ImageIO.write(bufferedThumbnail, "gif", fileToSave);
+                FileTypeFilter fileTypefilter = (FileTypeFilter) fileChooser.getFileFilter();
+                if (fileTypefilter.getExtension().equals(".png")) {
+                    File mazeFile = fileChooser.getSelectedFile();
+                    File solutionFile = fileChooser.getSelectedFile();
+                    mazeFile = new File(mazeFile + "_maze.png");
+                    solutionFile = new File(solutionFile + "_solution.png");
+                    if (yes.isSelected()) {
+                        ImageIO.write(bufferedThumbnail, "png", mazeFile);
+                        ImageIO.write(solutionImg, "png", solutionFile);
+                    }
+                    else{
+                        ImageIO.write(bufferedThumbnail, "png", mazeFile);
+                    }
                 }
                 JOptionPane.showMessageDialog(null, "Successfully exported mazes");
                 outerExportFrame.dispatchEvent(new WindowEvent(outerExportFrame, WindowEvent.WINDOW_CLOSING));

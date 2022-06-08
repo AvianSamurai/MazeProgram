@@ -6,7 +6,6 @@ import Utils.Debug;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -18,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import static java.awt.Font.*;
+import static java.awt.GridBagConstraints.CENTER;
 import static java.awt.GridBagConstraints.NONE;
 
 public class ExportMazeDialog {
@@ -49,19 +49,20 @@ public class ExportMazeDialog {
     private BufferedImage[] mazeImages;
     private Maze[] mazes;
     private JDialog imageDialog;
+    private JDialog[] imageDialogs;
 
     private static boolean isOpen = false;
 
-         public static void Open() {
-             if(!isOpen && !OpenMazeDialog.GetIsOpen()) {
-                     new ExportMazeDialog();
-                     isOpen = true;
-                 }
+    public static void Open() {
+        if(!isOpen && !OpenMazeDialog.GetIsOpen()) {
+            new ExportMazeDialog();
+            isOpen = true;
         }
+    }
 
-        public static boolean GetIsOpen() {return isOpen; }
+    public static boolean GetIsOpen() {return isOpen; }
 
-        private ExportMazeDialog() {
+    private ExportMazeDialog() {
         // Create outer frame and set size
         outerFrame = new JFrame("Export Maze to Image");
         outerFrame.setSize(WINDOW_SIZE);
@@ -190,53 +191,33 @@ public class ExportMazeDialog {
 
         JLabel[] mazeNames = new JLabel[table.getSelectedRowCount()];
         JButton[] imageButtons = new JButton[table.getSelectedRowCount()];
+        JLabel[] imageLabels = new JLabel[table.getSelectedRowCount()];
+        imageDialogs = new JDialog[table.getSelectedRowCount()];
+
         for (int i = 0; i < table.getSelectedRowCount(); i++) {
             mazeNames[i] = new JLabel((String) table.getValueAt(table.getSelectedRows()[i], 1));
             outerPanel.add(mazeNames[i], gBC); RestoreGBCDefaults();
+
             imageButtons[i] = new JButton();
             imageButtons[i].setSize(100, 100);
             imageButtons[i].setForeground(Color.RED);
             imageButtons[i].setFocusPainted(true);
             imageButtons[i].setMargin(new Insets(0, 0, 0, 0));
             imageButtons[i].setContentAreaFilled(false);
-            float ratio;
-            int width;
-            int height;
-            if (mazeImages[i].getWidth() == mazeImages[i].getHeight()){
-                width = imageButtons[i].getWidth();
-                height = imageButtons[i].getHeight();
-            }
-            else if (mazeImages[i].getWidth() > mazeImages[i].getHeight()) {
-                ratio = mazeImages[i].getWidth() / imageButtons[i].getWidth();
-                width = imageButtons[i].getWidth();
-                height = Math.round(mazeImages[i].getHeight() / ratio);
-            }
-            else {
-                ratio = mazeImages[i].getHeight() / imageButtons[i].getHeight();
-                height = imageButtons[i].getHeight();
-                width = Math.round(mazeImages[i].getWidth() / ratio);
-            }
-            imageButtons[i].setIcon(new ImageIcon(mazeImages[i].getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+            imageButtons[i].setIcon(setScaledImgIcon(mazeImages[i], imageButtons[i]));
 
-            int w = 600;
-            int h = 600;
-            imageDialog.setSize(new Dimension(w, h));
-            if (mazeImages[i].getWidth() == mazeImages[i].getHeight()){
-                w = 600;
-                h = 600;
-            }
-            else if (mazeImages[i].getWidth() > mazeImages[i].getHeight()) {
-                ratio = mazeImages[i].getWidth() / 600;
-                w = 600;
-                h = Math.round(mazeImages[i].getHeight() / ratio);
-            }
-            else {
-                ratio = mazeImages[i].getHeight() / 600;
-                h = 600;
-                w = Math.round(mazeImages[i].getWidth() / ratio);
-            }
-            imageDialog.add(new JLabel(new ImageIcon(mazeImages[i].getScaledInstance(w, h, Image.SCALE_SMOOTH))));
-            imageButtons[i].addActionListener(imageButtonListener);
+            imageLabels[i] = new JLabel();
+            imageLabels[i].setSize(600, 600);
+            imageLabels[i].setIcon(setScaledImgIcon(mazeImages[i], imageLabels[i]));
+            imageLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
+
+            imageDialogs[i] = new JDialog();
+            imageDialogs[i].setSize(600, 600);
+            imageDialogs[i].add(imageLabels[i]);
+
+            final int temp = i;
+            imageButtons[temp].addActionListener(e -> imageDialogs[temp].setVisible(true));
+
             NextX();
             outerPanel.add(imageButtons[i], gBC); RestoreGBCDefaults();
 
@@ -297,8 +278,29 @@ public class ExportMazeDialog {
         outerExportFrame.setVisible(true);
     }
 
-    private void popupThumbnail() {
-        imageDialog.setVisible(true);
+    private ImageIcon setScaledImgIcon(BufferedImage mazeImg, JComponent container) {
+        float ratio;
+        int width;
+        int height;
+        ImageIcon thumbnail;
+
+        if (mazeImg.getWidth() == mazeImg.getHeight()){
+            width = container.getWidth();
+            height = container.getHeight();
+        }
+        else if (mazeImg.getWidth() > mazeImg.getHeight()) {
+            ratio = mazeImg.getWidth() / (float)container.getWidth();
+            width = container.getWidth();
+            height = Math.round(mazeImg.getHeight() / ratio);
+        }
+        else {
+            ratio = mazeImg.getHeight() / (float)container.getHeight();
+            height = container.getHeight();
+            width = Math.round(mazeImg.getWidth() / ratio);
+        }
+
+        thumbnail = new ImageIcon(mazeImg.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+        return thumbnail;
     }
 
     private JComponent CreateTable(){
@@ -409,13 +411,6 @@ public class ExportMazeDialog {
         }
     };
 
-    ActionListener imageButtonListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            popupThumbnail();
-        }
-    };
-
     ActionListener downloadListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -463,3 +458,4 @@ public class ExportMazeDialog {
         }
     };
 }
+

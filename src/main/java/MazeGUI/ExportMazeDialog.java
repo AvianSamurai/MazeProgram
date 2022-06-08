@@ -6,6 +6,7 @@ import Utils.Debug;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -47,9 +48,10 @@ public class ExportMazeDialog {
     private GridBagConstraints gBC;
     private MazeDB db;
     private BufferedImage[] mazeImages;
+    private BufferedImage[] solutionImages;
     private Maze[] mazes;
-    private JDialog imageDialog;
     private JDialog[] imageDialogs;
+    private JDialog[] solutionDialogs;
 
     private static boolean isOpen = false;
 
@@ -147,6 +149,17 @@ public class ExportMazeDialog {
             return;
         }
 
+        // Create arrays with size set to number of selected rows
+        mazes = new Maze[table.getSelectedRowCount()];
+        mazeImages = new BufferedImage[table.getSelectedRowCount()];
+        imageDialogs = new JDialog[table.getSelectedRowCount()];
+        solutionDialogs = new JDialog[table.getSelectedRowCount()];
+        JLabel[] mazeNames = new JLabel[table.getSelectedRowCount()];
+        JButton[] imageButtons = new JButton[table.getSelectedRowCount()];
+        JButton[] solutionButtons = new JButton[table.getSelectedRowCount()];
+        JLabel[] imageLabels = new JLabel[table.getSelectedRowCount()];
+        JLabel[] solutionLabels = new JLabel[table.getSelectedRowCount()];
+
         // Create outer frame and set size
         outerExportFrame = new JFrame("Export Maze to Image");
         outerExportFrame.setSize(600, 600);
@@ -164,10 +177,9 @@ public class ExportMazeDialog {
         outerPanel.setLayout(gbl);
         outerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        mazeImages = new BufferedImage[table.getSelectedRowCount()];
-        mazes = new Maze[table.getSelectedRowCount()];
-        imageDialog = new JDialog();
         outerExportFrame.dispatchEvent(new WindowEvent(outerExportFrame, WindowEvent.WINDOW_CLOSING));
+
+        // Set maze resolution, small number of cells with higher resolution and large number of cells with lower resolution
         for (int i = 0; i < table.getSelectedRowCount(); i++) {
             int id = Integer.parseInt((String) table.getValueAt(table.getSelectedRows()[i], 0));
             mazes[i] = Maze.LoadMazeFromID(id);
@@ -178,6 +190,7 @@ public class ExportMazeDialog {
                 for (int j = 64; j >= 16; j--) {
                     if (res >= start && res <= add) {
                         mazeImages[i] = mazes[i].getMazeStructure().getMazeImage(j);
+                        solutionImages[i] = mazes[i].getMazeStructure().drawSolution(i, mazes[i]);
                     }
                     start = add;
                     add += 208;
@@ -188,11 +201,6 @@ public class ExportMazeDialog {
             }
             id++;
         }
-
-        JLabel[] mazeNames = new JLabel[table.getSelectedRowCount()];
-        JButton[] imageButtons = new JButton[table.getSelectedRowCount()];
-        JLabel[] imageLabels = new JLabel[table.getSelectedRowCount()];
-        imageDialogs = new JDialog[table.getSelectedRowCount()];
 
         for (int i = 0; i < table.getSelectedRowCount(); i++) {
             mazeNames[i] = new JLabel((String) table.getValueAt(table.getSelectedRows()[i], 1));
@@ -207,13 +215,34 @@ public class ExportMazeDialog {
             imageButtons[i].setIcon(setScaledImgIcon(mazeImages[i], imageButtons[i]));
 
             imageLabels[i] = new JLabel();
-            imageLabels[i].setSize(600, 600);
+            imageLabels[i].setSize(550, 550);
             imageLabels[i].setIcon(setScaledImgIcon(mazeImages[i], imageLabels[i]));
             imageLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
 
             imageDialogs[i] = new JDialog();
             imageDialogs[i].setSize(600, 600);
+            imageDialogs[i].setTitle((String) table.getValueAt(table.getSelectedRows()[i], 1));
             imageDialogs[i].add(imageLabels[i]);
+            imageDialogs[i].setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
+
+            solutionButtons[i] = new JButton();
+            solutionButtons[i].setSize(100, 100);
+            solutionButtons[i].setForeground(Color.RED);
+            solutionButtons[i].setFocusPainted(true);
+            solutionButtons[i].setMargin(new Insets(0, 0, 0, 0));
+            solutionButtons[i].setContentAreaFilled(false);
+            solutionButtons[i].setIcon(setScaledImgIcon(solutionImages[i], imageButtons[i]));
+
+            solutionLabels[i] = new JLabel();
+            solutionLabels[i].setSize(550, 550);
+            solutionLabels[i].setIcon(setScaledImgIcon(solutionImages[i], imageLabels[i]));
+            solutionLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
+
+            solutionDialogs[i] = new JDialog();
+            solutionDialogs[i].setSize(600, 600);
+            solutionDialogs[i].setTitle((String) table.getValueAt(table.getSelectedRows()[i], 1) + "( with solution)");
+            solutionDialogs[i].add(imageLabels[i]);
+            solutionDialogs[i].setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
 
             final int temp = i;
             imageButtons[temp].addActionListener(e -> imageDialogs[temp].setVisible(true));

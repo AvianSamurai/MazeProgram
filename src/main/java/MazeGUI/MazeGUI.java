@@ -39,13 +39,11 @@ public class MazeGUI extends JFrame implements Runnable {
     private JTextField currentlySolvableTextField;
     private JTextField reachOptimalSolutionTextField;
 
-    private BufferedImage bufferedThumbnail;
+    private BufferedImage mazeImage;
     private BufferedImage solutionImg;
     private JFrame outerExportFrame;
     private JPanel thumbnailPanel;
     private JRadioButton yes;
-    private JRadioButton no;
-    private JButton btnExport;
 
     public MazeGUI(String title) throws HeadlessException {
         super(title);
@@ -475,34 +473,29 @@ public class MazeGUI extends JFrame implements Runnable {
         // Set icon
         outerExportFrame.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
 
-        // Create title
-        JLabel title = new JLabel("Export maze to image");
-        title.setFont(new Font("Arial", BOLD, 24));
-
-        // creating buttons
+        // Creating panels
         thumbnailPanel = new JPanel();
         JPanel exportInfoPanel = new JPanel();
         JPanel resolutionPanel = new JPanel();
-        JPanel solutionPanel = new JPanel();
+        JPanel solutionChoicePanel = new JPanel();
         JPanel btnPanel  = new JPanel();
 
-        thumbnailPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-
+        // Ask whether exporting with maze solution or not using radiobuttons
         JLabel includeSolution = new JLabel("Include a copy of maze with optimal solution");
-        solutionPanel.add(includeSolution);
-
+        solutionChoicePanel.add(includeSolution);
         ButtonGroup G = new ButtonGroup();
         yes = new JRadioButton("Yes");
         yes.setSelected(true);
-        no = new JRadioButton("No");
-        solutionPanel.add(yes);
-        solutionPanel.add(no);
+        JRadioButton no = new JRadioButton("No");
+        solutionChoicePanel.add(yes);
+        solutionChoicePanel.add(no);
         G.add(yes);
         G.add(no);
-        solutionPanel.setLayout(new BoxLayout(solutionPanel, BoxLayout.Y_AXIS));
+        solutionChoicePanel.setLayout(new BoxLayout(solutionChoicePanel, BoxLayout.Y_AXIS));
 
+        // Cancel and export button
         JButton btnCancel = new JButton("Cancel");
-        btnExport = new JButton("Export");
+        JButton btnExport = new JButton("Export");
         btnExport.addActionListener(downloadListener);
         btnCancel.addActionListener(new ActionListener() {
             @Override
@@ -512,7 +505,6 @@ public class MazeGUI extends JFrame implements Runnable {
         });
         btnPanel.add(btnCancel);
         btnPanel.add(btnExport);
-
 
         // Set maze resolution, small number of cells with higher resolution and large number of cells with lower resolution
         // minimum cell number: 3 * 3 = 9
@@ -524,30 +516,35 @@ public class MazeGUI extends JFrame implements Runnable {
         int res = mazePanel.GetMazeStructure().getWidth() * mazePanel.GetMazeStructure().getHeight();
         for (int i = 64; i >= 16; i--) {
             if (res >= start && res <= add) {
-                bufferedThumbnail = mazePanel.GetMazeStructure().getMazeImage(i);
+                mazeImage = mazePanel.GetMazeStructure().getMazeImage(i);
                 solutionImg = mazePanel.GetMazeStructure().drawSolution(i, maze);
             }
             start = add;
             add += 208;
         }
 
+        // Set size and border for thumbnail panel
+        thumbnailPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         thumbnailPanel.setSize(new Dimension(300, 300));
-        JLabel imageLabel = new JLabel();
         Debug.LogLn(GetPanelDimension().width + " | " + GetPanelDimension().height);
 
-        imageLabel.setIcon(new ImageIcon(bufferedThumbnail.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
+        // Create a label to hold the maze thumbnail
+        JLabel imageLabel = new JLabel();
+        imageLabel.setIcon(new ImageIcon(mazeImage.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
         thumbnailPanel.add(imageLabel);
 
+        // Display the resolution of maze
         JLabel resolution = new JLabel("Resolution");
-        JTextField textField = new JTextField(bufferedThumbnail.getWidth() + "*" + bufferedThumbnail.getHeight());
+        JTextField textField = new JTextField(mazeImage.getWidth() + "*" + mazeImage.getHeight());
         textField.setEditable(false);
         textField.setMaximumSize(new Dimension(300, 25));
         resolutionPanel.add(resolution);
         resolutionPanel.add(textField);
         resolutionPanel.setLayout(new BoxLayout(resolutionPanel, BoxLayout.Y_AXIS));
 
+        // Add all panels together
         exportInfoPanel.add(resolutionPanel);
-        exportInfoPanel.add(solutionPanel);
+        exportInfoPanel.add(solutionChoicePanel);
         exportInfoPanel.add(btnPanel);
         exportInfoPanel.setBorder(new EmptyBorder(30, 30, 30, 30));
         exportInfoPanel.setLayout(new GridLayout(3, 0));
@@ -563,15 +560,15 @@ public class MazeGUI extends JFrame implements Runnable {
         float ratio;
         int width;
         int height;
-        if (bufferedThumbnail.getWidth() >= bufferedThumbnail.getHeight()) {
-            ratio = bufferedThumbnail.getWidth() / ((float)thumbnailPanel.getWidth());
+        if (mazeImage.getWidth() >= mazeImage.getHeight()) {
+            ratio = mazeImage.getWidth() / ((float)thumbnailPanel.getWidth());
             width = thumbnailPanel.getWidth();
-            height = Math.round(bufferedThumbnail.getHeight() / ratio);
+            height = Math.round(mazeImage.getHeight() / ratio);
         }
         else {
-            ratio = bufferedThumbnail.getHeight() / ((float)thumbnailPanel.getHeight());
+            ratio = mazeImage.getHeight() / ((float)thumbnailPanel.getHeight());
             height = thumbnailPanel.getHeight();
-            width = Math.round(bufferedThumbnail.getWidth() / ratio);
+            width = Math.round(mazeImage.getWidth() / ratio);
         }
         return new Dimension(width, height);
     }
@@ -593,11 +590,13 @@ public class MazeGUI extends JFrame implements Runnable {
                     mazeFile = new File(mazeFile + "_maze.png");
                     solutionFile = new File(solutionFile + "_solution.png");
                     if (yes.isSelected()) {
-                        ImageIO.write(bufferedThumbnail, "png", mazeFile);
+                        // Export both raw maze image and a copy of maze with solution
+                        ImageIO.write(mazeImage, "png", mazeFile);
                         ImageIO.write(solutionImg, "png", solutionFile);
                     }
                     else{
-                        ImageIO.write(bufferedThumbnail, "png", mazeFile);
+                        // Only export maze image
+                        ImageIO.write(mazeImage, "png", mazeFile);
                     }
                 }
                 JOptionPane.showMessageDialog(null, "Successfully exported mazes");

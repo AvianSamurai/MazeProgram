@@ -587,7 +587,7 @@ public class MazeGUI extends JFrame implements Runnable {
                 if (fileTypefilter.getExtension().equals(".png")) {
                     File mazeFile = fileChooser.getSelectedFile();
                     File solutionFile = fileChooser.getSelectedFile();
-                    mazeFile = new File(mazeFile + "_maze.png");
+                    mazeFile = new File(mazeFile + ".png");
                     solutionFile = new File(solutionFile + "_solution.png");
                     if (yes.isSelected()) {
                         // Export both raw maze image and a copy of maze with solution

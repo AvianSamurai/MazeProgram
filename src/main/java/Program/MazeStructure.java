@@ -10,6 +10,7 @@ import java.io.Console;
 import java.util.ArrayList;
 
 public class MazeStructure {
+    public static final int STROKE_SIZE = 3;
     private int width, height;
     private I_Cell[][] cells;
 
@@ -279,7 +280,35 @@ public class MazeStructure {
                 g.drawImage(GetCell(x, y).getCellImageRepresentation(size, size), x * size, y * size, size, size, null);
             }
         }
+
         return bi;
+    }
+
+    /**
+     * Given an image and a maze object, this method will draw the solution onto it
+     *
+     * @param img image of the maze
+     * @param size size of each cell in the maze
+     * @param maze the maze object that the image was generated from
+     */
+    public void drawSolution(BufferedImage img, int size, Maze maze) {
+        int[][] solution = MazeAlgorithms.GenerateSolution(this, maze.GetStartPos()[0], maze.GetStartPos()[1], maze.GetEndPos()[0], maze.GetEndPos()[1]);
+        if(solution == null || solution.length <= 1) { return; }
+
+        Graphics2D g = (Graphics2D) img.getGraphics();
+        g.setColor(Color.red);
+        g.setStroke(new BasicStroke(STROKE_SIZE));
+
+        int[] prevPos = null;
+        for(int[] i : solution) {
+            if(prevPos == null) {
+                prevPos = i;
+                continue;
+            }
+
+            g.drawLine(i[0]*size + (size/2), i[1]*size + (size/2), prevPos[0]*size + (size/2), prevPos[1]*size + (size/2));
+            prevPos = i;
+        }
     }
 
     /**

@@ -40,7 +40,7 @@ public class MazeGUI extends JFrame implements Runnable {
     private JTextField reachOptimalSolutionTextField;
 
     private BufferedImage bufferedThumbnail;
-    private JFrame outerFrame;
+    private JFrame outerExportFrame;
     private JPanel thumbnailPanel;
 
     public MazeGUI(String title) throws HeadlessException {
@@ -465,11 +465,11 @@ public class MazeGUI extends JFrame implements Runnable {
 
     private void ExportCurrentMazeDialog() {
         // Create outer frame and set size
-        outerFrame = new JFrame("Export current maze");
-        outerFrame.setSize(new Dimension(700, 400));
+        outerExportFrame = new JFrame("Export current maze");
+        outerExportFrame.setSize(new Dimension(700, 400));
 
         // Set icon
-        outerFrame.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
+        outerExportFrame.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
 
         // Create title
         JLabel title = new JLabel("Export maze to image");
@@ -499,7 +499,12 @@ public class MazeGUI extends JFrame implements Runnable {
         JButton btnCancel = new JButton("Cancel");
         JButton btnExport = new JButton("Export");
         btnExport.addActionListener(downloadListener);
-        btnCancel.addActionListener(cancelListener);
+        btnCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                outerExportFrame.dispatchEvent(new WindowEvent(outerExportFrame, WindowEvent.WINDOW_CLOSING));
+            }
+        });
         btnPanel.add(btnCancel);
         btnPanel.add(btnExport);
 
@@ -539,11 +544,11 @@ public class MazeGUI extends JFrame implements Runnable {
         exportInfoPanel.setBorder(new EmptyBorder(30, 30, 30, 30));
         exportInfoPanel.setLayout(new GridLayout(3, 0));
 
-        outerFrame.add(thumbnailPanel, BorderLayout.CENTER);
-        outerFrame.add(exportInfoPanel, BorderLayout.EAST);
+        outerExportFrame.add(thumbnailPanel, BorderLayout.CENTER);
+        outerExportFrame.add(exportInfoPanel, BorderLayout.EAST);
 
         // show window
-        outerFrame.setVisible(true);
+        outerExportFrame.setVisible(true);
     }
 
     private Dimension GetPanelDimension() {
@@ -551,7 +556,7 @@ public class MazeGUI extends JFrame implements Runnable {
         int width;
         int height;
         if (bufferedThumbnail.getWidth() >= bufferedThumbnail.getHeight()) {
-            ratio = bufferedThumbnail.getWidth() / thumbnailPanel.getWidth();
+            ratio = bufferedThumbnail.getWidth() / ((float)thumbnailPanel.getWidth());
             width = thumbnailPanel.getWidth();
             height = Math.round(bufferedThumbnail.getHeight() / ratio);
         }
@@ -580,13 +585,6 @@ public class MazeGUI extends JFrame implements Runnable {
     */
 
     private void DownloadMazeDialog() {
-        // Create outer frame and set size
-        outerFrame = new JFrame();
-        outerFrame.setSize(new Dimension(900, 500));
-
-        // Set icon
-        outerFrame.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
-
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
 
@@ -599,7 +597,7 @@ public class MazeGUI extends JFrame implements Runnable {
         fileChooser.addChoosableFileFilter(gifFilter);
         fileChooser.setAcceptAllFileFilterUsed(false);
 
-        int userSelection = fileChooser.showSaveDialog(outerFrame);
+        int userSelection = fileChooser.showSaveDialog(outerExportFrame);
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
             try {
@@ -616,9 +614,11 @@ public class MazeGUI extends JFrame implements Runnable {
                     fileToSave = new File(fileToSave + ".gif");
                     ImageIO.write(bufferedThumbnail, "gif", fileToSave);
                 }
+                JOptionPane.showMessageDialog(null, "Successfully exported mazes");
+                outerExportFrame.dispatchEvent(new WindowEvent(outerExportFrame, WindowEvent.WINDOW_CLOSING));
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(outerFrame, "File is not a supported image file or is corrupted", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(outerExportFrame, "File is not a supported image file or is corrupted", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -635,16 +635,10 @@ public class MazeGUI extends JFrame implements Runnable {
         }
     };
 
-    ActionListener cancelListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING));
-        }
-    };
-
     ActionListener exportCurrentMazeListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            if(maze == null) {return;}
             ExportCurrentMazeDialog();
         }
     };

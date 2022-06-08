@@ -42,6 +42,7 @@ public class ExportMazeDialog {
     // Local variables
     private JTextField searchBar;
     private JFrame outerFrame;
+    private JFrame outerExportFrame;
     private JSelectionTable table = null;
     private GridBagConstraints gBC;
     private MazeDB db;
@@ -137,7 +138,6 @@ public class ExportMazeDialog {
 
         // show window
         outerFrame.setVisible(true);
-        outerFrame.setAlwaysOnTop(true);
     }
 
     private void ExportCMultipleMazeDialog() {
@@ -147,12 +147,12 @@ public class ExportMazeDialog {
         }
 
         // Create outer frame and set size
-        outerFrame = new JFrame("Export Maze to Image");
-        outerFrame.setSize(600, 600);
-        outerFrame.addWindowListener(windowListener);
+        outerExportFrame = new JFrame("Export Maze to Image");
+        outerExportFrame.setSize(600, 600);
+        outerExportFrame.addWindowListener(windowListener);
 
         // Set icon
-        outerFrame.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
+        outerExportFrame.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
 
         // Create default grid bag constraints
         gBC = (GridBagConstraints) DEFAULT_GBC.clone();
@@ -166,7 +166,7 @@ public class ExportMazeDialog {
         mazeImages = new BufferedImage[table.getSelectedRowCount()];
         mazes = new Maze[table.getSelectedRowCount()];
         imageDialog = new JDialog();
-        outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING));
+        outerExportFrame.dispatchEvent(new WindowEvent(outerExportFrame, WindowEvent.WINDOW_CLOSING));
         for (int i = 0; i < table.getSelectedRowCount(); i++) {
             int id = Integer.parseInt((String) table.getValueAt(table.getSelectedRows()[i], 0));
             mazes[i] = Maze.LoadMazeFromID(id);
@@ -226,12 +226,12 @@ public class ExportMazeDialog {
                 h = 600;
             }
             else if (mazeImages[i].getWidth() > mazeImages[i].getHeight()) {
-                ratio = mazeImages[i].getWidth() / 600f;
+                ratio = mazeImages[i].getWidth() / 600;
                 w = 600;
                 h = Math.round(mazeImages[i].getHeight() / ratio);
             }
             else {
-                ratio = mazeImages[i].getHeight() / 600f;
+                ratio = mazeImages[i].getHeight() / 600;
                 h = 600;
                 w = Math.round(mazeImages[i].getWidth() / ratio);
             }
@@ -271,7 +271,13 @@ public class ExportMazeDialog {
 
         // Buttons cancel and export
         JButton cancelBtn = new JButton("Cancel");
-        cancelBtn.addActionListener(cancelListener);
+        cancelBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                outerExportFrame.dispatchEvent(new WindowEvent(outerExportFrame, WindowEvent.WINDOW_CLOSING));
+                outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING));
+            }
+        });
         NextY(); NextX();
         gBC.insets = new Insets(30, 0, 0, 15);
         gBC.fill = GridBagConstraints.NONE;
@@ -285,10 +291,10 @@ public class ExportMazeDialog {
         outerPanel.add(exportBtn, gBC); RestoreGBCDefaults();
 
         JScrollPane scrollPane = new JScrollPane(outerPanel);
-        outerFrame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+        outerExportFrame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
         // show window
-        outerFrame.setVisible(true);
+        outerExportFrame.setVisible(true);
     }
 
     private void popupThumbnail() {
@@ -327,19 +333,20 @@ public class ExportMazeDialog {
 
     private void DownloadMazesDialog() {
         // Create outer frame and set size
-        outerFrame = new JFrame();
-        outerFrame.setSize(new Dimension(900, 500));
+        JFrame outerDownloadFrame = new JFrame();
+        outerDownloadFrame.setSize(new Dimension(900, 500));
 
         // Set icon
-        outerFrame.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
+        outerDownloadFrame.setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
 
         FileFilter pngFilter = new FileTypeFilter(".png", "PNG Image");
         fileChooser.addChoosableFileFilter(pngFilter);
+        fileChooser.setAcceptAllFileFilterUsed(false);
 
-        int userSelection = fileChooser.showSaveDialog(outerFrame);
+        int userSelection = fileChooser.showSaveDialog(outerDownloadFrame);
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             try {
                 FileTypeFilter filter = (FileTypeFilter) fileChooser.getFileFilter();
@@ -350,9 +357,14 @@ public class ExportMazeDialog {
                         ImageIO.write(mazeImages[i], "png", fileToSave);
                     }
                 }
+
+                JOptionPane.showMessageDialog(null, "Successfully exported mazes");
+                outerDownloadFrame.dispatchEvent(new WindowEvent(outerDownloadFrame, WindowEvent.WINDOW_CLOSING));
+                outerExportFrame.dispatchEvent(new WindowEvent(outerExportFrame, WindowEvent.WINDOW_CLOSING));
+                outerFrame.dispatchEvent(new WindowEvent(outerFrame, WindowEvent.WINDOW_CLOSING));
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(outerFrame, "File is not a supported image file or is corrupted", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(outerDownloadFrame, "File is not a supported image file or is corrupted", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

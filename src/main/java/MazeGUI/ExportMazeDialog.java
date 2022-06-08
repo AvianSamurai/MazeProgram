@@ -52,6 +52,7 @@ public class ExportMazeDialog {
     private Maze[] mazes;
     private JDialog[] imageDialogs;
     private JDialog[] solutionDialogs;
+    private JRadioButton[] yes;
 
     private static boolean isOpen = false;
 
@@ -153,12 +154,14 @@ public class ExportMazeDialog {
         mazes = new Maze[table.getSelectedRowCount()];
         mazeImages = new BufferedImage[table.getSelectedRowCount()];
         imageDialogs = new JDialog[table.getSelectedRowCount()];
+        solutionImages = new BufferedImage[table.getSelectedRowCount()];
         solutionDialogs = new JDialog[table.getSelectedRowCount()];
         JLabel[] mazeNames = new JLabel[table.getSelectedRowCount()];
         JButton[] imageButtons = new JButton[table.getSelectedRowCount()];
         JButton[] solutionButtons = new JButton[table.getSelectedRowCount()];
         JLabel[] imageLabels = new JLabel[table.getSelectedRowCount()];
         JLabel[] solutionLabels = new JLabel[table.getSelectedRowCount()];
+        yes = new JRadioButton[table.getSelectedRowCount()];
 
         // Create outer frame and set size
         outerExportFrame = new JFrame("Export Maze to Image");
@@ -190,7 +193,7 @@ public class ExportMazeDialog {
                 for (int j = 64; j >= 16; j--) {
                     if (res >= start && res <= add) {
                         mazeImages[i] = mazes[i].getMazeStructure().getMazeImage(j);
-                        solutionImages[i] = mazes[i].getMazeStructure().drawSolution(i, mazes[i]);
+                        solutionImages[i] = mazes[i].getMazeStructure().drawSolution(j, mazes[i]);
                     }
                     start = add;
                     add += 208;
@@ -231,26 +234,35 @@ public class ExportMazeDialog {
             solutionButtons[i].setFocusPainted(true);
             solutionButtons[i].setMargin(new Insets(0, 0, 0, 0));
             solutionButtons[i].setContentAreaFilled(false);
-            solutionButtons[i].setIcon(setScaledImgIcon(solutionImages[i], imageButtons[i]));
+            solutionButtons[i].setIcon(setScaledImgIcon(solutionImages[i], solutionButtons[i]));
 
             solutionLabels[i] = new JLabel();
             solutionLabels[i].setSize(550, 550);
-            solutionLabels[i].setIcon(setScaledImgIcon(solutionImages[i], imageLabels[i]));
+            solutionLabels[i].setIcon(setScaledImgIcon(solutionImages[i], solutionLabels[i]));
             solutionLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
 
             solutionDialogs[i] = new JDialog();
             solutionDialogs[i].setSize(600, 600);
-            solutionDialogs[i].setTitle((String) table.getValueAt(table.getSelectedRows()[i], 1) + "( with solution)");
-            solutionDialogs[i].add(imageLabels[i]);
+            solutionDialogs[i].setTitle((String) table.getValueAt(table.getSelectedRows()[i], 1) + " (with solution)");
+            solutionDialogs[i].add(solutionLabels[i]);
             solutionDialogs[i].setIconImage(new ImageIcon(this.getClass().getResource("MazeCo.png")).getImage());
 
             final int temp = i;
             imageButtons[temp].addActionListener(e -> imageDialogs[temp].setVisible(true));
-
             NextX();
             outerPanel.add(imageButtons[i], gBC); RestoreGBCDefaults();
 
-            JLabel resolution = new JLabel(mazeImages[i].getWidth() + "*" + mazeImages[i].getHeight());
+            solutionButtons[temp].addActionListener(e -> solutionDialogs[temp].setVisible(true));
+            NextX();
+            outerPanel.add(solutionButtons[i], gBC); RestoreGBCDefaults();
+
+            JLabel resolutionLabel = new JLabel("Resolution");
+            NextY();
+            outerPanel.add(resolutionLabel, gBC); RestoreGBCDefaults();
+
+            JTextField resolution = new JTextField(mazeImages[i].getWidth() + "*" + mazeImages[i].getHeight());
+            resolution.setEditable(false);
+            resolution.setMaximumSize(new Dimension(300, 25));
             NextX();
             outerPanel.add(resolution, gBC); RestoreGBCDefaults();
 
@@ -260,15 +272,16 @@ public class ExportMazeDialog {
 
             ButtonGroup G = new ButtonGroup();
 
-            JRadioButton yes = new JRadioButton("Yes");
+            yes[i] = new JRadioButton("Yes");
+            yes[i].setSelected(true);
             NextX();
-            outerPanel.add(yes, gBC); RestoreGBCDefaults();
+            outerPanel.add(yes[i], gBC); RestoreGBCDefaults();
 
             JRadioButton no = new JRadioButton("No");
             NextX();
             outerPanel.add(no, gBC); RestoreGBCDefaults();
 
-            G.add(yes);
+            G.add(yes[i]);
             G.add(no);
 
             JSeparator hr = new JSeparator(SwingConstants.HORIZONTAL);
@@ -289,7 +302,7 @@ public class ExportMazeDialog {
             }
         });
         NextY(); NextX();
-        gBC.insets = new Insets(30, 0, 0, 15);
+        gBC.insets = new Insets(30, 0, 0, 0);
         gBC.fill = GridBagConstraints.NONE;
         gBC.anchor = GridBagConstraints.EAST;
         outerPanel.add(cancelBtn, gBC); RestoreGBCDefaults();
@@ -298,6 +311,7 @@ public class ExportMazeDialog {
         exportBtn.addActionListener(downloadListener);
         NextX();
         gBC.insets = new Insets(30, 0, 0, 0);
+        gBC.fill = GridBagConstraints.NONE;
         outerPanel.add(exportBtn, gBC); RestoreGBCDefaults();
 
         JScrollPane scrollPane = new JScrollPane(outerPanel);
@@ -372,10 +386,12 @@ public class ExportMazeDialog {
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-
-        FileFilter pngFilter = new FileTypeFilter(".png", "PNG Image");
-        fileChooser.addChoosableFileFilter(pngFilter);
+        FileFilter fileFilter = new FileTypeFilter(".png", "PNG Image");
+        fileChooser.addChoosableFileFilter(fileFilter);
         fileChooser.setAcceptAllFileFilterUsed(false);
+
+        File[] mazeFiles = new File[table.getSelectedRowCount()];
+        File[] solutionFiles = new File[table.getSelectedRowCount()];
 
         int userSelection = fileChooser.showSaveDialog(outerDownloadFrame);
         if (userSelection == JFileChooser.APPROVE_OPTION) {
@@ -383,10 +399,21 @@ public class ExportMazeDialog {
                 FileTypeFilter filter = (FileTypeFilter) fileChooser.getFileFilter();
                 if (filter.getExtension().equals(".png")) {
                     for (int i = 0; i < mazes.length; i++) {
-                        File fileToSave = fileChooser.getSelectedFile();
-                        fileToSave = new File(fileToSave + (String) table.getValueAt(table.getSelectedRows()[i], 1) + ".png");
-                        ImageIO.write(mazeImages[i], "png", fileToSave);
+                        mazeFiles[i] = fileChooser.getSelectedFile();
+                        solutionFiles[i] = fileChooser.getSelectedFile();
+                        mazeFiles[i] = new File(mazeFiles[i] + (String) table.getValueAt(table.getSelectedRows()[i], 1) + ".png");
+                        solutionFiles[i] = new File(solutionFiles[i] + (String) table.getValueAt(table.getSelectedRows()[i], 1) + "_solution.png");
+                        if (yes[i].isSelected()) {
+                            // Export both raw maze image and a copy of maze with solution
+                            ImageIO.write(mazeImages[i], "png", mazeFiles[i]);
+                            ImageIO.write(solutionImages[i], "png", solutionFiles[i]);
+                        }
+                        else{
+                            // Only export maze image
+                            ImageIO.write(mazeImages[i], "png", mazeFiles[i]);
+                        }
                     }
+
                 }
 
                 JOptionPane.showMessageDialog(null, "Successfully exported mazes");

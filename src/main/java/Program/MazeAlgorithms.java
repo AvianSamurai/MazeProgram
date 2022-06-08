@@ -132,8 +132,8 @@ public class MazeAlgorithms {
     }
 
     private static int[] GetNextCellToCarveFromAndConnectIt(MazeStructure m) {
-        for(int x = 0; x < m.getWidth(); x++) {
-            for(int y = 0; y < m.getHeight(); y++) {
+        for(int x : GetShuffeledSequentialIntArray(0, m.getWidth())) {
+            for(int y : GetShuffeledSequentialIntArray(0, m.getHeight())) {
 
                 if(m.GetBasicCell(x, y) != null && !m.GetBasicCell(x, y).hasAnyConnections()) {
                     BasicCell[] cellNeighbors = m.GetBasicCellNeighbors(x, y);

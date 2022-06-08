@@ -290,11 +290,12 @@ public class MazeGUI extends JFrame implements Runnable {
     private void NewMaze() {
         // All Frames and Panels
         JFrame NewMazeFrame = new JFrame();
-        NewMazeFrame.setSize(800,450);
+        NewMazeFrame.setSize(700,300);
+        NewMazeFrame.setResizable(false);
         JPanel NewMaze = new JPanel();
-        NewMaze.setSize(800,450);
+        NewMaze.setSize(700,300);
         JPanel NewMaze2 = new JPanel();
-        NewMaze2.setSize(800,450);
+        NewMaze2.setSize(700,300);
 
         // First window
         JLabel mazeNameLabel, authNameLabel, mazeTypeLabel;
@@ -303,26 +304,26 @@ public class MazeGUI extends JFrame implements Runnable {
 
         // Fields for the user to add maze & author name
         mazeNameLabel = new JLabel("Maze Name: ");
-        mazeNameLabel.setBounds(50, 100, 100, 30);
+        mazeNameLabel.setBounds(50, 50, 100, 30);
         mazeName=new JTextField();
-        mazeName.setBounds(150,100, 200,30);  // Set where the fields are placed
+        mazeName.setBounds(150,50, 200,30);  // Set where the fields are placed
         authNameLabel = new JLabel("Author Name: ");
-        authNameLabel.setBounds(50, 150, 100, 30);
+        authNameLabel.setBounds(50, 100, 100, 30);
         authName=new JTextField();
-        authName.setBounds(150,150, 200,30);
+        authName.setBounds(150,100, 200,30);
 
 
         // DropMenu for the MazeType
         mazeTypeLabel = new JLabel("Maze Type: ");
-        mazeTypeLabel.setBounds(50, 250, 100, 30);
+        mazeTypeLabel.setBounds(50, 150, 100, 30);
 
         String[] mazeTypeOptions = {"Standard", "Themed", "Logo"};
         JComboBox<String> jComboBox = new JComboBox<>(mazeTypeOptions);
-        jComboBox.setBounds(150, 250, 200, 30);
+        jComboBox.setBounds(150, 150, 200, 30);
 
         // Button to go to next set of options or cancel completely
         JButton jButtonNext = new JButton("Next");
-        jButtonNext.setBounds(550, 350, 90, 20);
+        jButtonNext.setBounds(550, 200, 90, 20);
         jButtonNext.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -330,7 +331,7 @@ public class MazeGUI extends JFrame implements Runnable {
             }
         });
         JButton jButtonCancel = new JButton("Cancel");
-        jButtonCancel.setBounds(450, 350, 90, 20);
+        jButtonCancel.setBounds(450, 200, 90, 20);
         jButtonCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -355,12 +356,12 @@ public class MazeGUI extends JFrame implements Runnable {
 
         // DropMenu for the MazeSize
         mazeSizes = new JLabel("Maze Size: ");
-        mazeSizes.setBounds(50, 100, 100, 30);
+        mazeSizes.setBounds(50, 50, 100, 30);
 
-        JLabel widthLabel = new JLabel("width:");
-        widthLabel.setBounds(50, 140, 80, 30);
-        JLabel heightLabel = new JLabel("height:");
-        heightLabel.setBounds(50, 180, 80, 30);
+        JLabel widthLabel = new JLabel("Maze Width:");
+        widthLabel.setBounds(50, 100, 80, 30);
+        JLabel heightLabel = new JLabel("Maze Height:");
+        heightLabel.setBounds(50, 150, 80, 30);
 
         JSpinner widthSpinner = new JSpinner();
         JSpinner heightSpinner = new JSpinner();
@@ -376,13 +377,14 @@ public class MazeGUI extends JFrame implements Runnable {
         heightModel.setStepSize(1);
         heightModel.setValue(15);
         heightSpinner.setModel(heightModel);
-        widthSpinner.setBounds(130, 140, 100, 30);
-        heightSpinner.setBounds(130, 180, 100, 30);
+        // Maze Width and Height input fields
+        widthSpinner.setBounds(130, 100, 100, 30);
+        heightSpinner.setBounds(130, 150, 100, 30);
 
         // Button to go to next set of options or cancel completely
         Object[] options = {"Yes", "No"};
         JButton jButtonCreate2 = new JButton("Create");
-        jButtonCreate2.setBounds(550, 350, 90, 20);
+        jButtonCreate2.setBounds(550, 200, 90, 20);
         jButtonCreate2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -407,7 +409,7 @@ public class MazeGUI extends JFrame implements Runnable {
         });
 
         JButton jButtonCancel2 = new JButton("Cancel");
-        jButtonCancel2.setBounds(450, 350, 90, 20);
+        jButtonCancel2.setBounds(450, 200, 90, 20);
         jButtonCancel2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -1,14 +1,17 @@
 package Program;
 
+import MazeGUI.MazeEditor;
+import MazeGUI.MazeGUI;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Console;
 import java.util.ArrayList;
 
 public class MazeStructure {
     private int width, height;
     private I_Cell[][] cells;
-    private int[][][] logoCellLocations;
 
     protected MazeStructure(int width, int height) {
         this.width = width;
@@ -218,7 +221,7 @@ public class MazeStructure {
      * @param newCells the 2d array of cells to replace with
      * @param hasExteriorBorder if true, surrounds the inserted group with a border, otherwise, it does not
      */
-    public void InsertLogoCellGroup(int x, int y, I_Cell[][] newCells, boolean hasExteriorBorder) {
+    public void InsertCellGroup(int x, int y, I_Cell[][] newCells, boolean hasExteriorBorder) {
         for(int xPos = 0; xPos < newCells.length; xPos++) {
             for(int yPos = 0; yPos < newCells[0].length; yPos++) {
                 if(newCells[xPos][yPos] != null) {
@@ -259,6 +262,24 @@ public class MazeStructure {
         imgDialog.add(new JLabel(new ImageIcon(bi)));
         imgDialog.setSize(new Dimension(width * size + 64, height * size + 64));
         imgDialog.setVisible(true);
+    }
+
+    /**
+     * Get maze image with configurable resolution
+     *
+     * @param size size of each cell in pixels
+     * @return an image of maze which can be displayed on the interface and exported to the user's local machine
+     */
+    public BufferedImage getMazeImage(int size) {
+        BufferedImage bi = new BufferedImage(width * size, height * size, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = bi.createGraphics();
+        g.setBackground(Color.white);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                g.drawImage(GetCell(x, y).getCellImageRepresentation(size, size), x * size, y * size, size, size, null);
+            }
+        }
+        return bi;
     }
 
     /**

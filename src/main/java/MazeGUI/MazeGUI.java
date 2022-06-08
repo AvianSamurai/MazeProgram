@@ -291,6 +291,7 @@ public class MazeGUI extends JFrame implements Runnable {
         // All Frames and Panels
         JFrame NewMazeFrame = new JFrame();
         NewMazeFrame.setSize(700,300);
+        NewMazeFrame.setResizable(false);
         JPanel NewMaze = new JPanel();
         NewMaze.setSize(700,300);
         JPanel NewMaze2 = new JPanel();

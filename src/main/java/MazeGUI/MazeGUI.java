@@ -125,7 +125,7 @@ public class MazeGUI extends JFrame implements Runnable {
             }
         });
         resetButton.setPreferredSize(new Dimension(100, 25));
-        JButton stepButton = new JButton("Step");
+        JButton stepButton = new JButton("Clear Logo");
         stepButton.setPreferredSize(new Dimension(100, 25));
         JButton runButton = new JButton("Run");
         runButton.addActionListener(new ActionListener() {
@@ -133,6 +133,12 @@ public class MazeGUI extends JFrame implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 MazeAlgorithms.GenerateMaze(mazePanel.GetMazeStructure());
                 mazePanel.UpdateButtonGrid();
+            }
+        });
+        stepButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mazePanel.RemoveAndRegenerateLogo();
             }
         });
         runButton.setPreferredSize(new Dimension(100, 25));
@@ -157,22 +163,26 @@ public class MazeGUI extends JFrame implements Runnable {
         GroupLayout groupLayout = new GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(groupLayout);
 
-        JToggleButton showSolutionButton = new JToggleButton("ON");  // Action a
+        JToggleButton showSolutionButton = new JToggleButton("OFF");  // Action a
         showSolutionButton.setMinimumSize(new Dimension(55, 0));
         JLabel showSolutionLabel = new JLabel("Show optimal solution: ");
         ItemListener itemListener = e -> {
             // event is generated in button
             int state = e.getStateChange();
             // if selected print selected in console
-            if (state == ItemEvent.SELECTED) {
+            if (state != ItemEvent.SELECTED) {
                 showSolutionButton.setText("OFF");
                 mazePanel.SetShowSolution(false);
-                mazePanel.UpdateButtonGrid();
+                if(maze != null) {
+                    mazePanel.UpdateButtonGrid();
+                }
             } else {
                 // else print deselected in console
                 showSolutionButton.setText("ON");
                 mazePanel.SetShowSolution(true);
-                mazePanel.UpdateButtonGrid();
+                if(maze != null) {
+                    mazePanel.UpdateButtonGrid();
+                }
             }
         };
         showSolutionButton.addItemListener(itemListener);
@@ -244,17 +254,25 @@ public class MazeGUI extends JFrame implements Runnable {
 
         // ----------------------------------------------
         // Panel 4
-        JPanel imagePanel = new JPanel();
+        JPanel infoPanel = new JPanel();
         c.gridx = 2;
         c.gridy = 1;
         c.gridheight = 1;
         // Inside
-        imagePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("Image"), // outer border
+        infoPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Maze Info"), // outer border
                 BorderFactory.createEmptyBorder(10, 15, 10, 15)));
-        JButton addImage = new JButton("Add/Change image");
-        imagePanel.add(addImage);
-        propertyPanel.add(imagePanel, c);
+        JButton mazeInfo = new JButton("Show maze info");
+        mazeInfo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(maze != null) {
+                    mazePanel.DisplayMazeInfo();
+                }
+            }
+        });
+        infoPanel.add(mazeInfo);
+        propertyPanel.add(infoPanel, c);
 
         // ----------------------------------------------
         // Panel 5

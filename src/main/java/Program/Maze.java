@@ -107,6 +107,13 @@ public class Maze {
     }
 
     /**
+     * Gets the database id of the maze
+     *
+     * @return maze id
+     */
+    public int GetID() { return this.id; }
+
+    /**
      * Gets a string representation of size of the maze in cells
      *
      * @return maze size

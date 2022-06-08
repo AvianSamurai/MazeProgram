@@ -291,9 +291,9 @@ public class MazeStructure {
      * @param size size of each cell in the maze
      * @param maze the maze object that the image was generated from
      */
-    public void drawSolution(BufferedImage img, int size, Maze maze) {
+    public BufferedImage drawSolution(BufferedImage img, int size, Maze maze) {
         int[][] solution = MazeAlgorithms.GenerateSolution(this, maze.GetStartPos()[0], maze.GetStartPos()[1], maze.GetEndPos()[0], maze.GetEndPos()[1]);
-        if(solution == null || solution.length <= 1) { return; }
+        if(solution == null || solution.length <= 1) { return null; }
 
         Graphics2D g = (Graphics2D) img.getGraphics();
         g.setColor(Color.red);
@@ -309,6 +309,7 @@ public class MazeStructure {
             g.drawLine(i[0]*size + (size/2), i[1]*size + (size/2), prevPos[0]*size + (size/2), prevPos[1]*size + (size/2));
             prevPos = i;
         }
+        return img;
     }
 
     /**

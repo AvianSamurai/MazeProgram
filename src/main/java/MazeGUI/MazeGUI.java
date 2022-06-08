@@ -40,8 +40,11 @@ public class MazeGUI extends JFrame implements Runnable {
     private JTextField reachOptimalSolutionTextField;
 
     private BufferedImage bufferedThumbnail;
+    private BufferedImage solutionImg;
     private JFrame outerExportFrame;
     private JPanel thumbnailPanel;
+    private JRadioButton yes;
+    private JRadioButton no;
 
     public MazeGUI(String title) throws HeadlessException {
         super(title);
@@ -488,8 +491,8 @@ public class MazeGUI extends JFrame implements Runnable {
         solutionPanel.add(includeSolution);
 
         ButtonGroup G = new ButtonGroup();
-        JRadioButton yes = new JRadioButton("Yes");
-        JRadioButton no = new JRadioButton("No");
+        yes = new JRadioButton("Yes");
+        no = new JRadioButton("No");
         solutionPanel.add(yes);
         solutionPanel.add(no);
         G.add(yes);
@@ -508,6 +511,7 @@ public class MazeGUI extends JFrame implements Runnable {
         btnPanel.add(btnCancel);
         btnPanel.add(btnExport);
 
+
         // Set maze resolution, small number of cells with higher resolution and large number of cells with lower resolution
         // minimum cell number: 3 * 3 = 9
         // maximum cell number: 100 * 100 = 10000
@@ -519,15 +523,42 @@ public class MazeGUI extends JFrame implements Runnable {
         for (int i = 64; i >= 16; i--) {
             if (res >= start && res <= add) {
                 bufferedThumbnail = mazePanel.GetMazeStructure().getMazeImage(i);
+                solutionImg = mazePanel.GetMazeStructure().drawSolution(bufferedThumbnail, i, maze);
             }
             start = add;
             add += 208;
         }
 
+
         thumbnailPanel.setSize(new Dimension(300, 300));
         JLabel imageLabel = new JLabel();
         Debug.LogLn(GetPanelDimension().width + " | " + GetPanelDimension().height);
-        imageLabel.setIcon(new ImageIcon(bufferedThumbnail.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
+
+        /*
+        yes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (yes.isSelected()) {
+                    imageLabel.setIcon(new ImageIcon(bufferedThumbnail.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
+                }
+            }
+        });
+        */
+
+        //imageLabel.setIcon(new ImageIcon(solutionImg.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
+        //imageLabel.setIcon(new ImageIcon(bufferedThumbnail.getScaledInstance(GetPanelDimension().width, GetPanelDimension().height, Image.SCALE_SMOOTH)));
+
+        /*
+        no.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (no.isSelected()) {
+
+                }
+            }
+        });
+        */
+
         thumbnailPanel.add(imageLabel);
 
         JLabel resolution = new JLabel("Resolution");
@@ -568,22 +599,6 @@ public class MazeGUI extends JFrame implements Runnable {
         return new Dimension(width, height);
     }
 
-    /*
-    private BufferedImage DisplaySolution(int size) {
-        SolutionCell solutionCell = new SolutionCell();
-        MazeStructure mazeStructure = mazePanel.GetMazeStructure();
-        int[][] solutionPositions = mazePanel.getSolution();
-        BufferedImage solutionImage = new BufferedImage(mazeStructure.getWidth() * size, mazeStructure.getHeight() * size, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2 = solutionImage.createGraphics();
-
-        for (int[] solpos : solutionPositions) {
-            g2.drawImage(mazeStructure.GetCell(solpos[0], solpos[1]).getCellImageRepresentation(size, size), solpos[0] * size, solpos[1] * size, size, size, Color.CYAN, null);
-        }
-        //buttonGrid[solpos[0]][solpos[1]].setBackground(Color.CYAN);
-        return solutionImage;
-    }
-    */
-
     private void DownloadMazeDialog() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
@@ -603,8 +618,12 @@ public class MazeGUI extends JFrame implements Runnable {
             try {
                 FileTypeFilter filter = (FileTypeFilter) fileChooser.getFileFilter();
                 if (filter.getExtension().equals(".png")) {
-                    fileToSave = new File(fileToSave + ".png");
-                    ImageIO.write(bufferedThumbnail, "png", fileToSave);
+                    File fileToSave1 = fileChooser.getSelectedFile();
+                    fileToSave1 = new File(fileToSave1 + "_maze.png");
+                    File fileToSave2 = fileChooser.getSelectedFile();
+                    fileToSave2 = new File(fileToSave2 + "_solution.png");
+                    ImageIO.write(bufferedThumbnail, "png", fileToSave1);
+                    ImageIO.write(solutionImg, "png", fileToSave2);
                 }
                 else if (filter.getExtension().equals(".jpg")) {
                     fileToSave = new File(fileToSave + ".jpg");
@@ -649,7 +668,7 @@ public class MazeGUI extends JFrame implements Runnable {
         public void actionPerformed(ActionEvent e) {
 
             JOptionPane.showMessageDialog(null, e.getActionCommand());
-            // maze.getMazeStructure().DebugDisplayMaze(16);
+            maze.getMazeStructure().DebugDisplayMaze(16);
         }
     };
 
@@ -757,9 +776,9 @@ public class MazeGUI extends JFrame implements Runnable {
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
         // Uncomment this to clear your database and insert fake data
-        // MazeDB dbm = new MazeDB();
-        // dbm.LoadTestDataIntoDatabase(true);
-        // dbm.disconnect();
+        MazeDB dbm = new MazeDB();
+        dbm.LoadTestDataIntoDatabase(true);
+        dbm.disconnect();
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

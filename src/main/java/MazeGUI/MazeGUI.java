@@ -115,6 +115,8 @@ public class MazeGUI extends JFrame implements Runnable {
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(maze == null) { return; }
+
                 int result = JOptionPane.showConfirmDialog(null,"Are you sure you want to reset the maze?", "Reset Maze",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE);
@@ -131,6 +133,7 @@ public class MazeGUI extends JFrame implements Runnable {
         runButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(maze == null) { return; }
                 MazeAlgorithms.GenerateMaze(mazePanel.GetMazeStructure());
                 mazePanel.UpdateButtonGrid();
             }
@@ -138,6 +141,7 @@ public class MazeGUI extends JFrame implements Runnable {
         stepButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(maze == null) { return; }
                 mazePanel.RemoveAndRegenerateLogo();
             }
         });
@@ -248,7 +252,8 @@ public class MazeGUI extends JFrame implements Runnable {
                 BorderFactory.createTitledBorder("Logo"), // outer border
                 BorderFactory.createEmptyBorder(10, 15, 10, 15)));
 
-        JButton addLogo = new JButton("Add/Change logo");
+        JButton addLogo = new JButton("Add logo");
+        addLogo.addActionListener(importLogoListener);
         logoPanel.add(addLogo);
         propertyPanel.add(logoPanel, c);
 
@@ -470,7 +475,10 @@ public class MazeGUI extends JFrame implements Runnable {
     ActionListener saveMazeListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(maze == null) { JOptionPane.showMessageDialog(null, "No maze is open"); }
+            if(maze == null) {
+                JOptionPane.showMessageDialog(null, "No maze is open");
+                return;
+            }
             maze.SaveMaze();
             JOptionPane.showMessageDialog(null, "Maze saved to database");
         }
@@ -499,6 +507,8 @@ public class MazeGUI extends JFrame implements Runnable {
     ActionListener importLogoListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            if(maze == null) { return; }
+
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
             int result = fileChooser.showOpenDialog(mainPanel);

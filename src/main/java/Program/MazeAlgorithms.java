@@ -3,6 +3,7 @@ package Program;
 import MazeGUI.MazeEditor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.Stack;
 
@@ -28,9 +29,18 @@ public class MazeAlgorithms {
 
     }
 
+    private static int[] GetShuffeledSequentialIntArray(int start, int end) {
+        ArrayList<Integer> intList = new ArrayList<Integer>();
+        for(int i = start; i < end; i++) {
+            intList.add(i);
+        }
+        Collections.shuffle(intList);
+        return intList.stream().mapToInt(i->i).toArray();
+    }
+
     private static int[] SearchForRemainingCells(MazeStructure m) {
-        for(int x = 0; x < m.getWidth(); x++) {
-            for(int y = 0; y < m.getHeight(); y++) {
+        for(int x : GetShuffeledSequentialIntArray(0, m.getWidth())) {
+            for(int y : GetShuffeledSequentialIntArray(0, m.getHeight())) {
                 if(m.GetBasicCell(x, y) != null && !m.GetBasicCell(x, y).hasAnyConnections()) {
                     BasicCell[] cellNeighbors = m.GetBasicCellNeighbors(x, y);
                     for(int i = 0; i < 4; i++) {

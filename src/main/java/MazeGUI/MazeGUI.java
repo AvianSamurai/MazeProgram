@@ -334,15 +334,30 @@ public class MazeGUI extends JFrame implements Runnable {
         NewMaze.add(new JLabel("New Maze"));  // Label of the new window
 
         // Fields for the user to add maze & author name
+        String username = System.getProperty("user.name");
         mazeNameLabel = new JLabel("Maze Name: ");
         mazeNameLabel.setBounds(50, 50, 100, 30);
         mazeName=new JTextField();
+        mazeName.setText(username + "s maze");
+        mazeName.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                mazeName.selectAll();
+            }
+        });
         mazeName.setBounds(150,50, 200,30);  // Set where the fields are placed
         authNameLabel = new JLabel("Author Name: ");
         authNameLabel.setBounds(50, 100, 100, 30);
         authName=new JTextField();
-        String username = System.getProperty("user.name");
         authName.setText(username);
+        authName.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                authName.selectAll();
+            }
+        });
         authName.setBounds(150,100, 200,30);
 
 

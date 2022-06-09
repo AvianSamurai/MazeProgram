@@ -1,14 +1,18 @@
 package Program;
 
+import MazeGUI.MazeEditor;
+import MazeGUI.MazeGUI;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Console;
 import java.util.ArrayList;
 
 public class MazeStructure {
+    public static final int STROKE_SIZE = 3;
     private int width, height;
     private I_Cell[][] cells;
-    private int[][][] logoCellLocations;
 
     protected MazeStructure(int width, int height) {
         this.width = width;
@@ -259,6 +263,52 @@ public class MazeStructure {
         imgDialog.add(new JLabel(new ImageIcon(bi)));
         imgDialog.setSize(new Dimension(width * size + 64, height * size + 64));
         imgDialog.setVisible(true);
+    }
+
+    /**
+     * Get maze image with configurable resolution
+     *
+     * @param size size of each cell in pixels
+     * @return an image of maze which can be displayed on the interface and exported to the user's local machine
+     */
+    public BufferedImage getMazeImage(int size) {
+        BufferedImage bi = new BufferedImage(width * size, height * size, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = bi.createGraphics();
+        g.setBackground(Color.white);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                g.drawImage(GetCell(x, y).getCellImageRepresentation(size, size), x * size, y * size, size, size, null);
+            }
+        }
+
+        return bi;
+    }
+
+    /**
+     * Given an image and a maze object, this method will draw the solution onto it
+     *
+     * @param img image of the maze
+     * @param size size of each cell in the maze
+     * @param maze the maze object that the image was generated from
+     */
+    public void drawSolution(BufferedImage img, int size, Maze maze) {
+        int[][] solution = MazeAlgorithms.GenerateSolution(this, maze.GetStartPos()[0], maze.GetStartPos()[1], maze.GetEndPos()[0], maze.GetEndPos()[1]);
+        if(solution == null || solution.length <= 1) { return; }
+
+        Graphics2D g = (Graphics2D) img.getGraphics();
+        g.setColor(Color.red);
+        g.setStroke(new BasicStroke(STROKE_SIZE));
+
+        int[] prevPos = null;
+        for(int[] i : solution) {
+            if(prevPos == null) {
+                prevPos = i;
+                continue;
+            }
+
+            g.drawLine(i[0]*size + (size/2), i[1]*size + (size/2), prevPos[0]*size + (size/2), prevPos[1]*size + (size/2));
+            prevPos = i;
+        }
     }
 
     /**

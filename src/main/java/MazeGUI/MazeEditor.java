@@ -27,7 +27,7 @@ public class MazeEditor extends JPanel {
     private Stack<int[]> cellsToUpdate = new Stack<>();
     private int[][] solutionPositions = null;
     private MazeGUI mazeGUI;
-    private boolean showSolution = true;
+    private boolean showSolution = false;
 
     public MazeEditor() {
         this.setLayout((outerAreaLayout = new SpringLayout()));
@@ -591,5 +591,30 @@ public class MazeEditor extends JPanel {
         if(selectedTool == ToolsEnum.PLACE_LOGO) {
             UpdateEditedButtons();
         }
+    }
+
+    public void RemoveAndRegenerateLogo() {
+
+        for(int y = 0; y < mazeStruct.getHeight(); y++) {
+            for (int x = 0; x < mazeStruct.getWidth(); x++) {
+                I_Cell cell = mazeStruct.GetCell(x, y);
+                if(cell instanceof LogoCell) {
+                    BasicCell newCell = new BasicCell();
+                    mazeStruct.InsertCell(x, y, newCell);
+                    cellsToUpdate.add(new int[]{x, y});
+                }
+            }
+        }
+
+        MazeAlgorithms.GenerateMaze(mazeStruct);
+        UpdateButtonGrid();
+    }
+
+    public void DisplayMazeInfo() {
+        JOptionPane.showMessageDialog(mazeGUI,
+                "Title: \t" + maze.GetTitle() +
+                "\nAuthor: \t" + maze.GetAuthor() +
+                "\nDatabase id: \t" + maze.GetID(),
+                "Maze Info", JOptionPane.INFORMATION_MESSAGE);
     }
 }

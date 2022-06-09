@@ -341,6 +341,8 @@ public class MazeGUI extends JFrame implements Runnable {
         authNameLabel = new JLabel("Author Name: ");
         authNameLabel.setBounds(50, 100, 100, 30);
         authName=new JTextField();
+        String username = System.getProperty("user.name");
+        authName.setText(username);
         authName.setBounds(150,100, 200,30);
 
 

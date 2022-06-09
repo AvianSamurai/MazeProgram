@@ -285,17 +285,17 @@ public class MazeStructure {
     }
 
     /**
-     * Given an image and a maze object, this method will draw the solution onto it
+     * Given a maze image and a maze object, this method will draw the solution onto the maze and generate a new image
      *
-     * @param img image of the maze
      * @param size size of each cell in the maze
      * @param maze the maze object that the image was generated from
      */
-    public void drawSolution(BufferedImage img, int size, Maze maze) {
+    public BufferedImage drawSolution(int size, Maze maze) {
+        BufferedImage image = getMazeImage(size);
         int[][] solution = MazeAlgorithms.GenerateSolution(this, maze.GetStartPos()[0], maze.GetStartPos()[1], maze.GetEndPos()[0], maze.GetEndPos()[1]);
-        if(solution == null || solution.length <= 1) { return; }
+        if(solution == null || solution.length <= 1) { return null; }
 
-        Graphics2D g = (Graphics2D) img.getGraphics();
+        Graphics2D g = (Graphics2D) image.getGraphics();
         g.setColor(Color.red);
         g.setStroke(new BasicStroke(STROKE_SIZE));
 
@@ -309,6 +309,7 @@ public class MazeStructure {
             g.drawLine(i[0]*size + (size/2), i[1]*size + (size/2), prevPos[0]*size + (size/2), prevPos[1]*size + (size/2));
             prevPos = i;
         }
+        return image;
     }
 
     /**

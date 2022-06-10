@@ -53,6 +53,7 @@ public class MazeAlgorithms {
         }
         return null;
     }
+
     public static int[][] GenerateSolution(MazeStructure m, int startX, int startY, int endX, int endY) {
         ArrayList<int[]> solutionPositions = new ArrayList<int[]>();
 
@@ -92,9 +93,6 @@ public class MazeAlgorithms {
         int currentX = endX;
         int currentY = endY;
         int minWeight = mazeWeights[endX][endY];
-
-        solutionPositions.add(new int[]{endX, endY});
-
         while(true) {
 
             Direction[] dirs = m.GetDirectionsToValidCells(currentX, currentY, true);

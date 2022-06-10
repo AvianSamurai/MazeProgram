@@ -142,13 +142,6 @@ public class TestMazeStructure {
         });
     }
 
-    @Test
-    @DisplayName("Test get non-basic cell")
-    void TestGetNonBasicCell() {
-        // To be tested
-        // e.g. logo cell
-    }
-
     // Normal test cases
     @Test
     @DisplayName("Test get neighbours of a basic cell (1, 1)")
@@ -168,6 +161,10 @@ public class TestMazeStructure {
         assertEquals(mazeStructure.GetBasicCell(5, 5), cellNeighbors[1]);
         assertEquals(mazeStructure.GetBasicCell(4, 6), cellNeighbors[2]);
         assertEquals(mazeStructure.GetBasicCell(3, 5), cellNeighbors[3]);
+
+        // Test get directions to valid cells with four directions carvable
+        Direction[] directions = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(4, 5, true));
     }
 
     // Boundary test cases
@@ -179,6 +176,10 @@ public class TestMazeStructure {
         assertEquals(mazeStructure.GetBasicCell(6, 0), cellNeighbors[1]);
         assertEquals(mazeStructure.GetBasicCell(5, 1), cellNeighbors[2]);
         assertEquals(mazeStructure.GetBasicCell(4, 0), cellNeighbors[3]);
+
+        // Test get directions to valid cells on the first row which has three directions carvable
+        Direction[] directions = {Direction.EAST, Direction.SOUTH, Direction.WEST};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(5, 0, true));
     }
 
     @Test
@@ -189,6 +190,10 @@ public class TestMazeStructure {
         assertEquals(mazeStructure.GetBasicCell(1, 4), cellNeighbors[1]);
         assertEquals(mazeStructure.GetBasicCell(0, 5), cellNeighbors[2]);
         assertNull(cellNeighbors[3], "Left border reached");
+
+        // Test get directions to valid cells on the first column which has three directions carvable
+        Direction[] directions = {Direction.NORTH, Direction.EAST, Direction.SOUTH};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(0, 4, true));
     }
 
     @Test
@@ -199,6 +204,10 @@ public class TestMazeStructure {
         assertEquals(mazeStructure.GetBasicCell(4, 9), cellNeighbors[1]);
         assertNull(cellNeighbors[2], "Bottom border reached");
         assertEquals(mazeStructure.GetBasicCell(2, 9), cellNeighbors[3]);
+
+        // Test get directions to valid cells on the last row which has three directions carvable
+        Direction[] directions = {Direction.NORTH, Direction.EAST, Direction.WEST};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(3, 9, true));
     }
 
     @Test
@@ -209,6 +218,10 @@ public class TestMazeStructure {
         assertNull(cellNeighbors[1], "Right border reached");
         assertEquals(mazeStructure.GetBasicCell(9, 9), cellNeighbors[2]);
         assertEquals(mazeStructure.GetBasicCell(8, 8), cellNeighbors[3]);
+
+        // Test get directions to valid cells on the last column which has three directions carvable
+        Direction[] directions = {Direction.NORTH, Direction.SOUTH, Direction.WEST};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(9, 8, true));
     }
 
     @Test
@@ -219,6 +232,10 @@ public class TestMazeStructure {
         assertEquals(mazeStructure.GetBasicCell(1, 0), cellNeighbors[1]);
         assertEquals(mazeStructure.GetBasicCell(0, 1), cellNeighbors[2]);
         assertNull(cellNeighbors[3], "Left border reached");
+
+        // Test get directions to valid cells in top left corner which has three directions carvable
+        Direction[] directions = {Direction.EAST, Direction.SOUTH};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(0, 0, true));
     }
 
     @Test
@@ -229,6 +246,10 @@ public class TestMazeStructure {
         assertEquals(mazeStructure.GetBasicCell(1, 9), cellNeighbors[1]);
         assertNull(cellNeighbors[2], "South border reached");
         assertNull(cellNeighbors[3], "Left border reached");
+
+        // Test get directions to valid cells in bottom left corner which has three directions carvable
+        Direction[] directions = {Direction.NORTH, Direction.EAST};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(0, 9, true));
     }
 
     @Test
@@ -239,6 +260,10 @@ public class TestMazeStructure {
         assertNull(cellNeighbors[1], "Right border reached");
         assertEquals(mazeStructure.GetBasicCell(9, 1), cellNeighbors[2]);
         assertEquals(mazeStructure.GetBasicCell(8, 0), cellNeighbors[3]);
+
+        // Test get directions to valid cells in top right corner which has three directions carvable
+        Direction[] directions = {Direction.SOUTH, Direction.WEST};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(9, 0, true));
     }
 
     @Test
@@ -249,6 +274,18 @@ public class TestMazeStructure {
         assertNull(cellNeighbors[1], "Right border reached");
         assertNull(cellNeighbors[2], "South border reached");
         assertEquals(mazeStructure.GetBasicCell(8, 9), cellNeighbors[3]);
+
+        // Test get directions to valid cells in bottom right corner which has three directions carvable
+        Direction[] directions = {Direction.NORTH, Direction.WEST};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(9, 9, true));
+    }
+
+    @Test
+    @DisplayName("Test get directions to valid cells when not allowing the cell to connect with others")
+    void GetDirectionsToValidCellOfCellWithNoConnectionAllowed() {
+        Direction[] directions = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+        assertArrayEquals(directions, mazeStructure.GetDirectionsToValidCells(2, 8, false),
+                "The cell has connection to other cells, check hasAnyConnections()");
     }
 
     // Exceptional test cases
@@ -258,12 +295,6 @@ public class TestMazeStructure {
         assertThrows(Exception.class, () -> {
             mazeStructure.GetBasicCellNeighbors(-1, 10);
         });
-    }
-
-    @Test
-    @DisplayName("Test get neighbours of a non-basic cell")
-    void TestGetNeighboursOfNonBasicCell() {
-        // To be tested
     }
 
     // Normal cases
@@ -331,12 +362,5 @@ public class TestMazeStructure {
         assertThrows(Exception.class, () -> {
             mazeStructure.InsertCell(-1, 11, newCell);
         });
-    }
-
-
-    @Test
-    @DisplayName("Test insert cell group")
-    void InsertCellGroup() {
-        // To be tested
     }
 }

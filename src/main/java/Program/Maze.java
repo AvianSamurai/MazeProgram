@@ -4,7 +4,6 @@ import DB.MazeDB;
 import Utils.Debug;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.sql.ResultSet;
@@ -34,6 +33,8 @@ public class Maze {
      * @param type
      * @deprecated
      */
+
+    //Constructor declared to utilize the pre-defined fields into objects when the class is called
     public Maze (String title, String author, String cellSize, String type){
         this.title = title.replaceAll("[^a-zA-Z0-9 ]", "");
         this.author = author.replaceAll("[^a-zA-Z0-9 ]", "");
@@ -54,6 +55,8 @@ public class Maze {
      * @param width
      * @param height
      */
+
+    //Another constructor declared to utilize extra parameters using the concept of overloading
     public Maze (String title, String author, String cellSize, String type, int width, int height) {
         this(title, author, "auto", type);
 
@@ -83,6 +86,9 @@ public class Maze {
      * @param author author of the maze
      * @deprecated
      */
+
+    //Another constructor declared using the concept of overloading. This is so the information added by the user
+    //can include only the title and author to create a maze object.
     public Maze (String title, String author){
         this.title = title;
         this.author = author;
@@ -93,6 +99,8 @@ public class Maze {
      *
      * @return maze author
      */
+
+    //Retrieves the author of the maze
     public String GetAuthor() {
         return this.author;
     }
@@ -102,6 +110,8 @@ public class Maze {
      *
      * @return maze title
      */
+
+    //Retrieves the title of the maze
     public String GetTitle(){
         return this.title;
     }
@@ -111,6 +121,8 @@ public class Maze {
      *
      * @return maze id
      */
+
+    //Retrieves the ID of the maze
     public int GetID() { return this.id; }
 
     /**
@@ -118,6 +130,8 @@ public class Maze {
      *
      * @return maze size
      */
+
+    //Retrieves the size of the maze in string form using the cells as a measurement
     public String getCellSize(){return this.cellSize;}
 
     /**
@@ -125,6 +139,8 @@ public class Maze {
      *
      * @return the start position of the maze
      */
+
+    //Retrieves the starting position of the maze
     public int[] GetStartPos() { return this.startPos; }
 
     /**
@@ -132,6 +148,8 @@ public class Maze {
      *
      * @return the end position of the maze
      */
+
+    //Retrieves the end position of the maze
     public int[] GetEndPos() { return this.endPos; }
 
     /**
@@ -139,6 +157,8 @@ public class Maze {
      *
      * @param startPos new start position
      */
+
+    //Gets the starting position of the maze chosen by the user
     public void SetStartPos(int[] startPos) { this.startPos = startPos; }
 
 
@@ -147,6 +167,8 @@ public class Maze {
      *
      * @param endPos new end position
      */
+
+    //Gets the end position of the maze chosen by the user
     public void SetEndPos(int[] endPos) { this.endPos = endPos; }
 
     /**
@@ -155,18 +177,25 @@ public class Maze {
      *
      * @return maze type
      */
+
+    //Gets the type of maze chosen by the user
     public String getType(){return this.type;}
 
     /**
      * Returns the contained maze structure, this may be null if the maze was constructed with a deprecated constructor
      * @return the maze structure object
      */
+
+    //Returns the structure of the maze
     public MazeStructure getMazeStructure() { return m; }
 
     /**
      * Saves the maze to database
      * @return true if save was successful, false otherwise
      */
+
+    //Saves the current maze and inserts the data in a local database to be retrieved later.
+    //If the maze information already exists this function uses an UPDATE SQL command to update the data.
     public boolean SaveMaze() {
         MazeDB mazeDB;
         try {
@@ -227,6 +256,9 @@ public class Maze {
      * @param id id to find maze by
      * @return the new maze object
      */
+
+    //Using the JSON data stored in the database, this function retrieves stored maze data using a SELECT
+    //SQL command
     public static Maze LoadMazeFromID(int id) {
         MazeDB mazeDB;
         Maze finalMaze = null;
@@ -271,6 +303,8 @@ public class Maze {
      *
      * @return date and time in string format
      */
+
+    //Function is used to get the date and time of maze creation and update
     public String GetDateTime(){
         this.theDateTime = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
         LocalDateTime current = LocalDateTime.now();

@@ -54,6 +54,17 @@ public class MazeAlgorithms {
         return null;
     }
 
+    /**
+     * Solves a given maze structure and returns an array of cell positions representing the solution.
+     * The cells are ordered from end of solution to beginning of solution
+     *
+     * @param m maze structure to solve
+     * @param startX x position of the start
+     * @param startY y position of the start
+     * @param endX x position of the end
+     * @param endY y position of the end
+     * @return and integer array of solution positions
+     */
     public static int[][] GenerateSolution(MazeStructure m, int startX, int startY, int endX, int endY) {
         ArrayList<int[]> solutionPositions = new ArrayList<int[]>();
 

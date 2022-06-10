@@ -59,6 +59,14 @@ public class ImageCell extends BasicCell {
         }
     }
 
+    /**
+     * Sets the cell's image to be an arrow pointing in the given direction<br/>
+     * Also takes into account whether this arrow is being used to represent the start of the maze or the end of the maze
+     * and positions it correctly.
+     *
+     * @param dir The direction the arrow should point
+     * @param isStart whether it is the start of the maze or not
+     */
     public void SetCellArrow(Direction dir, boolean isStart) {
         SetBorder(dir, false);
 

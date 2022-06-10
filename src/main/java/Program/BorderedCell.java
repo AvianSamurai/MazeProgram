@@ -82,6 +82,11 @@ public abstract class BorderedCell {
         otherCell.SetBorder(dir.GetOppositeDirection(), true);
     }
 
+    /**
+     * Returns the amount of borders a cell has
+     *
+     * @return cell border count
+     */
     public int GetBorderCount() {
         int count = 0;
         for(boolean b : borders) {

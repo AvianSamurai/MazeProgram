@@ -15,9 +15,13 @@ public class ImageCell extends BasicCell {
      *
      * @throws IOException thrown if the placeholder image couldn't be loaded, this should never happen
      */
-    public ImageCell() throws IOException {
+    public ImageCell() {
         super();
-        cellImage = ImageIO.read(this.getClass().getResource("PlaceHolder.png"));
+        try {
+            cellImage = ImageIO.read(this.getClass().getResource("PlaceHolder.png"));
+        } catch (IOException e) { // This should never happen because the resource should always be available
+            e.printStackTrace();
+        }
 
     }
 
@@ -46,10 +50,12 @@ public class ImageCell extends BasicCell {
      * @param im the new image
      */
     public void SetCellImage(Image im) {
+        // Get the image and its properties
         BufferedImage cellim = (BufferedImage) im;
         int imwidth = cellim.getWidth();
         int imheight = cellim.getHeight();
 
+        // Sets the image size to be a square the size of the image's largest dimension
         if(imheight < imwidth) {
             cellImage = new BufferedImage(imwidth, imwidth, BufferedImage.TYPE_INT_ARGB);
             ((Graphics2D)cellImage.getGraphics()).drawImage(cellim, 0, (imwidth - imheight)/2, imwidth, imheight, null);
@@ -70,6 +76,7 @@ public class ImageCell extends BasicCell {
     public void SetCellArrow(Direction dir, boolean isStart) {
         SetBorder(dir, false);
 
+        // Load the arrow image
         BufferedImage arrowImage;
         try {
             arrowImage = ImageIO.read(this.getClass().getResource("ArrowImage.png"));
@@ -78,9 +85,11 @@ public class ImageCell extends BasicCell {
             return;
         }
 
+        // Resize the image
         BufferedImage resizedArrow = new BufferedImage(ARROW_IMAGE_SIZE, ARROW_IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
         ((Graphics2D)resizedArrow.getGraphics()).drawImage(arrowImage, 0, isStart ? 0 : ARROW_IMAGE_SIZE - arrowImage.getHeight(), null);
 
+        // Create a buffered image to hold the final arrow image
         cellImage = new BufferedImage(ARROW_IMAGE_SIZE, ARROW_IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) cellImage.getGraphics();
 

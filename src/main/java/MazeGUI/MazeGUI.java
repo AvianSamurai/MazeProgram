@@ -448,7 +448,7 @@ public class MazeGUI extends JFrame implements Runnable {
                 String size = widthSpinner.getValue() + "x" + heightSpinner.getValue();
                 String selectedType = jComboBox.getItemAt(jComboBox.getSelectedIndex());
                 NewMazeFrame.dispose();
-                maze = new Maze(title, author, size, selectedType, (int)widthSpinner.getValue(), (int)heightSpinner.getValue());
+                maze = new Maze(title, author, selectedType, (int)widthSpinner.getValue(), (int)heightSpinner.getValue());
                 if (createStatus == JOptionPane.YES_OPTION){
                     MazeAlgorithms.GenerateMaze(maze.getMazeStructure());
                 }
@@ -762,9 +762,9 @@ public class MazeGUI extends JFrame implements Runnable {
 
     public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException {
         // Uncomment this to clear your database and insert fake data
-        // MazeDB dbm = new MazeDB();
-        // dbm.LoadTestDataIntoDatabase(true);
-        // dbm.disconnect();
+        MazeDB dbm = new MazeDB();
+        dbm.LoadTestDataIntoDatabase(true);
+        dbm.disconnect();
         SwingUtilities.invokeLater(new MazeGUI(("MazeCo")));
     }
 }

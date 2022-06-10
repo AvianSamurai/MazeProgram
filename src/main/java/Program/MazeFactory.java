@@ -67,6 +67,17 @@ public class MazeFactory {
             return m;
         }
 
+        return CreateLogoMazeTestHook(logo, m, width, height);
+    }
+
+    public static MazeStructure CreateLogoMazeTestHook(BufferedImage logo, MazeStructure mm, int width, int height) {
+        MazeStructure m;
+        if(mm == null) {
+            m = new MazeStructure(width, height);
+        } else {
+            m = mm;
+        }
+
         int maxWidth = width/3;
         if(LogoCell.GetLogoCellHeightFromWidth(logo, maxWidth) > maxWidth) {
             maxWidth = LogoCell.GetLogoCellWidthFromHeight(logo, maxWidth);

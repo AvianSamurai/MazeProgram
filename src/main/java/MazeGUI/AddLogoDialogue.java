@@ -1,6 +1,5 @@
 package MazeGUI;
 
-import Program.I_Cell;
 import Program.LogoCell;
 import Program.MazeStructure;
 
@@ -12,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 
 public class AddLogoDialogue extends JDialog {
 

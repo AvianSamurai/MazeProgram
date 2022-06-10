@@ -4,7 +4,6 @@ import Utils.Debug;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.PixelGrabber;
 import java.util.ArrayList;
 
@@ -75,7 +74,7 @@ public class LogoCell extends BorderedCell implements I_Cell {
     public static int GetLogoCellWidthFromHeight(BufferedImage logoImage, int cellsTall) {
         int cellSize = (int) Math.ceil(logoImage.getHeight(null) / (double)cellsTall);
         int cellsWide = (int) Math.ceil(logoImage.getWidth(null) / (double)cellSize);
-        return cellsWide - 1;
+        return cellsWide;
     }
 
     /**

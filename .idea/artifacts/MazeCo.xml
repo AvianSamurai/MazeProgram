@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact name="MazeCo">
-    <output-path>$PROJECT_DIR$/out/artifacts/MazeCo</output-path>
-    <root id="root">
-      <element id="artifact" artifact-name="MazeProgram:jar" />
-      <element id="file-copy" path="$PROJECT_DIR$/db.props" />
-    </root>
-  </artifact>
-</component>

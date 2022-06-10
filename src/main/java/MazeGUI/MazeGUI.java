@@ -255,6 +255,7 @@ public class MazeGUI extends JFrame implements Runnable {
         c.gridx = 2;
         c.gridy = 0;
         c.gridheight = 1;
+
         // Inside
         logoPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Logo"), // outer border
@@ -294,6 +295,7 @@ public class MazeGUI extends JFrame implements Runnable {
         c.gridx = 3;
         c.gridy = 0;
         c.gridheight = 2;
+
         // Inside
         flowPanel2.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Save & Export"), // outer border
@@ -313,7 +315,6 @@ public class MazeGUI extends JFrame implements Runnable {
         flowPanel2.add(saveAndExport);
         propertyPanel.add(flowPanel2, c);
 
-        //pack();
         repaint();
         setVisible(true);
     }
@@ -402,14 +403,14 @@ public class MazeGUI extends JFrame implements Runnable {
         JLabel mazeSizes;
         NewMaze2.add(new JLabel("New Maze"));  // Label of the new window
 
-        // DropMenu for the MazeSize
+        // Allows user to input custom dimensions for the maze size (width and height)
         mazeSizes = new JLabel("Maze Size: ");
         mazeSizes.setBounds(50, 50, 100, 30);
 
         JLabel widthLabel = new JLabel("Maze Width:");
-        widthLabel.setBounds(50, 100, 80, 30);
+        widthLabel.setBounds(50, 100, 80, 30); // Sets where the width label is set on the window
         JLabel heightLabel = new JLabel("Maze Height:");
-        heightLabel.setBounds(50, 150, 80, 30);
+        heightLabel.setBounds(50, 150, 80, 30); // Sets where the height label is set on the window
 
         JSpinner widthSpinner = new JSpinner();
         JSpinner heightSpinner = new JSpinner();
@@ -432,7 +433,7 @@ public class MazeGUI extends JFrame implements Runnable {
         // Button to go to next set of options or cancel completely
         Object[] options = {"Yes", "No"};
         JButton jButtonCreate2 = new JButton("Create");
-        jButtonCreate2.setBounds(550, 200, 90, 20);
+        jButtonCreate2.setBounds(550, 200, 90, 20);  // Sets where create button is placed on the window
         jButtonCreate2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -457,7 +458,7 @@ public class MazeGUI extends JFrame implements Runnable {
         });
 
         JButton jButtonCancel2 = new JButton("Cancel");
-        jButtonCancel2.setBounds(450, 200, 90, 20);
+        jButtonCancel2.setBounds(450, 200, 90, 20); // Sets where the cancel button is placed
         jButtonCancel2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -467,7 +468,6 @@ public class MazeGUI extends JFrame implements Runnable {
 
         // Add elements to the GUI
         NewMaze2.add(mazeSizes);
-        //NewMaze2.add(jComboBoxMazeSize);
         NewMaze2.add(widthLabel);
         NewMaze2.add(heightLabel);
         NewMaze2.add(widthSpinner);
@@ -499,7 +499,7 @@ public class MazeGUI extends JFrame implements Runnable {
         JPanel solutionChoicePanel = new JPanel();
         JPanel btnPanel  = new JPanel();
 
-        // Ask whether exporting with maze solution or not using radiobuttons
+        // Ask whether exporting with maze solution or not using radio buttons
         JLabel includeSolution = new JLabel("Include a copy of maze with optimal solution");
         solutionChoicePanel.add(includeSolution);
         ButtonGroup G = new ButtonGroup();

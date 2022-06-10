@@ -37,6 +37,12 @@ public class MazeEditor extends JPanel {
         this.add(mazeCanvas);
         outerAreaLayout.putConstraint(SpringLayout.VERTICAL_CENTER, mazeCanvas, 0, SpringLayout.VERTICAL_CENTER, this);
         outerAreaLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, mazeCanvas, 0, SpringLayout.HORIZONTAL_CENTER, this);
+
+        // Add startup text to maze canvas
+        String username = System.getProperty("user.name");
+        JLabel welcomeLabel = new JLabel("Welcome " + username + ", \n" +
+                "Click 'open' to show a saved maze, or click 'new' to create a new one");
+        mazeCanvas.add(welcomeLabel);
     }
 
     public void OpenMazeStructure(Maze m) {

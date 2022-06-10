@@ -42,7 +42,6 @@ public class TestDirection {
         assertEquals(3, west.GetIntValue());
     }
 
-    //Test method GetOppositeDirection()
     @Test
     @DisplayName("Test get opposite direction to north")
     void testOppositeToNorth() {
@@ -92,26 +91,38 @@ public class TestDirection {
     }
 
     @Test
-    @DisplayName("Get offset based on north")
+    @DisplayName("Test Get offset based on north")
     void testGetOffsetNorth(){
         assertArrayEquals(new int[] {0, -1}, north.GetOffset());
     }
 
     @Test
-    @DisplayName("Get offset based on south")
+    @DisplayName("Test Get offset based on south")
     void testGetOffsetSouth(){
         assertArrayEquals(new int[] {0, 1}, south.GetOffset());
     }
 
     @Test
-    @DisplayName("Get offset based on east")
+    @DisplayName("Test Get offset based on east")
     void testGetOffsetEast(){
         assertArrayEquals(new int[] {1, 0}, east.GetOffset());
     }
 
     @Test
-    @DisplayName("Get offset based on west")
+    @DisplayName("Test Get offset based on west")
     void testGetOffsetWest(){
         assertArrayEquals(new int[] {-1, 0}, west.GetOffset());
+    }
+
+    @Test
+    @DisplayName("Test convert west offset to north")
+    void testConvertWestOffsetToNorth(){
+        assertEquals(west.OffsetToDirection(0, -1), north);
+    }
+
+    @Test
+    @DisplayName("Test convert offset (0, -1) to direction")
+    void testConvertSouthOffsetToEast() {
+        assertEquals(south.OffsetToDirection(1, 0), east);
     }
 }

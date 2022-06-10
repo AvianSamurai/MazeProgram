@@ -19,8 +19,6 @@ public class Maze {
     private transient DateTimeFormatter theDateTime;
     private int id = -1;
     public String cellSize;
-    public String imageSize;
-    public String logo;
     private String type;
     private MazeStructure m;
     private int[] startPos, endPos;
@@ -38,10 +36,6 @@ public class Maze {
         this.title = title.replaceAll("[^a-zA-Z0-9 ]", "");
         this.author = author.replaceAll("[^a-zA-Z0-9 ]", "");
         this.cellSize = cellSize;
-        this.imageSize = imageSize;
-        this.logo = logo;
-        //this.imageSize = imageSize;
-        //this.logo = logo;
         this.type = type;
     }
 

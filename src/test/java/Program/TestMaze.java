@@ -11,8 +11,7 @@ public class TestMaze {
 
     @BeforeEach
     void setup() {
-        maze1 = new Maze("Cool maze", "Robbert", "64", "logo.png");
-        maze2 = new Maze("Wow maze", "Jack");
+        maze1 = new Maze("Cool maze", "Robbert", "64", "Themed");
     }
 
     @Test

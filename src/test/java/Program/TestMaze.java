@@ -123,12 +123,6 @@ public class TestMaze {
     }
 
     @Test
-    @DisplayName("Test save a maze to the database")
-    void testLoadMazeFromID() {
-        //TODO: To be tested
-    }
-
-    @Test
     void testGetDateTime() {
         LocalDateTime current = LocalDateTime.now();
         //Replace expect output with the current local datetime

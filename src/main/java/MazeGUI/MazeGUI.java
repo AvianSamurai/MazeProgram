@@ -745,6 +745,7 @@ public class MazeGUI extends JFrame implements Runnable {
     }
 
     public void UpdateSolutionsLabel(int length) {
+        currentlySolvableTextField.setText("");
         currentlySolvableTextField.setText(length > 0 ? "Solvable" : "Not Solvable");
         currentlySolvableTextField.setBackground(length > 0 ? Color.green : Color.pink);
         reachOptimalSolutionTextField.setText(length + "");

@@ -8,10 +8,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestMaze {
     Maze maze1;
     Maze maze2;
+    Maze maze3;
 
     @BeforeEach
     void setup() {
-        maze1 = new Maze("Cool maze", "Robbert", "64", "Themed");
+        maze1 = new Maze("No maze", "Robbert", "Standard");
+        maze2 = new Maze("New maze", "Jack", "Themed", 15, 15);
+        maze3 = new Maze("New maze title and author only", "Tom");
     }
 
     @Test
@@ -25,13 +28,29 @@ public class TestMaze {
     }
 
     @Test
+    void testGetAuthorFromMaze3() {
+        assertEquals("Tom", maze3.GetAuthor());
+    }
+
+    @Test
     void testGetTitleFromMaze1() {
-        assertEquals("Cool maze", maze1.GetTitle());
+        assertEquals("No maze", maze1.GetTitle());
     }
 
     @Test
     void testGetTitleFromMaze2() {
-        assertEquals("Wow maze", maze2.GetTitle());
+        assertEquals("New maze", maze2.GetTitle());
+    }
+
+    @Test
+    void testGetTitleFromMaze3() {
+        assertEquals("New maze title and author only", maze3.GetTitle());
+    }
+
+    @Test
+    void testGetIDFromMaze1() {
+        maze1.SaveMaze();
+        assertEquals("1", maze1.GetID());
     }
 
     @Test

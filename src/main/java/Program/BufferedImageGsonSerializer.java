@@ -18,6 +18,8 @@ public class BufferedImageGsonSerializer<Image> implements JsonSerializer<Image>
     public JsonElement serialize(Image bufferedImage, Type type, JsonSerializationContext jsonSerializationContext) {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         String imageStr = "";
+
+        // Convert image to base64
         try {
             ImageIO.write((RenderedImage) bufferedImage, BASE_64_CONVERSION_TYPE, byteStream);
             imageStr = Base64.getEncoder().encodeToString(byteStream.toByteArray());
@@ -26,6 +28,7 @@ public class BufferedImageGsonSerializer<Image> implements JsonSerializer<Image>
             return null;
         }
 
+        // Create element to represent the image and add the base64 data to it
         JsonObject element = new JsonObject();
         element.addProperty("imdata", imageStr);
         return element;
@@ -34,9 +37,12 @@ public class BufferedImageGsonSerializer<Image> implements JsonSerializer<Image>
     @Override
     public Image deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         if(jsonElement.getAsJsonObject().has("imdata")) {
+            // Get the base64 image data
             String imageStr = jsonElement.getAsJsonObject().get("imdata").getAsString();
+            // Decode it to bytes
             byte[] decodedBytes = Base64.getDecoder().decode(imageStr);
             try {
+                // Try to read an image from the decoded bytes
                 Image buff = (Image) ImageIO.read(new ByteArrayInputStream(decodedBytes));
                 return buff;
             } catch (IOException e) {

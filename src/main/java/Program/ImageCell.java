@@ -85,6 +85,8 @@ public class ImageCell extends BasicCell {
         cellImage = new BufferedImage(ARROW_IMAGE_SIZE, ARROW_IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) cellImage.getGraphics();
 
+        // Works out the rotation the array should have based on what side of the maze it is next to and applies the
+        // rotation
         switch (isStart ? dir.GetOppositeDirection() : dir) {
 
             case WEST:
@@ -103,16 +105,22 @@ public class ImageCell extends BasicCell {
                 g.rotate(3 * Math.PI / 2, ARROW_IMAGE_SIZE/2, ARROW_IMAGE_SIZE/2);
                 break;
         }
+
+        // Draw the rotated arrow onto the buffered image
         g.drawRenderedImage(resizedArrow, null);
     }
 
     @Override
     public BufferedImage getCellImageRepresentation(int width, int height) {
+        // Get a buffered image containing the borders
         BufferedImage borderedCell = super.getCellImageRepresentation(width, height);
         Graphics2D renderedCell = (Graphics2D) borderedCell.getGraphics();
+
+        // Render the cell image onto the buffered image
         renderedCell.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         renderedCell.drawImage(cellImage, BasicCell.BORDER_WIDTH/2, BasicCell.BORDER_WIDTH/2,
                 width - BasicCell.BORDER_WIDTH, height - BasicCell.BORDER_WIDTH, null);
+
         return  borderedCell;
     }
 }

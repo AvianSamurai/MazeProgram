@@ -152,6 +152,7 @@ public class Maze {
      * @return true if save was successful, false otherwise
      */
     public boolean SaveMaze() {
+        // Connect to the database
         MazeDB mazeDB;
         try {
             mazeDB = new MazeDB();
@@ -168,14 +169,18 @@ public class Maze {
             newMaze = true;
         }
 
+        // Create the GSON serializer and register the custom serializers
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(I_Cell.class, new InterfaceGsonSerializer());
         builder.registerTypeAdapter(Image.class, new BufferedImageGsonSerializer());
         builder.registerTypeAdapter(BufferedImage.class, new BufferedImageGsonSerializer());
         Gson gson = builder.create();
+
+        // Serialize this object
         String mazeString = gson.toJson(this);
         Debug.LogLn("Saving Maze...");
 
+        // If it's a new maze, a new id will have to be generated before saving it to the database
         if(newMaze) {
             try {
                 int nextID = mazeDB.GetNextAvailableID();
@@ -189,16 +194,17 @@ public class Maze {
             }
             mazeDB.disconnect();
             return true;
-        } else {
-            try {
-                mazeDB.CreateUpdateDelete("UPDATE saved_mazes SET json_data = '" + mazeString + "', last_modified = '" + GetDateTime() + "' " +
-                        "WHERE id = " + id);
-            } catch (SQLException e) {
-                Debug.LogLn("Failed to update maze in database");
-                e.printStackTrace();
-                mazeDB.disconnect();
-                return false;
-            }
+        }
+
+        // If its not a new maze, we can just update the json_data at the id contained in this class
+        try {
+            mazeDB.CreateUpdateDelete("UPDATE saved_mazes SET json_data = '" + mazeString + "', last_modified = '" + GetDateTime() + "' " +
+                    "WHERE id = " + id);
+        } catch (SQLException e) {
+            Debug.LogLn("Failed to update maze in database");
+            e.printStackTrace();
+            mazeDB.disconnect();
+            return false;
         }
 
         mazeDB.disconnect();
@@ -212,6 +218,7 @@ public class Maze {
      * @return the new maze object
      */
     public static Maze LoadMazeFromID(int id) {
+        // Connect to the database
         MazeDB mazeDB;
         Maze finalMaze = null;
         try {
@@ -224,13 +231,18 @@ public class Maze {
 
         ResultSet result;
         try {
+            // Attempt to find the maze in the database by the given id
             Debug.LogLn("Loading maze by id (id = " + id + ")");
             result = mazeDB.Query("SELECT json_data FROM saved_mazes WHERE id = " + id);
+
+            // Create the GSON deserializer and register the custom deserializers
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.registerTypeAdapter(I_Cell.class, new InterfaceGsonSerializer());
             gsonBuilder.registerTypeAdapter(Image.class, new BufferedImageGsonSerializer());
             gsonBuilder.registerTypeAdapter(BufferedImage.class, new BufferedImageGsonSerializer());
             Gson gson = gsonBuilder.create();
+
+            // Get gson data and deserialize it into the finalMaze object
             if(result.next()) {
                 if(result.getString(1) != null) {
                     finalMaze = gson.fromJson(result.getString(1), Maze.class);
@@ -242,6 +254,7 @@ public class Maze {
             return null;
         }
 
+        // This is only true if the maze was made before the introduction of start and end positions
         if(finalMaze.startPos == null || finalMaze.endPos == null) {
             finalMaze.startPos = new int[]{0, 0};
             finalMaze.endPos = new int[]{finalMaze.getMazeStructure().getWidth() - 1, finalMaze.getMazeStructure().getHeight() - 1};
@@ -256,6 +269,7 @@ public class Maze {
      * @return date and time in string format
      */
     public String GetDateTime(){
+        // I don't know who made this method, but I really like it
         this.theDateTime = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
         LocalDateTime current = LocalDateTime.now();
         return this.theDateTime.format(current);

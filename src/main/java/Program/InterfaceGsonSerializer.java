@@ -14,6 +14,7 @@ public class InterfaceGsonSerializer<I_Cell> implements JsonSerializer<I_Cell>, 
 
     @Override
     public JsonElement serialize(I_Cell t, Type type, JsonSerializationContext jsonSerializationContext) {
+        // Add a property to the serialised class containing what kind of class it is
         JsonObject jElement = jsonSerializationContext.serialize(t).getAsJsonObject();
         jElement.addProperty("type", t.getClass().toString());
         return jElement;
@@ -22,13 +23,15 @@ public class InterfaceGsonSerializer<I_Cell> implements JsonSerializer<I_Cell>, 
     @Override
     public I_Cell deserialize(JsonElement elem, Type interfaceType, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jElement = elem.getAsJsonObject();
+
+        // Read what kind of class the object reports itself to be
         if(jElement.has("type")) {
             switch (jElement.get("type").getAsString()) {
                 case "class Program.BasicCell":
                     jElement.remove("type");
                     return context.deserialize(jElement, BasicCell.class);
 
-                case "class Program.LogoCell":
+                case "class Program.LogoCell": // Ensures image is deserialized as well
                     if(elem.getAsJsonObject().has("cellImage")) {
                         JsonObject imobject = elem.getAsJsonObject().get("cellImage").getAsJsonObject();
                         if(imobject.has("imdata")) {
@@ -39,7 +42,7 @@ public class InterfaceGsonSerializer<I_Cell> implements JsonSerializer<I_Cell>, 
                     }
                     return (I_Cell) (new BasicCell());
 
-                case "class Program.ImageCell":
+                case "class Program.ImageCell":// Ensures image is deserialized as well
                     if(elem.getAsJsonObject().has("cellImage")) {
                         JsonObject imobject = elem.getAsJsonObject().get("cellImage").getAsJsonObject();
                         if(imobject.has("imdata")) {

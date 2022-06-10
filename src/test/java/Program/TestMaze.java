@@ -130,14 +130,19 @@ public class TestMaze {
     @Test
     @DisplayName("Test save a maze to the database")
     void testSaveMaze() {
-        boolean saved = false;
-        try {
-            saved = maze1.SaveMaze();
+        boolean dbCanConnect = false;
+        try{
+            MazeDB db = new MazeDB();
+            dbCanConnect = true;
         } catch (Exception e) {
-            assertTrue(true, "No database running, probably running on CI");
-            return;
+
         }
-        assertTrue(saved);
+
+        if(dbCanConnect) {
+            assertTrue(maze1.SaveMaze());
+        } else {
+            assertTrue(true, "No db running");
+        }
     }
 
     @Test

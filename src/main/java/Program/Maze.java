@@ -18,9 +18,6 @@ public class Maze {
     private String author;
     private transient DateTimeFormatter theDateTime;
     private int id = -1;
-    public String cellSize;
-    public String imageSize;
-    public String logo;
     private String type;
     private MazeStructure m;
     private int[] startPos, endPos;
@@ -30,18 +27,12 @@ public class Maze {
      *
      * @param title
      * @param author
-     * @param cellSize
      * @param type
      * @deprecated
      */
-    public Maze (String title, String author, String cellSize, String type){
+    public Maze (String title, String author, String type){
         this.title = title.replaceAll("[^a-zA-Z0-9 ]", "");
         this.author = author.replaceAll("[^a-zA-Z0-9 ]", "");
-        this.cellSize = cellSize;
-        this.imageSize = imageSize;
-        this.logo = logo;
-        //this.imageSize = imageSize;
-        //this.logo = logo;
         this.type = type;
     }
 
@@ -54,8 +45,8 @@ public class Maze {
      * @param width
      * @param height
      */
-    public Maze (String title, String author, String cellSize, String type, int width, int height) {
-        this(title, author, "auto", type);
+    public Maze (String title, String author, String type, int width, int height) {
+        this(title, author, type);
 
         startPos = new int[]{0, 0};
         endPos = new int[]{width - 1, height - 1};
@@ -112,13 +103,6 @@ public class Maze {
      * @return maze id
      */
     public int GetID() { return this.id; }
-
-    /**
-     * Gets a string representation of size of the maze in cells
-     *
-     * @return maze size
-     */
-    public String getCellSize(){return this.cellSize;}
 
     /**
      * Returns a 2D x,y int representing the starting position of the maze

@@ -114,16 +114,16 @@ public abstract class BorderedCell {
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(BORDER_WIDTH));
 
-        if(GetBorders()[0]) {
+        if(GetBorders()[0]) { // North
             g.drawLine(0, 0, input.getWidth(), 0);
         }
-        if(GetBorders()[1]) {
+        if(GetBorders()[1]) { // East
             g.drawLine(input.getWidth(), 0, input.getWidth(), input.getHeight());
         }
-        if(GetBorders()[2]) {
+        if(GetBorders()[2]) { // South
             g.drawLine(0, input.getHeight(), input.getWidth(), input.getHeight());
         }
-        if(GetBorders()[3]) {
+        if(GetBorders()[3]) { // West
             g.drawLine(0, 0, 0, input.getHeight());
         }
 

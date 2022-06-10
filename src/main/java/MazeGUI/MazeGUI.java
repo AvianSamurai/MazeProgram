@@ -447,7 +447,7 @@ public class MazeGUI extends JFrame implements Runnable {
                 String size = widthSpinner.getValue() + "x" + heightSpinner.getValue();
                 String selectedType = jComboBox.getItemAt(jComboBox.getSelectedIndex());
                 NewMazeFrame.dispose();
-                maze = new Maze(title, author, size, selectedType, (int)widthSpinner.getValue(), (int)heightSpinner.getValue());
+                maze = new Maze(title, author, selectedType, (int)widthSpinner.getValue(), (int)heightSpinner.getValue());
                 if (createStatus == JOptionPane.YES_OPTION){
                     MazeAlgorithms.GenerateMaze(maze.getMazeStructure());
                 }
